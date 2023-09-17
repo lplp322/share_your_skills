@@ -3,5 +3,11 @@ services:
   app:
     container_name: server
     build: ./back_end
+    volumes:
+      - ./back_end:/app
+      - /app/node_modules
+    command: npm run start:docker
+    environment:
+      - NODE_PORT=8000
     ports:
       - 8000:8000
