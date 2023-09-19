@@ -26,6 +26,8 @@
     "bcrypt": "^5.0.1",
     "@types/bcrypt": "^5.0.0",
     "@types/node": "^20.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "@types/jsonwebtoken": "^9.0.3",
     "typescript": "^5.2.2"
   },
   "dependencies": {
@@ -34,6 +36,8 @@
     "@types/bcrypt": "^5.0.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "@types/jsonwebtoken": "^9.0.3",
     "mongoose": "^7.5.2"
   }
 }

@@ -13,6 +13,7 @@ export const loginOne = async (req: Request, res: Response) => {
     }
     const user = await userServices.login(userCredentials);
     if (user) {
+      console.log('userToken', user.token);
       res.status(messages.SUCCESSFUL_LOGIN).send("Login success");
     }
     else {
@@ -31,9 +32,9 @@ export const registerOne = async (req: Request, res: Response) => {
     login: req.body.login,
     password: req.body.password,
   }
-  const userAlreadyExists = await userServices.login(userCredentials);
-  if (userAlreadyExists) {
-    res.status(messages.USER_ALREADY_EXISTS).send("User already exists");
+  const userAlreadyExists = await userServices.getOne(userCredentials);
+  if (userAlreadyExists !== null) {
+    return res.status(messages.USER_ALREADY_EXISTS).send("User already exists");
   }
 
   // verify that the input is valid

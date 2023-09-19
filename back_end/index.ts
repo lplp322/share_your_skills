@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 import initDB from "./config/dbInit";
 import UserModel from "./models/userModel";
 import * as userController from "./controllers/userController";
+import { auth } from "./middleware/auth";
 
 dotenv.config();
 
-const messages = require("./config/messages");
 const app: Express = express();
 const port = process.env.NODE_PORT;
 
@@ -39,7 +39,7 @@ app.get("/a", (req: Request, res: Response) => {
 
 app.delete("/users", userController.deleteAll);
 
-app.get("/users", userController.getAll);
+app.get("/users", auth, userController.getAll);
 
 app.post("/users/login", userController.loginOne);
 
