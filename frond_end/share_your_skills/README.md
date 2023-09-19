@@ -46,4 +46,4 @@ to check all dependencences are in place use flutter doctor.
 
      The `flutter doctor` command will check your environment and provide guidance on any missing or misconfigured dependencies. Resolve any issues reported by `flutter doctor` to ensure a smooth development experience.
 
-     The dart code is written i main.dart in lib directory
+4. The dart code is written i main.dart in lib directory
