@@ -1,8 +1,10 @@
-import UserModel, { IUser, ICredentials } from "../models/userModel";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import UserModel, { IUser, ICredentials } from "../models/userModel";
+import dotenv from "dotenv";
 
-import { SECRET_KEY } from "../middleware/auth";
+dotenv.config();
+
 export async function register(user: IUser) {
   try {
     const newUser = new UserModel({
@@ -11,7 +13,7 @@ export async function register(user: IUser) {
       name: user.name,
       skills: user.skills,
     });
-    newUser.save();
+    await newUser.save();
   } catch (error) {
     throw error;
   }
@@ -20,15 +22,18 @@ export async function register(user: IUser) {
 export async function login(userCredentials: ICredentials) {
   try {
     const foundUser = await UserModel.findOne({ login: userCredentials.login });
+    
     if (!foundUser) {
-      throw new Error("User not found");
+      throw new Error("User not found sorry");
     }
+
     const isMatch = bcrypt.compareSync(userCredentials.password, foundUser.password);
+
     if (isMatch) {
-      const token = jwt.sign({ _id: foundUser._id?.toString(), name: foundUser.name }, SECRET_KEY, {expiresIn: '2 days',});
- 
+      const token = jwt.sign({ _id: foundUser._id?.toString(), name: foundUser.name }, process.env.SECRET_KEY!, {expiresIn: '2 days',});
       return { user: { _id: foundUser._id?.toString(), name: foundUser.name }, token: token };
     }
+
     else {
       throw new Error("Wrong password");
     }
@@ -63,3 +68,7 @@ export async function deleteAll() {
     throw error;
   }
 }
+
+
+
+  
