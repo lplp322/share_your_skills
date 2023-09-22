@@ -6,12 +6,12 @@ const messages = require("../config/messages");
 
 dotenv.config();
 export interface CustomRequest extends Request {
-    token: string | JwtPayload;
+  token: string | JwtPayload;
 }
-   
+
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const token = req.header('Authorization');
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
 
         if (!token) {
             throw new Error("No token provided (header 'Authorization' is missing)");
