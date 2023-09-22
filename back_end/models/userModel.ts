@@ -1,5 +1,5 @@
 import { model, Model, Schema } from "mongoose";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 export interface IUser {
   login: string;
@@ -20,13 +20,13 @@ const UserSchema = new Schema<IUser>({
   skills: { type: [String], required: false },
 });
 
-const saltRounds = 8
+const saltRounds = 8;
 
-UserSchema.pre<IUser>('save', function (next) {
+UserSchema.pre<IUser>("save", function (next) {
   this.password = bcrypt.hashSync(this.password, saltRounds);
   next();
 });
 
-const UserModel: Model<IUser> = model('User', UserSchema);
+const UserModel: Model<IUser> = model("User", UserSchema);
 
 export default UserModel;

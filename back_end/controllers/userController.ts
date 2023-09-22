@@ -10,13 +10,12 @@ export const loginOne = async (req: Request, res: Response) => {
     const userCredentials: ICredentials = {
       login: req.body.login,
       password: req.body.password,
-    }
+    };
     const userAndToken = await userServices.login(userCredentials);
     if (userAndToken) {
-      console.log('userToken', userAndToken.token);
+      console.log("userToken", userAndToken.token);
       res.status(messages.SUCCESSFUL_LOGIN).send(userAndToken.token);
-    }
-    else {
+    } else {
       res.status(messages.USER_NOT_FOUND).send("Login failed");
     }
   } catch (err) {

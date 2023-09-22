@@ -1,5 +1,5 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import UserModel, { IUser, ICredentials } from "../models/userModel";
 import dotenv from "dotenv";
 
@@ -22,19 +22,27 @@ export async function register(user: IUser) {
 export async function login(userCredentials: ICredentials) {
   try {
     const foundUser = await UserModel.findOne({ login: userCredentials.login });
-    
+
     if (!foundUser) {
       throw new Error("User not found sorry");
     }
 
-    const isMatch = bcrypt.compareSync(userCredentials.password, foundUser.password);
+    const isMatch = bcrypt.compareSync(
+      userCredentials.password,
+      foundUser.password
+    );
 
     if (isMatch) {
-      const token = jwt.sign({ _id: foundUser._id?.toString(), name: foundUser.name }, process.env.SECRET_KEY!, {expiresIn: '2 days',});
-      return { user: { _id: foundUser._id?.toString(), name: foundUser.name }, token: token };
-    }
-
-    else {
+      const token = jwt.sign(
+        { _id: foundUser._id?.toString(), name: foundUser.name },
+        process.env.SECRET_KEY!,
+        { expiresIn: "2 days" }
+      );
+      return {
+        user: { _id: foundUser._id?.toString(), name: foundUser.name },
+        token: token,
+      };
+    } else {
       throw new Error("Wrong password");
     }
   } catch (error) {
@@ -68,7 +76,3 @@ export async function deleteAll() {
     throw error;
   }
 }
-
-
-
-  
