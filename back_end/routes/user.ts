@@ -1,5 +1,4 @@
 import { Express } from "express";
-
 import * as userController from "../controllers/userController";
 import { auth } from "../middleware/auth";
 

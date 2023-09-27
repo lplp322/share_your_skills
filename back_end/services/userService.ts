@@ -11,7 +11,7 @@ export async function register(user: IUser) {
       login: user.login,
       password: user.password,
       name: user.name,
-      skills: user.skills,
+      skillIds: user.skillIds,
     });
     await newUser.save();
   } catch (error) {

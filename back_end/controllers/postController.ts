@@ -7,7 +7,7 @@ const messages = require("../config/messages");
 export const getAll = async (req: Request, res: Response) => {
     try {
         const posts = await postServices.getAll();
-        res.status(messages.SUCCESSFUL_GET).send(posts);
+        res.status(messages.SUCCESSFUL).send(posts);
     } catch (err) {
         return res.status(messages.INTERNAL_SERVER_ERROR).send("getAll : " + err);
     }

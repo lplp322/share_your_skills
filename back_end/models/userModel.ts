@@ -1,11 +1,12 @@
-import { model, Model, Schema } from "mongoose";
+import { model, Model, Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
+import SkillModel, { ISkill } from "./skillModel";
 
 export interface IUser {
   login: string;
   password: string;
   name?: string;
-  skills?: Array<string>;
+  skillIds?: Array<Schema.Types.ObjectId>;
 }
 
 export interface ICredentials {
@@ -17,7 +18,7 @@ const UserSchema = new Schema<IUser>({
   login: { type: String, required: true },
   password: { type: String, required: true },
   name: { type: String, required: false },
-  skills: { type: [String], required: false },
+  skillIds: [{ type: Schema.Types.ObjectId, ref: 'Skill' }],
 });
 
 const saltRounds = 8;

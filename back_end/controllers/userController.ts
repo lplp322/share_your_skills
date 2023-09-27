@@ -13,7 +13,7 @@ export const loginOne = async (req: Request, res: Response) => {
     };
     const userAndToken = await userServices.login(userCredentials);
     if (userAndToken) {
-      console.log("userToken", userAndToken.token);
+      console.log("userToken", userAndToken);
       res.status(messages.SUCCESSFUL_LOGIN).send(userAndToken.token);
     } else {
       res.status(messages.USER_NOT_FOUND).send("Login failed");

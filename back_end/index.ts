@@ -16,8 +16,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 require("./routes/user")(app);
-// require("./routes/post")(app);
-// require("./routes/skill")(app);
+require("./routes/post")(app);
+require("./routes/skill")(app);
 
 app.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
