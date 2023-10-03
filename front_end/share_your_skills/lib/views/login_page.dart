@@ -37,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
      var response = await http.post(Uri.parse(url +"login"),
      headers: {"Content-Type": "application/json"},
      body: jsonEncode(regBody));
+     print(response.body);
      var jsonResponse = jsonDecode(response.body);
      print(jsonResponse);
      if(jsonResponse['status']){

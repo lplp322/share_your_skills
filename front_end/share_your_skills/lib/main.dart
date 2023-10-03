@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_your_skills/views/login_page.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
