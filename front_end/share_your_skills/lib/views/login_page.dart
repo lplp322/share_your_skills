@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:share_your_skills/views/home_page.dart';
 import 'package:share_your_skills/views/registration.dart';
@@ -18,6 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
   bool _isNotValidate = false;
   late SharedPreferences prefs;
+   String? errorMessage;
   final url = 'http://localhost:8000/users/';
   @override
   void initState() {
@@ -36,21 +36,24 @@ class _LoginPageState extends State<LoginPage> {
         "password": passwordController.text
       };
 
-      var response =
-          await http.post(Uri.parse(url + "login"), body: jsonEncode(regBody));
-      print(response.body);
-      // var jsonResponse = jsonDecode(response.body);
-     // print(jsonResponse);
+      var response = await http.post(
+        Uri.parse(url + "login"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(regBody),
+      );
+
       if (response.statusCode == 200) {
-        //var myToken = jsonResponse['token'];
-        var myToken = response.body;
+        var myToken = response.body; // Extract the token directly
         prefs.setString('token', myToken);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePage(token: myToken)),
         );
       } else {
-        print('Something went wrong');
+        setState(() {
+          errorMessage =
+              response.body; // Store the error message from the server
+        });
       }
     } else {
       setState(() {
@@ -109,6 +112,13 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               height: 10,
             ),
+             errorMessage != null
+              ? Text(
+                  errorMessage!,
+                  style:
+                      TextStyle(color: Colors.red), // Display error in red text
+                )
+              : SizedBox(),
             ElevatedButton(
               onPressed: () {
                 loginUser();
@@ -131,7 +141,9 @@ class _LoginPageState extends State<LoginPage> {
               },
               child: Text('Register'),
             ),
+            
           ],
+          
         ),
       ),
     ));

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+
 class HomePage extends StatefulWidget {
   final token;
   const HomePage({@required this.token, super.key});
@@ -9,20 +10,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late String email;
+  late String userId;
+  late String? userName;
+
   @override
-   void initState() {
+  void initState() {
     super.initState();
     Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-   // print(JwtDecoder.decode(widget.token));
-   email = jwtDecodedToken['login'];
+    userId = jwtDecodedToken['_id'];
+    userName = jwtDecodedToken['name'];
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Home Page")),
       body: Center(
-        child: Text(email),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("User ID: $userId"),
+            Text("User Name: $userName"),
+          ],
+        ),
       ),
     );
   }
