@@ -24,45 +24,41 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
     initSharedPref();
   }
+
   void initSharedPref() async {
     prefs = await SharedPreferences.getInstance();
   }
-  void loginUser () async{
+
+  void loginUser() async {
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-     var regBody = {
+      var regBody = {
         "login": emailController.text,
         "password": passwordController.text
       };
-     
-     var response = await http.post(Uri.parse(url +"login"),
-     headers: {"Content-Type": "application/json"},
-     body: jsonEncode(regBody));
-     print(response.body);
-     var jsonResponse = jsonDecode(response.body);
-     print(jsonResponse);
-     if(jsonResponse['status']){
-      var myToken = jsonResponse['token'];
-      prefs.setString('token', myToken);
-       Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(token: myToken)),
-                );
-     }
-     else{
-      print('Something went wrong');
-     }
-     }
-     else{
-       setState(() {
-         _isNotValidate = true;
-       });
-     }
-     
-    
+
+      var response =
+          await http.post(Uri.parse(url + "login"), body: jsonEncode(regBody));
+      print(response.body);
+      // var jsonResponse = jsonDecode(response.body);
+     // print(jsonResponse);
+      if (response.statusCode == 200) {
+        //var myToken = jsonResponse['token'];
+        var myToken = response.body;
+        prefs.setString('token', myToken);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage(token: myToken)),
+        );
+      } else {
+        print('Something went wrong');
+      }
+    } else {
+      setState(() {
+        _isNotValidate = true;
+      });
     }
-  
-  
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,8 +111,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () {
-               loginUser();
-              }, 
+                loginUser();
+              },
               child: Text(
                 'Login',
                 style: TextStyle(fontSize: 20),
