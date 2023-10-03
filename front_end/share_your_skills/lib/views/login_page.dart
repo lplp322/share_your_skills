@@ -38,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
      headers: {"Content-Type": "application/json"},
      body: jsonEncode(regBody));
      var jsonResponse = jsonDecode(response.body);
+     print(jsonResponse);
      if(jsonResponse['status']){
       var myToken = jsonResponse['token'];
       prefs.setString('token', myToken);
@@ -47,8 +48,19 @@ class _LoginPageState extends State<LoginPage> {
                       builder: (context) => HomePage(token: myToken)),
                 );
      }
+     else{
+      print('Something went wrong');
      }
+     }
+     else{
+       setState(() {
+         _isNotValidate = true;
+       });
+     }
+     
+    
     }
+  
   
   @override
   Widget build(BuildContext context) {
@@ -102,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                setState(() {});
+               loginUser();
               }, 
               child: Text(
                 'Login',
