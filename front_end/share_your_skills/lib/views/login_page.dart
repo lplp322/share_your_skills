@@ -30,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
   void loginUser () async{
     if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
      var regBody = {
-        "email": emailController.text,
+        "login": emailController.text,
         "password": passwordController.text
       };
      
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
        Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const HomePage(token: myToken)),
+                      builder: (context) => HomePage(token: myToken)),
                 );
      }
      }
