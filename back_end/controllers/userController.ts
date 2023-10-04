@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as userServices from "../services/userService";
 import { ICredentials } from "../models/userModel";
-//import { CustomRequest } from "../middleware/auth";
+import { CustomRequest } from "../middleware/auth";
 
 const messages = require("../config/messages");
 
@@ -71,7 +71,7 @@ export const getAll = async (req: Request, res: Response) => {
 export const deleteAll = async (req: Request, res: Response) => {
   try {
     await userServices.deleteAll();
-    res.status(messages.SUCCESSFUL_DELETE).send("All users deleted");
+    res.status(messages.SUCCESSFUL_DELETE).send("All users deleted by " + (req as CustomRequest).user_id);
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
