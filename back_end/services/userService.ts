@@ -50,10 +50,18 @@ export async function login(userCredentials: ICredentials) {
   }
 }
 
-// only used to verify that the user doesn't already exist when registering
-export async function getOne(userCredentials: ICredentials) {
+export async function getOne(idToFind: String) {
   try {
-    const foundUser = await UserModel.findOne({ login: userCredentials.login });
+    const foundUser = await UserModel.findById(idToFind);
+    return foundUser;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function verifyLoginUnused(loginToFind: String) {
+  try {
+    const foundUser = await UserModel.findOne({ login: loginToFind });
     return foundUser;
   } catch (error) {
     return null;

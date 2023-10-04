@@ -48,11 +48,14 @@ export async function getSkillId(name: string) {
 
 export async function getSkills(userId: Types.ObjectId) {
   try {
+    console.log("userId", userId);
     const user = await UserModel.findById(userId);
     if (!user) {
       throw new Error("User not found");
     }
+    console.log("user", user);
     const userSkills = SkillModel.find({ users: userId });
+    console.log("userSkills", userSkills);
     // we return the skills of the user (maybe we could return only their names)
     return userSkills;
   } catch (err) {
@@ -84,12 +87,21 @@ export async function deleteOne(
   }
 }
 
+export async function deleteAll() {
+  try {
+    await SkillModel.deleteMany({});
+  } catch (err) {
+    throw err;
+  }
+}
+
 // to be deleted
 
 export async function forceAddSkillToDB(skill: ISkill) {
   try {
     const newSkill = new SkillModel({
       name: skill.name,
+      imageURL: skill.imageURL,
       users: skill.users,
     });
     await newSkill.save();

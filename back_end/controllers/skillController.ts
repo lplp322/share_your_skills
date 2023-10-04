@@ -65,12 +65,24 @@ export const deleteOne = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteAll = async (req: Request, res: Response) => {
+  try {
+    await skillService.deleteAll();
+    res.status(messages.SUCCESSFUL_DELETE).send("All skills deleted");
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("deleteAll : " + err);
+  }
+};
+
 // to be deleted
 
 export const forceAddSkillToDB = async (req: Request, res: Response) => {
   try {
     const skill: ISkill = {
       name: req.body.name,
+      imageURL: req.body.imageURL,
       users: [],
     };
     console.log("skill added = ", skill);
