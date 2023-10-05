@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import UserModel, { IUser, ICredentials } from "../models/userModel";
 import dotenv from "dotenv";
+import * as skillService from "./skillService";
 
 dotenv.config();
 
@@ -13,7 +14,15 @@ export async function register(user: IUser) {
       name: user.name,
       skillIds: user.skillIds,
     });
+
     await newUser.save();
+
+    // adding the user_id to the skills
+    if (newUser.skillIds) {
+      for (const skillId of newUser.skillIds) {
+        await skillService.addUserToSkill(newUser._id!, skillId);
+      }
+    }
   } catch (error) {
     throw error;
   }
