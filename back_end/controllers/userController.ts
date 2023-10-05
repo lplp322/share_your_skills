@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as userServices from "../services/userService";
 import { ICredentials } from "../models/userModel";
-//import { CustomRequest } from "../middleware/auth";
+import { CustomRequest } from "../middleware/auth";
 
 const messages = require("../config/messages");
 
@@ -29,12 +29,9 @@ export const registerOne = async (
   next: NextFunction
 ) => {
   try {
-    // check if the user already exists
-    const userCredentials: ICredentials = {
-      login: req.body.login,
-      password: req.body.password,
-    };
-    const userAlreadyExists = await userServices.getOne(userCredentials);
+    const userAlreadyExists = await userServices.verifyLoginUnused(
+      req.body.login
+    );
     if (userAlreadyExists !== null) {
       return res
         .status(messages.USER_ALREADY_EXISTS)
@@ -46,7 +43,7 @@ export const registerOne = async (
       login: req.body.login,
       password: req.body.password,
       name: req.body.name,
-      skills: req.body.skills,
+      skillIds: req.body.skillIds,
     };
 
     await userServices.register(user);
@@ -68,10 +65,25 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
+export const getOne = async (req: Request, res: Response) => {
+  try {
+    console.log("user_id", (req as CustomRequest).user_id);
+    const user = await userServices.getOne((req as CustomRequest).user_id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    res.status(messages.SUCCESSFUL).send(user);
+  } catch (err) {
+    return res.status(messages.INTERNAL_SERVER_ERROR).send("getOne : " + err);
+  }
+};
+
 export const deleteAll = async (req: Request, res: Response) => {
   try {
     await userServices.deleteAll();
-    res.status(messages.SUCCESSFUL_DELETE).send("All users deleted");
+    res
+      .status(messages.SUCCESSFUL_DELETE)
+      .send("All users deleted by " + (req as CustomRequest).user_id);
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)

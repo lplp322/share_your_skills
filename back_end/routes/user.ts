@@ -13,5 +13,7 @@ module.exports = function (app: Express) {
     userController.loginOne
   );
 
+  app.get("/users/getUser", auth, userController.getOne);
+
   app.delete("/users", auth, userController.deleteAll);
-}
+};
