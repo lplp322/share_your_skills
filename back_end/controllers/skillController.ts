@@ -14,6 +14,7 @@ export const createOne = async (req: Request, res: Response) => {
     const skillId = new Types.ObjectId(req.body.skillId);
 
     await skillService.createOne(userId, skillId);
+    res.status(messages.SUCCESSFUL_CREATION).send("Skill added");
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
@@ -85,7 +86,6 @@ export const forceAddSkillToDB = async (req: Request, res: Response) => {
       imageURL: req.body.imageURL,
       users: [],
     };
-    console.log("skill added = ", skill);
     const skill_id = await skillService.forceAddSkillToDB(skill);
 
     if (skill_id) {

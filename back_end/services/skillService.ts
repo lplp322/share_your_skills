@@ -16,9 +16,40 @@ export async function createOne(
     if (!skill) {
       throw new Error("Skill not found");
     }
+
+    // check if the skill is already added to the user (repetition of code but it's ok for now)
+    if (user.skillIds?.includes(skillId)) {
+      throw new Error("Skill already added to user");
+    }
+    if (skill.users?.includes(userId)) {
+      throw new Error("User already added to skill");
+    }
     skill.users?.push(userId);
     user.skillIds?.push(skillId);
     await user.save();
+    await skill.save();
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function addUserToSkill(
+  userId: Types.ObjectId,
+  skillId: Types.ObjectId
+) {
+  try {
+    const user = await UserModel.findById(userId);
+    const skill = await SkillModel.findById(skillId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (!skill) {
+      throw new Error("Skill not found");
+    }
+    if (skill.users?.includes(userId)) {
+      throw new Error("User already added to skill");
+    }
+    skill.users?.push(userId);
     await skill.save();
   } catch (err) {
     throw err;
@@ -48,16 +79,13 @@ export async function getSkillId(name: string) {
 
 export async function getSkills(userId: Types.ObjectId) {
   try {
-    console.log("userId", userId);
     const user = await UserModel.findById(userId);
     if (!user) {
       throw new Error("User not found");
     }
-    console.log("user", user);
-    const userSkills = SkillModel.find({ users: userId });
-    console.log("userSkills", userSkills);
-    // we return the skills of the user (maybe we could return only their names)
-    return userSkills;
+
+    const skills = SkillModel.find({ _id: { $in: user.skillIds } });
+    return skills;
   } catch (err) {
     throw err;
   }

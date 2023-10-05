@@ -13,7 +13,6 @@ export const loginOne = async (req: Request, res: Response) => {
     };
     const userAndToken = await userServices.login(userCredentials);
     if (userAndToken) {
-      console.log("userToken", userAndToken);
       res.status(messages.SUCCESSFUL_LOGIN).send(userAndToken.token);
     } else {
       res.status(messages.USER_NOT_FOUND).send("Login failed");
@@ -67,7 +66,6 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getOne = async (req: Request, res: Response) => {
   try {
-    console.log("user_id", (req as CustomRequest).user_id);
     const user = await userServices.getOne((req as CustomRequest).user_id);
     if (!user) {
       throw new Error("User not found");
@@ -81,9 +79,7 @@ export const getOne = async (req: Request, res: Response) => {
 export const deleteAll = async (req: Request, res: Response) => {
   try {
     await userServices.deleteAll();
-    res
-      .status(messages.SUCCESSFUL_DELETE)
-      .send("All users deleted by " + (req as CustomRequest).user_id);
+    res.status(messages.SUCCESSFUL_DELETE).send("All users deleted");
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
