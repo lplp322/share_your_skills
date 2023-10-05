@@ -1,39 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:share_your_skills/views/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class HomePage extends StatefulWidget {
-  final token;
-  const HomePage({@required this.token, super.key});
+  
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  late String userId;
-  late String? userName;
-
-  @override
-  void initState() {
-    super.initState();
-    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
-    userId = jwtDecodedToken['_id'];
-    userName = jwtDecodedToken['name'];
+ 
+  void logoutUser() {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.remove('token');
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
   }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Home Page")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("User ID: $userId"),
-            Text("User Name: $userName"),
-          ],
-        ),
-      ),
+    return Container(
+      child: Text('Home Page'),
     );
   }
 }

@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:share_your_skills/views/home_page.dart';
 import 'package:share_your_skills/views/registration.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:share_your_skills/views/app_bar.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -47,8 +46,7 @@ class _LoginPageState extends State<LoginPage> {
         prefs.setString('token', myToken);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage(token: myToken)),
-        );
+          MaterialPageRoute(builder: (context) => AppBar(token: myToken)),
       } else {
         setState(() {
           errorMessage =
