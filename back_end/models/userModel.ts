@@ -6,6 +6,11 @@ export interface IUser {
   password: string;
   name?: string;
   skillIds?: Array<Types.ObjectId>;
+  address?: {
+    city:string;
+    street:string;
+    houseNumber:string;
+  }
 }
 
 export interface ICredentials {
@@ -18,6 +23,11 @@ const UserSchema = new Schema<IUser>({
   password: { type: String, required: true },
   name: { type: String, required: false },
   skillIds: [{ type: Types.ObjectId, ref: 'Skill' }],
+  address: {
+    city:{type:String, required:false},
+    street:{type:String, required:false},
+    houseNumber:{type:String, required:false}
+  }
 });
 
 const saltRounds = 8;

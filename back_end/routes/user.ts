@@ -15,5 +15,6 @@ module.exports = function (app: Express) {
 
   app.get("/users/getUser", auth, userController.getOne);
 
-  app.delete("/users", auth, userController.deleteAll);
+  // app.delete("/users", auth, userController.deleteAll);
+  app.post("/users/changeMyAddress", auth, userController.changeAddress)
 };

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as userServices from "../services/userService";
-import { ICredentials } from "../models/userModel";
+import UserModel, { ICredentials } from "../models/userModel";
 import { CustomRequest } from "../middleware/auth";
 
 const messages = require("../config/messages");
@@ -89,4 +89,17 @@ export const deleteAll = async (req: Request, res: Response) => {
       .status(messages.INTERNAL_SERVER_ERROR)
       .send("deleteAll : " + err);
   }
+};
+
+export const changeAddress = async (req: CustomRequest, res: Response) => {
+  UserModel.findOneAndUpdate(
+    { id: req.user_id },
+    {
+      address: {
+        city: req.body.city,
+        street: req.body.street,
+        houseNr: req.body.houseNr,
+      },
+    }
+  );
 };
