@@ -1,0 +1,99 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:share_your_skills/views/add_event_page.dart';
+import 'package:share_your_skills/views/chat_page.dart';
+import 'package:share_your_skills/views/event_page.dart';
+import 'package:share_your_skills/views/home_page.dart';
+import 'package:share_your_skills/views/profile_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_your_skills/models/app_state.dart';
+
+class AppBar extends StatefulWidget {
+  final token;
+  const AppBar({@required this.token, super.key});
+
+  @override
+  State<AppBar> createState() => _AppBarState();
+}
+
+class _AppBarState extends State<AppBar> {
+  late String userId;
+  late String? userName;
+
+  @override
+  void initState() {
+    super.initState();
+    Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
+    userId = jwtDecodedToken['_id'];
+    userName = jwtDecodedToken['name'];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Consumer<AppState>(
+          builder: (context, appState, _) {
+            // Use the selected index to determine the body widget
+            Widget selectedPage = _buildPage(appState.selectedIndex);
+
+            return selectedPage;
+          },
+        ),
+      ),
+      bottomNavigationBar: Consumer<AppState>(
+        builder: (context, appState, _) {
+          return BottomNavigationBar(
+            currentIndex: appState.selectedIndex,
+            onTap: (int newIndex) {
+              // Update the selected index using the AppState provider
+              appState.setSelectedIndex(newIndex);
+            },
+            selectedItemColor: Colors.green, // Color for selected item
+            unselectedItemColor: Colors.black, // Color for unselected items
+            items: const [
+              BottomNavigationBarItem(
+                label: 'Events',
+                icon: Icon(Icons.event),
+              ),
+              BottomNavigationBarItem(
+                label: 'Add',
+                icon: Icon(Icons.add),
+              ),
+              BottomNavigationBarItem(
+                label: 'Home',
+                icon: Icon(Icons.home),
+              ),
+              BottomNavigationBarItem(
+                label: 'Chat',
+                icon: Icon(Icons.chat),
+              ),
+              BottomNavigationBarItem(
+                label: 'Profile',
+                icon: Icon(Icons.person),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPage(int selectedIndex) {
+    switch (selectedIndex) {
+      case 0:
+        return EventPage();
+      case 1:
+        return AddEventPage();
+      case 2:
+        return HomePage();
+      case 3:
+        return ChatPage();
+      case 4:
+        return ProfilePage();
+      default:
+        return EventPage();
+    }
+  }
+}
