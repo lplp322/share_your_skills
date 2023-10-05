@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import * as userServices from "../services/userService";
-import UserModel, { ICredentials } from "../models/userModel";
+import { Address, ICredentials, IUser } from "../models/userModel";
 import { CustomRequest } from "../middleware/auth";
+import { Types } from "mongoose";
 
 const messages = require("../config/messages");
 
@@ -38,11 +39,12 @@ export const registerOne = async (
     }
 
     // verify that the input is valid
-    const user = {
+    const user: IUser = {
       login: req.body.login,
       password: req.body.password,
       name: req.body.name,
       skillIds: req.body.skillIds,
+      address: req.body.address,
     };
 
     await userServices.register(user);
@@ -87,15 +89,59 @@ export const deleteAll = async (req: Request, res: Response) => {
   }
 };
 
-export const changeAddress = async (req: CustomRequest, res: Response) => {
-  UserModel.findOneAndUpdate(
-    { id: req.user_id },
-    {
-      address: {
-        city: req.body.city,
-        street: req.body.street,
-        houseNr: req.body.houseNr,
-      },
+export const changeAddress = async (req: Request, res: Response) => {
+  try {
+    const id = new Types.ObjectId((req as CustomRequest).user_id);
+    const address: Address = {
+      city: req.body.city,
+      street: req.body.street,
+      houseNumber: req.body.houseNumber,
+    };
+    try {
+      await userServices.updateAddress(id, address);
+      return res.status(messages.SUCCESSFUL_UPDATE).send("Address updated");
+    } catch (err) {
+      return res
+        .status(messages.INTERNAL_SERVER_ERROR)
+        .send("changeAddress : " + err);
     }
-  );
+  } catch (err) {
+    return res.status(messages.BAD_REQUEST).send("Your address is incorrect");
+  }
+};
+
+export const changeName = async (req: Request, res: Response) => {
+  const id = new Types.ObjectId((req as CustomRequest).user_id);
+  const name: String = String(req.body.name);
+  if (name === undefined || name === "") {
+    return res.status(messages.BAD_REQUEST).send("Your name is missing");
+  }
+  try {
+    await userServices.updateName(id, name);
+    return res.status(messages.SUCCESSFUL_UPDATE).send("Name updated");
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("changeName : " + err);
+  }
+};
+
+export const changeLogin = async (req: Request, res: Response) => {
+  const id = new Types.ObjectId((req as CustomRequest).user_id);
+  const login: String = req.body.newLogin;
+  if (login === undefined || login === "") {
+    return res.status(messages.BAD_REQUEST).send("Your login is missing");
+  }
+  const userAlreadyExists = await userServices.verifyLoginUnused(login);
+  if (userAlreadyExists !== null) {
+    return res.status(messages.USER_ALREADY_EXISTS).send("User already exists");
+  }
+  try {
+    await userServices.updateLogin(id, login);
+    return res.status(messages.SUCCESSFUL_UPDATE).send("Login updated");
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("changeName : " + err);
+  }
 };

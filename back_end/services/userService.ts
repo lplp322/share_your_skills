@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import UserModel, { IUser, ICredentials } from "../models/userModel";
+import UserModel, { IUser, ICredentials, Address } from "../models/userModel";
 import dotenv from "dotenv";
 import * as skillService from "./skillService";
+import { Types } from "mongoose";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ export async function register(user: IUser) {
       password: user.password,
       name: user.name,
       skillIds: user.skillIds,
+      address: user.address,
     });
 
     await newUser.save();
@@ -89,6 +91,30 @@ export async function getAll() {
 export async function deleteAll() {
   try {
     await UserModel.deleteMany({});
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateAddress(id: Types.ObjectId, address: Address) {
+  try {
+    await UserModel.updateOne({ _id: id }, { address: address });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateName(id: Types.ObjectId, name: String) {
+  try {
+    await UserModel.updateOne({ _id: id }, { name: name });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateLogin(id: Types.ObjectId, login: String) {
+  try {
+    await UserModel.updateOne({ _id: id }, { login: login });
   } catch (error) {
     throw error;
   }
