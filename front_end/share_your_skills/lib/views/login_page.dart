@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Import provider package
+import 'package:share_your_skills/viewmodels/user_viewmodel.dart'; // Import your UserViewModel
 import 'package:share_your_skills/views/registration.dart';
-import 'package:share_your_skills/views/app_bar.dart' as MyAppBar;
+import 'package:share_your_skills/views/home_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -14,9 +16,17 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
   bool _isNotValidate = false;
   String? errorMessage;
+  void _navigateToHomePage(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final userViewModel =
+        Provider.of<UserViewModel>(context); // Get the UserViewModel instance
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -74,13 +84,17 @@ class _LoginPageState extends State<LoginPage> {
                       errorMessage!,
                       style: TextStyle(
                         color: Colors.red,
-                      ),
+                      ), // Display error in red text
                     )
                   : SizedBox(),
               ElevatedButton(
                 onPressed: () {
-                  // Send login event to ViewModel for handling
-                  // You should call the ViewModel method here to handle login
+                  print('Login button pressed'); // Add this line for debugging
+                  userViewModel.loginUser(
+                    emailController.text,
+                    passwordController.text,
+                     context,
+                  );
                 },
                 child: Text(
                   'Login',

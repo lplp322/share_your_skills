@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/services/user_api_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:share_your_skills/views/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_your_skills/views/login_page.dart';
+import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
+
 class UserViewModel extends ChangeNotifier {
   User? _user;
   String? registrationErrorMessage;
@@ -23,29 +26,52 @@ class UserViewModel extends ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> registerUser(
-      String fullName, String email, String password) async {
-    try {
-      final registeredUser = await _userApiService.registerUser(
-        fullName,
-        email,
-        password,
-      );
+Future<void> registerUser(String fullName, String email, String password, BuildContext context) async {
+  try {
+    final registeredUser = await _userApiService.registerUser(
+      fullName,
+      email,
+      password,
+    );
 
-      if (registeredUser != null) {
+    if (registeredUser != null) {
+      final token = registeredUser.token;
+
+      if (!JwtDecoder.isExpired(token)) {
         _user = registeredUser;
         registrationErrorMessage = null;
+        print('Navigator context: $context');
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => MyAppbar.AppBar(
+              token: token,
+            ),
+          ),
+        );
       } else {
-        registrationErrorMessage = 'Registration failed. Please try again.';
+        print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
+        registrationErrorMessage = 'Token is expired. Please log in again.';
+        _prefs.remove('token');
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ),
+        );
       }
-    } catch (e) {
+    } else {
       registrationErrorMessage = 'Registration failed. Please try again.';
-    } finally {
-      notifyListeners();
     }
+  } catch (e) {
+    registrationErrorMessage = 'Registration failed. Please try again.';
+  } finally {
+    notifyListeners();
   }
+}
 
-  Future<void> loginUser(String email, String password) async {
+
+
+  Future<void> loginUser(
+      String email, String password, BuildContext context) async {
     try {
       final loggedInUser = await _userApiService.loginUser(email, password);
 
@@ -55,9 +81,17 @@ class UserViewModel extends ChangeNotifier {
         if (!JwtDecoder.isExpired(token)) {
           _user = loggedInUser;
           loginErrorMessage = null;
+          print('Navigator context: $context');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+                builder: (context) => MyAppbar.AppBar(
+                      token: token,
+                    )),
+          );
         } else {
+          print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
           loginErrorMessage = 'Token is expired. Please log in again.';
-          _prefs.remove('token'); // Clear token from shared preferences
+          _prefs.remove('token');
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => LoginPage()),
           );
@@ -72,11 +106,8 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  void logoutUser() {
+  void logout() {
     _user = null;
-    _prefs.remove('token'); // Clear token from shared preferences
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => LoginPage()),
-    );
+    notifyListeners();
   }
 }

@@ -66,6 +66,7 @@ class RegistrationPage extends StatelessWidget {
                   nameController.text,
                   emailController.text,
                   passwordController.text,
+                  context,
                 );
               },
               child: Text('Register'),
