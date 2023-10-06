@@ -20,4 +20,5 @@ module.exports = function (app: Express) {
   app.post("/users/changeAddress", auth, userController.changeAddress);
   app.post("/users/changeName", auth, userController.changeName);
   app.post("/users/changeLogin", auth, userController.changeLogin);
+  app.post("/users/changePassword", auth, userController.changePassword);
 };

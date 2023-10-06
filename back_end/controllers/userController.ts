@@ -93,9 +93,9 @@ export const changeAddress = async (req: Request, res: Response) => {
   try {
     const id = new Types.ObjectId((req as CustomRequest).user_id);
     const address: Address = {
-      city: req.body.city,
-      street: req.body.street,
-      houseNumber: req.body.houseNumber,
+      city: String(req.body.city),
+      street: String(req.body.street),
+      houseNumber: String(req.body.houseNumber),
     };
     try {
       await userServices.updateAddress(id, address);
@@ -128,7 +128,7 @@ export const changeName = async (req: Request, res: Response) => {
 
 export const changeLogin = async (req: Request, res: Response) => {
   const id = new Types.ObjectId((req as CustomRequest).user_id);
-  const login: String = req.body.newLogin;
+  const login: String = String(req.body.newLogin);
   if (login === undefined || login === "") {
     return res.status(messages.BAD_REQUEST).send("Your login is missing");
   }
@@ -143,5 +143,18 @@ export const changeLogin = async (req: Request, res: Response) => {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
       .send("changeName : " + err);
+  }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+  const id = new Types.ObjectId((req as CustomRequest).user_id);
+  const login: String = String(req.body.login);
+  const oldPassword: String = String(req.body.oldPassword);
+  const newPassword: String = String(req.body.newPassword);
+  try {
+    await userServices.changePassword(login, oldPassword, newPassword);
+    return res.status(messages.SUCCESSFUL_UPDATE).send("Password updated");
+  } catch (err) {
+    return res.status(messages.BAD_REQUEST).send("changeName : " + err);
   }
 };

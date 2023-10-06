@@ -61,6 +61,33 @@ export async function login(userCredentials: ICredentials) {
   }
 }
 
+export async function changePassword(
+  login: String,
+  oldPassword: String,
+  newPassword: String
+) {
+  try {
+    const foundUser = await UserModel.findOne({ login: login });
+
+    if (!foundUser) {
+      throw new Error("User not found sorry");
+    }
+
+    const isMatch = bcrypt.compareSync(
+      oldPassword.toString(),
+      foundUser.password
+    );
+    if (isMatch) {
+      foundUser.password = String(newPassword);
+      foundUser.save();
+    } else {
+      throw new Error("Incorrect old password");
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getOne(idToFind: String) {
   try {
     const foundUser = await UserModel.findById(idToFind);
