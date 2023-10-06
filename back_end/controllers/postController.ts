@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { Request, Response, NextFunction } from "express";
 import * as postServices from "../services/postService";
+import * as skillServices from "../services/skillService";
 import { IPost } from "../models/postModel";
 import { CustomRequest } from "../middleware/auth";
 
@@ -40,7 +41,6 @@ export const getMyPosts = async (req: Request, res: Response) => {
 export const getAssignedPosts = async (req: Request, res: Response) => {
   try {
     const userId = new Types.ObjectId((req as CustomRequest).user_id);
-    console.log("getAssignedPosts : userId", userId);
     const posts = await postServices.getAssignedPosts(userId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -52,7 +52,6 @@ export const getAssignedPosts = async (req: Request, res: Response) => {
 
 export const getPostsBySkill = async (req: Request, res: Response) => {
   try {
-    console.log("req.body", req.body);
     const skillId = new Types.ObjectId(req.body.skillId as string);
     const posts = await postServices.getPostsBySkill(skillId);
     res.status(messages.SUCCESSFUL).send(posts);
@@ -60,6 +59,18 @@ export const getPostsBySkill = async (req: Request, res: Response) => {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
       .send("getPostsBySkill : " + err);
+  }
+};
+
+export const getRecommendedPosts = async (req: Request, res: Response) => {
+  try {
+    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const posts = await postServices.getRecommendedPosts(userId);
+    res.status(messages.SUCCESSFUL).send(posts);
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("getRecommendedPosts : " + err);
   }
 };
 
@@ -80,8 +91,12 @@ export const createOne = async (req: Request, res: Response) => {
       status: req.body.status,
       userId: userId,
       skillIds: skillIds,
-      assignedUserId: assignedUserId,
     };
+
+    if (req.body.assignedUserId) {
+      post.assignedUserId = assignedUserId;
+    }
+
     const postId = await postServices.createOne(post);
     res.status(messages.SUCCESSFUL_CREATION).send(postId);
   } catch (err) {
@@ -115,6 +130,45 @@ export const updateOne = async (req: Request, res: Response) => {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
       .send("updateOne : " + err);
+  }
+};
+
+export const assignOne = async (req: Request, res: Response) => {
+  try {
+    const assignedUserId = new Types.ObjectId((req as CustomRequest).user_id);
+    const postId = new Types.ObjectId(req.body.postId);
+
+    const userSkills = await skillServices.getSkills(assignedUserId);
+    const post = await postServices.getPost(postId);
+
+    if (!post) {
+      throw new Error("Post not found");
+    }
+    if (!userSkills) {
+      throw new Error("User skills not found");
+    }
+    if (!post.skillIds) {
+      throw new Error("Post skills not found");
+    }
+
+    // verify that users skills match at least one post skills
+    let found = false;
+    for (const userSkill of userSkills) {
+      if (post.skillIds.includes(userSkill._id)) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      throw new Error("User skills do not match post skills");
+    }
+
+    await postServices.updateAssignedUser(postId, assignedUserId);
+    res.status(messages.SUCCESSFUL_UPDATE).send("Post assigned");
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("assignOne : " + err);
   }
 };
 

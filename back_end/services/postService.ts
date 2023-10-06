@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import PostModel, { IPost } from "../models/postModel";
+import * as skillService from "../services/skillService";
 
 export async function getAll() {
   try {
@@ -39,16 +40,26 @@ export async function getAssignedPosts(userId: Types.ObjectId) {
 
 export async function getPostsBySkill(skillId: Types.ObjectId) {
   try {
-    console.log("skillId", skillId);
     const foundPosts = [];
     for (const post of await PostModel.find({})) {
-      console.log("post", post);
       if (post.skillIds.includes(skillId)) {
         foundPosts.push(post);
-        console.log("foundPosts", foundPosts);
       }
     }
     return foundPosts;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getRecommendedPosts(userId: Types.ObjectId) {
+  try {
+    const skills = await skillService.getSkills(userId);
+    const recommendedPosts = [];
+    for (const skill of skills) {
+      recommendedPosts.push(await getPostsBySkill(skill._id));
+    }
+    return recommendedPosts;
   } catch (error) {
     return null;
   }
@@ -66,6 +77,20 @@ export async function createOne(post: IPost) {
 export async function updateOne(id: Types.ObjectId, post: IPost) {
   try {
     await PostModel.updateOne({ _id: id }, post);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateAssignedUser(
+  postId: Types.ObjectId,
+  assignedUserId: Types.ObjectId
+) {
+  try {
+    await PostModel.updateOne(
+      { _id: postId },
+      { assignedUserId: assignedUserId }
+    );
   } catch (error) {
     throw error;
   }

@@ -13,9 +13,17 @@ module.exports = function (app: Express) {
 
   app.get("/posts/getPostsBySkill", auth, postController.getPostsBySkill);
 
+  app.get(
+    "/posts/getRecommendedPosts",
+    auth,
+    postController.getRecommendedPosts
+  );
+
   app.post("/posts/addPost", auth, postController.createOne);
 
-  app.put("/posts/modifyPost", auth, postController.updateOne);
+  app.put("/posts/updatePost", auth, postController.updateOne);
+
+  app.put("/posts/assignPost", auth, postController.assignOne);
 
   app.delete("/posts/deletePost", auth, postController.deleteOne);
 

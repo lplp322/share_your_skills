@@ -7,7 +7,7 @@ export interface IPost {
   status: string;
   userId: Types.ObjectId;
   skillIds: Array<Types.ObjectId>;
-  assignedUserId: Types.ObjectId;
+  assignedUserId?: Types.ObjectId;
 }
 
 const PostSchema = new Schema<IPost>({
