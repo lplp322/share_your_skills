@@ -1,11 +1,18 @@
 import { model, Model, Schema, Types } from "mongoose";
 import bcrypt from "bcrypt";
 
+export interface Address {
+  city: string;
+  street: string;
+  houseNumber: string;
+}
+
 export interface IUser {
   login: string;
   password: string;
   name?: string;
   skillIds?: Array<Types.ObjectId>;
+  address?: Address;
 }
 
 export interface ICredentials {
@@ -14,10 +21,15 @@ export interface ICredentials {
 }
 
 const UserSchema = new Schema<IUser>({
-  login: { type: String, required: true },
+  login: { type: String, required: true, index: true },
   password: { type: String, required: true },
   name: { type: String, required: false },
-  skillIds: [{ type: Types.ObjectId, ref: 'Skill' }],
+  skillIds: [{ type: Types.ObjectId, ref: "Skill" }],
+  address: {
+    city: { type: String, required: false },
+    street: { type: String, required: false },
+    houseNumber: { type: String, required: false },
+  },
 });
 
 const saltRounds = 8;
