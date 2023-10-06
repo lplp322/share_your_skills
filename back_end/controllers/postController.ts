@@ -15,6 +15,54 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
+export const getPost = async (req: Request, res: Response) => {
+  try {
+    const postId = new Types.ObjectId(req.body.postId as string);
+    const post = await postServices.getPost(postId);
+    res.status(messages.SUCCESSFUL).send(post);
+  } catch (err) {
+    return res.status(messages.INTERNAL_SERVER_ERROR).send("getPost : " + err);
+  }
+};
+
+export const getMyPosts = async (req: Request, res: Response) => {
+  try {
+    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const posts = await postServices.getMyPosts(userId);
+    res.status(messages.SUCCESSFUL).send(posts);
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("getMyPosts : " + err);
+  }
+};
+
+export const getAssignedPosts = async (req: Request, res: Response) => {
+  try {
+    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    console.log("getAssignedPosts : userId", userId);
+    const posts = await postServices.getAssignedPosts(userId);
+    res.status(messages.SUCCESSFUL).send(posts);
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("getAssignedPosts : " + err);
+  }
+};
+
+export const getPostsBySkill = async (req: Request, res: Response) => {
+  try {
+    console.log("req.body", req.body);
+    const skillId = new Types.ObjectId(req.body.skillId as string);
+    const posts = await postServices.getPostsBySkill(skillId);
+    res.status(messages.SUCCESSFUL).send(posts);
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("getPostsBySkill : " + err);
+  }
+};
+
 export const createOne = async (req: Request, res: Response) => {
   try {
     const userId = new Types.ObjectId((req as CustomRequest).user_id);
@@ -34,8 +82,8 @@ export const createOne = async (req: Request, res: Response) => {
       skillIds: skillIds,
       assignedUserId: assignedUserId,
     };
-    await postServices.createOne(post);
-    res.status(messages.SUCCESSFUL_CREATION).send("Post created");
+    const postId = await postServices.createOne(post);
+    res.status(messages.SUCCESSFUL_CREATION).send(postId);
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
@@ -49,7 +97,7 @@ export const updateOne = async (req: Request, res: Response) => {
     const skillIds = req.body.skillIds.map(
       (skillId: string) => new Types.ObjectId(skillId)
     );
-    const postId = new Types.ObjectId(req.query.postId as string);
+    const postId = new Types.ObjectId(req.body.postId as string);
     const assignedUserId = new Types.ObjectId(req.body.assignedUserId);
     const deadline = new Date(req.body.deadline);
     const post: IPost = {
@@ -73,12 +121,22 @@ export const updateOne = async (req: Request, res: Response) => {
 export const deleteOne = async (req: Request, res: Response) => {
   try {
     const postId = new Types.ObjectId(req.body.postId);
-
     await postServices.deleteOne(postId);
     res.status(messages.SUCCESSFUL_DELETE).send("Post deleted");
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
       .send("deleteOne : " + err);
+  }
+};
+
+export const deleteAll = async (req: Request, res: Response) => {
+  try {
+    await postServices.deleteAll();
+    res.status(messages.SUCCESSFUL_DELETE).send("All posts deleted");
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("deleteAll : " + err);
   }
 };

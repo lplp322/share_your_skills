@@ -68,7 +68,8 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getOne = async (req: Request, res: Response) => {
   try {
-    const user = await userServices.getOne((req as CustomRequest).user_id);
+    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const user = await userServices.getOne(userId);
     if (!user) {
       throw new Error("User not found");
     }
