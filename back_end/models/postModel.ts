@@ -1,13 +1,13 @@
-import { model, Model, Schema } from "mongoose";
+import { model, Model, Schema, Types } from "mongoose";
 
 export interface IPost {
   title: string;
   content: string;
   deadline: Date;
   status: string;
-  user_id: Schema.Types.ObjectId;
-  skills_id: Array<Schema.Types.ObjectId>;
-  assigned_user_id: Schema.Types.ObjectId;
+  user_id: Types.ObjectId;
+  skills_id: Array<Types.ObjectId>;
+  assigned_user_id: Types.ObjectId;
 }
 
 const PostSchema = new Schema<IPost>({

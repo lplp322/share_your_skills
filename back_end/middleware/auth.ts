@@ -6,7 +6,7 @@ const messages = require("../config/messages");
 
 dotenv.config();
 export interface CustomRequest extends Request {
-  token: string | JwtPayload;
+  user_id: string;
 }
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +18,9 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY!);
-    (req as CustomRequest).token = decoded;
+
+    const user_id = (decoded as JwtPayload)._id;
+    (req as CustomRequest).user_id = user_id;
 
     next();
   } catch (err) {
