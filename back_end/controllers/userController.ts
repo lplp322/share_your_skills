@@ -13,7 +13,7 @@ export const loginOne = async (req: Request, res: Response) => {
       password: req.body.password,
     };
     const userAndToken = await userServices.login(userCredentials);
-    const user = await userServices.getOne((req as CustomRequest).user_id);
+    // const user = await userServices.getOne((req as CustomRequest).user_id);
     if (userAndToken) {
       res.status(messages.SUCCESSFUL_LOGIN).send(userAndToken);
     } else {
