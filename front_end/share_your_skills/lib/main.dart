@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<UserViewModel>(
           create: (context) => UserViewModel(
-            Provider.of<UserApiService>(context, listen: true),
+            Provider.of<UserApiService>(context, listen: false),
             context,
           ),
         ),
@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         home: LoginPage(),
+         debugShowCheckedModeBanner: false,
       ),
     );
   }

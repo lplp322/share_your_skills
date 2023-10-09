@@ -5,11 +5,12 @@ import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 class RegistrationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context);
+    final userViewModel = Provider.of<UserViewModel>(context, listen: true);
     TextEditingController nameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
-    String? errorMessage;
+    String? errorMessage = userViewModel.registrationErrorMessage;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Registration Page'),
