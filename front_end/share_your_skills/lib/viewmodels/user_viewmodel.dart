@@ -6,6 +6,8 @@ import 'package:share_your_skills/views/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_your_skills/views/login_page.dart';
 import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
+import 'package:provider/provider.dart';
+import 'package:share_your_skills/models/app_state.dart';
 
 class UserViewModel extends ChangeNotifier {
   User? _user;
@@ -13,7 +15,6 @@ class UserViewModel extends ChangeNotifier {
   String? loginErrorMessage;
   final UserApiService _userApiService;
   final BuildContext context;
-  String? errorMessage; // Common error message for both login and registration
   late SharedPreferences _prefs;
 
   UserViewModel(this._userApiService, this.context) {
@@ -26,49 +27,49 @@ class UserViewModel extends ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
   }
 
-Future<void> registerUser(String fullName, String email, String password, BuildContext context) async {
-  try {
-    final registeredUser = await _userApiService.registerUser(
-      fullName,
-      email,
-      password,
-    );
+  Future<void> registerUser(String fullName, String email, String password,
+      BuildContext context) async {
+    try {
+      final registeredUser = await _userApiService.registerUser(
+        fullName,
+        email,
+        password,
+      );
 
-    if (registeredUser != null) {
-      final token = registeredUser.token;
+      if (registeredUser != null) {
+        final token = registeredUser.token;
 
-      if (!JwtDecoder.isExpired(token)) {
-        _user = registeredUser;
-        registrationErrorMessage = null;
-        print('Navigator context: $context');
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => MyAppbar.AppBar(
-              token: token,
+        if (!JwtDecoder.isExpired(token)) {
+          _user = registeredUser;
+          registrationErrorMessage = null;
+          print('Navigator context: $context');
+          Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => MyAppbar.AppBar(
+                token: token,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
+          registrationErrorMessage = 'Token is expired. Please log in again.';
+          _prefs.remove('token');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => LoginPage(),
+            ),
+          );
+        }
       } else {
-        print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
-        registrationErrorMessage = 'Token is expired. Please log in again.';
-        _prefs.remove('token');
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => LoginPage(),
-          ),
-        );
+        registrationErrorMessage = 'Registration failed. Please try again.';
       }
-    } else {
+    } catch (e) {
       registrationErrorMessage = 'Registration failed. Please try again.';
+    } finally {
+      notifyListeners();
     }
-  } catch (e) {
-    registrationErrorMessage = 'Registration failed. Please try again.';
-  } finally {
-    notifyListeners();
   }
-}
-
-
 
   Future<void> loginUser(
       String email, String password, BuildContext context) async {
@@ -82,6 +83,7 @@ Future<void> registerUser(String fullName, String email, String password, BuildC
           _user = loggedInUser;
           loginErrorMessage = null;
           print('Navigator context: $context');
+          Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
                 builder: (context) => MyAppbar.AppBar(
@@ -108,6 +110,7 @@ Future<void> registerUser(String fullName, String email, String password, BuildC
 
   void logout() {
     _user = null;
+    _prefs.remove('token');
     notifyListeners();
   }
 }

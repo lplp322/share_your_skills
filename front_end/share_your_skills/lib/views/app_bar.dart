@@ -28,7 +28,7 @@ class _AppBarState extends State<AppBar> {
     userId = jwtDecodedToken['_id'];
     userName = jwtDecodedToken['name'];
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,20 +45,23 @@ class _AppBarState extends State<AppBar> {
       bottomNavigationBar: Consumer<AppState>(
         builder: (context, appState, _) {
           return BottomNavigationBar(
+             type: BottomNavigationBarType.fixed,
             currentIndex: appState.selectedIndex,
             onTap: (int newIndex) {
-              // Update the selected index using the AppState provider
-              appState.setSelectedIndex(newIndex);
+              // Use the provided callback to update the state of the app
+              setState(() {
+                appState.selectedIndex = newIndex;
+              });
             },
             selectedItemColor: Colors.green, // Color for selected item
             unselectedItemColor: Colors.black, // Color for unselected items
             items: const [
               BottomNavigationBarItem(
-                label: 'Events',
+                label: 'My Events',
                 icon: Icon(Icons.event),
               ),
               BottomNavigationBarItem(
-                label: 'Add',
+                label: 'Add Event',
                 icon: Icon(Icons.add),
               ),
               BottomNavigationBarItem(

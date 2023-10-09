@@ -16,17 +16,13 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
   bool _isNotValidate = false;
   String? errorMessage;
-  void _navigateToHomePage(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel =
-        Provider.of<UserViewModel>(context); // Get the UserViewModel instance
-
+    final userViewModel = Provider.of<UserViewModel>(context,
+        listen: true); // Get the UserViewModel instance
+    errorMessage = userViewModel
+        .loginErrorMessage; // Get the error message from the UserViewModelƒ
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -79,21 +75,27 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 10,
               ),
-              errorMessage != null
-                  ? Text(
-                      errorMessage!,
-                      style: TextStyle(
-                        color: Colors.red,
-                      ), // Display error in red text
-                    )
-                  : SizedBox(),
+              // wrap the errormassage in a consumer to lsiten the changes of userviewmodel
+              Consumer<UserViewModel>(
+                builder: (context, userViewModel, _) {
+                  return errorMessage != null
+                      ? Text(
+                          errorMessage!,
+                          style: TextStyle(
+                            color: Colors.red,
+                          ), // Display error in red text
+                        )
+                      : SizedBox();
+                },
+              ),
+
               ElevatedButton(
                 onPressed: () {
                   print('Login button pressed'); // Add this line for debugging
                   userViewModel.loginUser(
                     emailController.text,
                     passwordController.text,
-                     context,
+                    context,
                   );
                 },
                 child: Text(
