@@ -50,7 +50,7 @@ export async function login(userCredentials: ICredentials) {
         { expiresIn: "2 days" }
       );
       return {
-        user: { _id: foundUser._id?.toString(), name: foundUser.name },
+        user: foundUser,
         token: token,
       };
     } else {
