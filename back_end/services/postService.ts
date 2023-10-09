@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
 import PostModel, { IPost } from "../models/postModel";
 import * as skillService from "../services/skillService";
 
@@ -55,10 +55,26 @@ export async function getPostsBySkill(skillId: Types.ObjectId) {
 export async function getRecommendedPosts(userId: Types.ObjectId) {
   try {
     const skills = await skillService.getSkills(userId);
-    const recommendedPosts = [];
+    const recommendedPosts: (
+      | (Document<unknown, {}, IPost> & IPost & { _id: Types.ObjectId })
+      | (Document<unknown, {}, IPost> & IPost & { _id: Types.ObjectId })[]
+      | null
+    )[] = [];
     for (const skill of skills) {
-      recommendedPosts.push(await getPostsBySkill(skill._id));
+      const skilledPosts = await getPostsBySkill(skill._id);
+      if (!skilledPosts) {
+        continue;
+      }
+      for (const post of skilledPosts) {
+        if (
+          !recommendedPosts.includes(post) &&
+          post.userId.toString() !== userId.toString()
+        ) {
+          recommendedPosts.push(post);
+        }
+      }
     }
+
     return recommendedPosts;
   } catch (error) {
     return null;

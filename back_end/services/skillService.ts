@@ -71,7 +71,7 @@ export async function getSkillId(name: string) {
     if (!skill) {
       throw new Error("Skill not found");
     }
-    return skill._id;
+    return skill._id.toString();
   } catch (err) {
     throw err;
   }
