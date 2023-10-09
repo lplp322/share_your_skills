@@ -9,7 +9,7 @@ class RegistrationPage extends StatelessWidget {
     TextEditingController nameController = TextEditingController();
     TextEditingController emailController = TextEditingController();
     TextEditingController passwordController = TextEditingController();
-
+    String? errorMessage;
     return Scaffold(
       appBar: AppBar(
         title: Text('Registration Page'),
@@ -72,13 +72,18 @@ class RegistrationPage extends StatelessWidget {
               child: Text('Register'),
             ),
             SizedBox(height: 10),
-            if (userViewModel.errorMessage != null)
-              Text(
-                userViewModel.errorMessage!,
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
+            Consumer<UserViewModel>(
+              builder: (context, userViewModel, _) {
+                return errorMessage != null
+                    ? Text(
+                        errorMessage!,
+                        style: TextStyle(
+                          color: Colors.red,
+                        ), // Display error in red text
+                      )
+                    : SizedBox();
+              },
+            ),
           ],
         ),
       ),

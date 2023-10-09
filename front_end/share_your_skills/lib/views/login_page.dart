@@ -16,11 +16,6 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
   bool _isNotValidate = false;
   String? errorMessage;
-  void _navigateToHomePage(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,14 +74,20 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 height: 10,
               ),
-              errorMessage != null
+              // wrap the errormassage in a consumer to lsiten the changes of userviewmodel
+              Consumer<UserViewModel>(
+                builder: (context, userViewModel, _) {
+                  return   errorMessage != null
                   ? Text(
                       errorMessage!,
                       style: TextStyle(
                         color: Colors.red,
                       ), // Display error in red text
                     )
-                  : SizedBox(),
+                  : SizedBox();
+                },
+              ),
+            
               ElevatedButton(
                 onPressed: () {
                   print('Login button pressed'); // Add this line for debugging

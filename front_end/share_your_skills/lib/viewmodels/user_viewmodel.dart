@@ -108,6 +108,7 @@ Future<void> registerUser(String fullName, String email, String password, BuildC
 
   void logout() {
     _user = null;
+    _prefs.remove('token');
     notifyListeners();
   }
 }

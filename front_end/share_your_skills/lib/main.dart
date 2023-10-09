@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<UserViewModel>(
           create: (context) => UserViewModel(
-            Provider.of<UserApiService>(context, listen: false),
+            Provider.of<UserApiService>(context, listen: true),
             context,
           ),
         ),
