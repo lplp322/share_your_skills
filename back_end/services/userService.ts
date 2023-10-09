@@ -88,7 +88,7 @@ export async function changePassword(
   }
 }
 
-export async function getOne(idToFind: String) {
+export async function getOne(idToFind: Types.ObjectId) {
   try {
     const foundUser = await UserModel.findById(idToFind);
     return foundUser;
