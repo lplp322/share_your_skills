@@ -26,7 +26,7 @@ class EventCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: Container(
                     height: 150,
                     width: 350,
