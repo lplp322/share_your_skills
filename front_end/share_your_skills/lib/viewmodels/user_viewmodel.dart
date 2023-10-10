@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/services/user_api_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:share_your_skills/views/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_your_skills/views/login_page.dart';
 import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
@@ -27,44 +26,67 @@ class UserViewModel extends ChangeNotifier {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> registerUser(String fullName, String email, String password,
-      BuildContext context) async {
+  Future<void> registerUser({
+    required String fullName,
+    required String email,
+    required String password,
+    required List<String> selectedSkills,
+    required String city,
+    required String street,
+    required String houseNumber,
+    BuildContext? context,
+  }) async {
     try {
-      final registeredUser = await _userApiService.registerUser(
-        fullName,
-        email,
-        password,
-      );
-
-      if (registeredUser != null) {
-        final token = registeredUser.token;
-
-        if (!JwtDecoder.isExpired(token)) {
-          _user = registeredUser;
-          registrationErrorMessage = null;
-          print('Navigator context: $context');
-          Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => MyAppbar.AppBar(
-                token: token,
-              ),
-            ),
-          );
-        } else {
-          print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
-          registrationErrorMessage = 'Token is expired. Please log in again.';
-          _prefs.remove('token');
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => LoginPage(),
-            ),
-          );
-        }
+      if (fullName.isEmpty) {
+        registrationErrorMessage = 'Please enter your Fullname.';
+      } else if (email.isEmpty) {
+        registrationErrorMessage = 'Please enter your Email.';
+      } else if (password.isEmpty) {
+        registrationErrorMessage = 'Please enter your Password.';
       } else {
-        registrationErrorMessage = 'Registration failed. Please try again.';
+        final user = User(
+          name: fullName,
+          email: email,
+          skillIds: selectedSkills, // Use the skill IDs here
+          address: Address(
+            city: city,
+            street: street,
+            houseNumber: houseNumber,
+          ),
+        );
+
+        final registeredUser =
+            await _userApiService.registerUser(user, password);
+
+        if (registeredUser != null) {
+          final token = registeredUser.token;
+
+          if (!JwtDecoder.isExpired(token)) {
+            _user = registeredUser;
+            registrationErrorMessage = null;
+            _prefs.setString('token', token);
+
+            if (context != null) {
+              Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => MyAppbar.AppBar(
+                    token: token,
+                  ),
+                ),
+              );
+            }
+          } else {
+            print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
+            registrationErrorMessage = 'Token is expired. Please log in again.';
+            _prefs.remove('token');
+          }
+        } else {
+          registrationErrorMessage = 'Registration failed. Please try again.';
+        }
       }
     } catch (e) {
+      print('Registration error: $e');
       registrationErrorMessage = 'Registration failed. Please try again.';
     } finally {
       notifyListeners();
@@ -72,7 +94,10 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> loginUser(
-      String email, String password, BuildContext context) async {
+    String email,
+    String password,
+    BuildContext context,
+  ) async {
     try {
       final loggedInUser = await _userApiService.loginUser(email, password);
 
@@ -82,6 +107,10 @@ class UserViewModel extends ChangeNotifier {
         if (!JwtDecoder.isExpired(token)) {
           _user = loggedInUser;
           loginErrorMessage = null;
+
+          // No need to replace skill IDs with skill names here,
+          // as this mapping is handled in the API service.
+
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
           Navigator.of(context).pushReplacement(
