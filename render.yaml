@@ -18,4 +18,4 @@ services:
     disk:
       name: data
       mountPath: /data/db
-      sizeMB: 512
+      sizeGB: 1
