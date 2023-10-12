@@ -165,6 +165,11 @@ export const assignOne = async (req: Request, res: Response) => {
       throw new Error("Post skills not found");
     }
 
+    // the assigned user cannot be the post owner
+    if (post.userId.toString() === assignedUserId.toString()) {
+      throw new Error("Cannot assign post to owner");
+    }
+
     // verify that users skills match at least one post skills
     let found = false;
     for (const userSkill of userSkills) {
@@ -176,7 +181,6 @@ export const assignOne = async (req: Request, res: Response) => {
     if (!found) {
       throw new Error("User skills do not match post skills");
     }
-
     await postServices.updateAssignedUser(postId, assignedUserId);
     res.status(messages.SUCCESSFUL_UPDATE).send("Post assigned");
   } catch (err) {

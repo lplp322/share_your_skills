@@ -54,7 +54,10 @@ export async function getMyPosts(userId: Types.ObjectId) {
 
 export async function getAssignedPosts(userId: Types.ObjectId) {
   try {
-    const foundPosts = await PostModel.find({ assignedUserId: userId });
+    const foundPosts = await PostModel.find({
+      assignedUserId: userId,
+      status: postStatus.ASSIGNED,
+    });
     return foundPosts;
   } catch (error) {
     return null;
@@ -140,8 +143,11 @@ export async function updateAssignedUser(
   try {
     await PostModel.updateOne(
       { _id: postId },
-      { assignedUserId: assignedUserId },
-      { status: postStatus.ASSIGNED }
+      {
+        assignedUserId: assignedUserId,
+        status: postStatus.ASSIGNED,
+        location: "Assigned",
+      }
     );
   } catch (error) {
     throw error;
