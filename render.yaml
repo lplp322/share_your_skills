@@ -1,7 +1,7 @@
 services:
   - type: web
     name: app
-    runtime: docker
+    runtime: node
     rootDir: ./back_end
     startCommand: npm run start:docker
     envVars:
