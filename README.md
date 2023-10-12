@@ -11,3 +11,11 @@
 ### Stop server container in Docker
 
 1. Run `docker-compose down`
+
+### Use of tokens
+
+1. Register by sending a POST request with a JSON format
+2. Login by sending a POST request with only "login" and "password"
+3. Retreive the token from login function (userService.ts)
+4. Put it in the header associated to the key "Authorization" for the routes that require it
+

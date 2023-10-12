@@ -3,5 +3,29 @@ services:
   app:
     container_name: server
     build: ./back_end
+    volumes:
+      - ./back_end:/app
+      - /app/node_modules
+    command: npm run start:docker
+    environment:
+      NODE_PORT: 8000
+      MONGODB_URI: mongodb://mongo:27017/skills_db
+      SECRET_KEY: 'GroupomaniaFour'
     ports:
       - 8000:8000
+    networks:
+      - express-mongo
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo:4.2.0
+    volumes:
+      - mongo_db:/data/db
+    networks:
+      - express-mongo
+    expose:
+      - 27017
+networks:
+  express-mongo:
+volumes:
+  mongo_db: {}
