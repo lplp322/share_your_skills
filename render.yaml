@@ -1,0 +1,20 @@
+services:
+  - name: app
+    buildCommand: npm install
+    startCommand: npm run start:docker
+    env:
+      - key: NODE_PORT
+        value: 8000
+      - key: MONGODB_URI
+        value: mongodb://mongo:27017/skills_db
+      - key: SECRET_KEY
+        value: GroupomaniaFour
+    routes:
+      - type: http
+        port: 8000
+  - name: mongo
+    image: mongo:4.2.0
+volumes:
+  - name: mongo_db
+networks:
+  - name: express-mongo
