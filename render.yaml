@@ -3,15 +3,13 @@ services:
     name: app
     buildCommand: npm install
     startCommand: npm run start:docker
-    env:
+    envVars:
       - key: NODE_PORT
         value: 8000
       - key: MONGODB_URI
         value: "mongodb://mongo:27017/skills_db"
       - key: SECRET_KEY
         value: "GroupomaniaFour"
-    ports:
-      - port: 8000
   - type: pserv
     name: mongo
     env: docker
