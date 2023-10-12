@@ -11,11 +11,11 @@ services:
         value: "mongodb://mongo:27017/skills_db"
       - key: SECRET_KEY
         value: "GroupomaniaFour"
-  - type: pserv
+  - type: web
     name: mongo
     env: docker
     autoDeploy: false
     disk:
       name: data
       mountPath: /data/db
-      sizeGB: 10
+      sizeMB: 512
