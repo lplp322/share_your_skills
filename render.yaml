@@ -1,7 +1,8 @@
 services:
   - type: web
     name: app
-    buildCommand: npm install
+    runtime: docker
+    rootDir: ./back_end
     startCommand: npm run start:docker
     envVars:
       - key: NODE_PORT
