@@ -1,10 +1,33 @@
 import { Document, Types } from "mongoose";
 import PostModel, { IPost } from "../models/postModel";
 import * as skillService from "../services/skillService";
+const postStatus = require("../config/postStatus");
 
 export async function getAll() {
   try {
     const posts = await PostModel.find({});
+    for (const post of posts) {
+      // get the current time of the day
+      const currentTime = new Date().getTime();
+      // get the deadline of the post
+      const deadline = post.deadline.getTime();
+      // if the post is expired, update the status
+      if (currentTime > deadline) {
+        if (post.status === postStatus.ASSIGNED) {
+          await PostModel.updateOne(
+            { _id: post._id },
+            { status: postStatus.COMPLETED },
+            { new: true }
+          );
+        } else if (post.status === postStatus.PENDING) {
+          await PostModel.updateOne(
+            { _id: post._id },
+            { status: postStatus.EXPIRED },
+            { new: true }
+          );
+        }
+      }
+    }
     return posts;
   } catch (error) {
     throw error;
@@ -32,6 +55,18 @@ export async function getMyPosts(userId: Types.ObjectId) {
 export async function getAssignedPosts(userId: Types.ObjectId) {
   try {
     const foundPosts = await PostModel.find({ assignedUserId: userId });
+    return foundPosts;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getPastAssignedPosts(userId: Types.ObjectId) {
+  try {
+    const foundPosts = await PostModel.find({
+      assignedUserId: userId,
+      status: postStatus.COMPLETED,
+    });
     return foundPosts;
   } catch (error) {
     return null;
@@ -105,7 +140,8 @@ export async function updateAssignedUser(
   try {
     await PostModel.updateOne(
       { _id: postId },
-      { assignedUserId: assignedUserId }
+      { assignedUserId: assignedUserId },
+      { status: postStatus.ASSIGNED }
     );
   } catch (error) {
     throw error;

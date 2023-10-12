@@ -50,6 +50,18 @@ export const getAssignedPosts = async (req: Request, res: Response) => {
   }
 };
 
+export const getPastAssignedPosts = async (req: Request, res: Response) => {
+  try {
+    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const posts = await postServices.getPastAssignedPosts(userId);
+    res.status(messages.SUCCESSFUL).send(posts);
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("getPastAssignedPosts : " + err);
+  }
+};
+
 export const getPostsBySkill = async (req: Request, res: Response) => {
   try {
     const skillId = new Types.ObjectId(req.body.skillId as string);
@@ -89,6 +101,7 @@ export const createOne = async (req: Request, res: Response) => {
       content: req.body.content,
       deadline: deadline,
       status: req.body.status,
+      location: req.body.location,
       userId: userId,
       skillIds: skillIds,
     };
@@ -120,6 +133,7 @@ export const updateOne = async (req: Request, res: Response) => {
       content: req.body.content,
       deadline: deadline,
       status: req.body.status,
+      location: req.body.location,
       userId: userId,
       skillIds: skillIds,
       assignedUserId: assignedUserId,
