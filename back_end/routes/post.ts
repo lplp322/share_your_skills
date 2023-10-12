@@ -11,6 +11,12 @@ module.exports = function (app: Express) {
 
   app.get("/posts/getAssignedPosts", auth, postController.getAssignedPosts);
 
+  app.get(
+    "/posts/getPastAssignedPosts",
+    auth,
+    postController.getPastAssignedPosts
+  );
+
   app.get("/posts/getPostsBySkill", auth, postController.getPostsBySkill);
 
   app.get(
