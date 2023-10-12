@@ -1,5 +1,6 @@
 services:
-  - name: app
+  - type: web
+    name: app
     buildCommand: npm install
     startCommand: npm run start:docker
     env:
@@ -11,10 +12,11 @@ services:
         value: "GroupomaniaFour"
     ports:
       - port: 8000
-  - name: mongo
-    image: mongo:4.2.0
-    volumes:
-      - name: mongo_data
-        path: /data/db
-networks:
-  - name: express-mongo
+  - type: pserv
+    name: mongo
+    env: docker
+    autoDeploy: false
+    disk:
+      name: data
+      mountPath: /data/db
+      sizeGB: 10
