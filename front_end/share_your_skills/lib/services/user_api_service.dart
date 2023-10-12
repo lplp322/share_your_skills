@@ -100,7 +100,6 @@ class UserApiService {
   }
 
   User? extractUserFromToken(String token, Map <String, dynamic>? userJson) {
-    print("extractUserFromToken called");
 
     try {
       if (userJson != null) {
@@ -133,7 +132,6 @@ class UserApiService {
         final String? street = addressData?['street'];
         final String? houseNumber = addressData?['houseNumber'];
 
-        print("User Skills: $userSkills");
 
         // Create a new User object with updated information
         final updatedUser = User(

@@ -7,6 +7,7 @@ import 'package:share_your_skills/views/login_page.dart';
 import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/models/app_state.dart';
+import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 
 class UserViewModel extends ChangeNotifier {
   User? _user;
@@ -108,8 +109,9 @@ class UserViewModel extends ChangeNotifier {
           _user = loggedInUser;
           loginErrorMessage = null;
 
-          // No need to replace skill IDs with skill names here,
-          // as this mapping is handled in the API service.
+          final postViewModel =
+              Provider.of<PostViewModel>(context, listen: false);
+          await postViewModel.fetchUserAssignedPosts();
 
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
@@ -140,6 +142,13 @@ class UserViewModel extends ChangeNotifier {
   void logout() {
     _user = null;
     _prefs.remove('token');
+
+    final postViewModel = Provider.of<PostViewModel>(context, listen: false);
+
+    if (postViewModel.userAssignedPosts.isNotEmpty) {
+         postViewModel.clearAssignedPosts();
+    }
+
     notifyListeners();
   }
 }

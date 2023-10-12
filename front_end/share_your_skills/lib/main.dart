@@ -5,7 +5,7 @@ import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/services/user_api_service.dart';
 import 'package:share_your_skills/views/home_page.dart';
-
+import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 void main() {
   runApp(MyApp());
 }
@@ -27,6 +27,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AppState>(
           create: (context) => AppState(),
         ),
+         ChangeNotifierProvider<PostViewModel>(
+      create: (context) => PostViewModel(
+        Provider.of<UserViewModel>(context, listen: false).user,
+      ),
+    ),
       ],
       child: MaterialApp(
         title: 'Your App',
