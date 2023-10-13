@@ -45,7 +45,22 @@ export async function getPost(idToFind: Types.ObjectId) {
 
 export async function getMyPosts(userId: Types.ObjectId) {
   try {
-    const foundPosts = await PostModel.find({ userId: userId });
+    const foundPosts = await PostModel.find({
+      userId: userId,
+      status: postStatus.PENDING || postStatus.ASSIGNED,
+    });
+    return foundPosts;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getMyPastPosts(userId: Types.ObjectId) {
+  try {
+    const foundPosts = await PostModel.find({
+      userId: userId,
+      status: postStatus.COMPLETED || postStatus.EXPIRED,
+    });
     return foundPosts;
   } catch (error) {
     return null;
@@ -68,7 +83,7 @@ export async function getPastAssignedPosts(userId: Types.ObjectId) {
   try {
     const foundPosts = await PostModel.find({
       assignedUserId: userId,
-      status: postStatus.COMPLETED,
+      status: postStatus.COMPLETED || postStatus.EXPIRED,
     });
     return foundPosts;
   } catch (error) {
