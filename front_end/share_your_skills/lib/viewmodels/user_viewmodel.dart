@@ -109,10 +109,10 @@ class UserViewModel extends ChangeNotifier {
           _user = loggedInUser;
           loginErrorMessage = null;
 
-          final postViewModel =
+         /* final postViewModel =
               Provider.of<PostViewModel>(context, listen: false);
           await postViewModel.fetchUserAssignedPosts();
-
+*/
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
           Navigator.of(context).pushReplacement(
@@ -142,12 +142,12 @@ class UserViewModel extends ChangeNotifier {
   void logout() {
     _user = null;
     _prefs.remove('token');
-
+/*
     final postViewModel = Provider.of<PostViewModel>(context, listen: false);
 
     if (postViewModel.userAssignedPosts.isNotEmpty) {
          postViewModel.clearAssignedPosts();
-    }
+    }*/
 
     notifyListeners();
   }
