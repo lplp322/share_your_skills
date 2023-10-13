@@ -42,8 +42,8 @@ class _ProfilePageState extends State<ProfilePage> {
           SizedBox(height: 30),
           ElevatedButton(
             onPressed: () {
-              // Logout logic
-              userViewModel.logout(); // Implement this method in UserViewModel
+            
+              userViewModel.logout(context); 
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => LoginPage()),
               );

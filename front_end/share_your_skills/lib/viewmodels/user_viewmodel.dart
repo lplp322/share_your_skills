@@ -16,9 +16,10 @@ class UserViewModel extends ChangeNotifier {
   final UserApiService _userApiService;
   final BuildContext context;
   late SharedPreferences _prefs;
-
+  late PostViewModel postViewModel;
   UserViewModel(this._userApiService, this.context) {
     initSharedPrefs();
+    postViewModel = PostViewModel(_user);
   }
 
   User? get user => _user;
@@ -108,10 +109,8 @@ class UserViewModel extends ChangeNotifier {
         if (!JwtDecoder.isExpired(token)) {
           _user = loggedInUser;
           loginErrorMessage = null;
-
-          final postViewModel =
-              Provider.of<PostViewModel>(context, listen: false);
-          await postViewModel.fetchUserAssignedPosts();
+          postViewModel = PostViewModel(_user);
+          await postViewModel.fetchUserAssignedPosts(_user!);
 
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
@@ -139,15 +138,11 @@ class UserViewModel extends ChangeNotifier {
     }
   }
 
-  void logout() {
+  void logout(BuildContext context) {
     _user = null;
     _prefs.remove('token');
-/*
-    final postViewModel = Provider.of<PostViewModel>(context, listen: false);
 
-    if (postViewModel.userAssignedPosts.isNotEmpty) {
-         postViewModel.clearAssignedPosts();
-    }*/
+    postViewModel.clearAssignedPosts();
 
     notifyListeners();
   }

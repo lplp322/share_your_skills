@@ -6,6 +6,19 @@ class ShowPostPage extends StatelessWidget {
 
   const ShowPostPage({Key? key, required this.post}) : super(key: key);
 
+  String getImageAssetPath(String title) {
+    switch (title) {
+      case "Cooking":
+        return 'images/cooking.jpg';
+      case "Garderning":
+        return 'images/gardening.webp';
+      case "Cleaning":
+        return 'images/cleaning.jpeg';
+      default:
+        return 'images/cleaning.jpeg';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +49,8 @@ class ShowPostPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.0),
                   image: DecorationImage(
-                    image: AssetImage('images/gardening.webp'),
+                    image: AssetImage(getImageAssetPath(
+                        post.title)), // Match image based on the title
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -68,15 +82,14 @@ class ShowPostPage extends StatelessWidget {
                 ),
                 child: ElevatedButton(
                   onPressed: () {
-                 
+                    // Handle cancel button action
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color.fromARGB(255, 148, 71, 47)),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        Color.fromARGB(255, 148, 71, 47)),
                   ),
                   child: Container(
-                    width:
-                        double.infinity, 
+                    width: double.infinity,
                     child: Center(
                       child: Text(
                         'Cancel',

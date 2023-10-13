@@ -4,16 +4,12 @@ import 'package:share_your_skills/views/login_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/services/user_api_service.dart';
-import 'package:share_your_skills/views/home_page.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
-void main() {
-  runApp(MyApp());
-}
+import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
+void main() {
+  runApp(
+    MultiProvider(
       providers: [
         Provider<UserApiService>(
           create: (context) => UserApiService('http://localhost:8000/users'),
@@ -27,20 +23,37 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<AppState>(
           create: (context) => AppState(),
         ),
-         ChangeNotifierProvider<PostViewModel>(
-      create: (context) => PostViewModel(
-        Provider.of<UserViewModel>(context, listen: false).user,
-      ),
-    ),
-      ],
-      child: MaterialApp(
-        title: 'Your App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        ChangeNotifierProvider<PostViewModel>(
+          create: (context) => PostViewModel(
+            Provider.of<UserViewModel>(context, listen: false).user,
+          ),
         ),
-        home: LoginPage(),
-         debugShowCheckedModeBanner: false,
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Your App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
       ),
+      home: Consumer<UserViewModel>(
+        builder: (context, userViewModel, _) {
+          if (userViewModel.user != null) {
+            return MyAppbar.AppBar(
+              token: userViewModel.user?.token,
+            );
+          } else {
+            return LoginPage();
+          }
+        },
+      ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

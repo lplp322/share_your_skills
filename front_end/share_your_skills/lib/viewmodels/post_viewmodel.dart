@@ -4,17 +4,21 @@ import 'package:share_your_skills/services/post_api_service.dart';
 import 'package:share_your_skills/models/user.dart';
 
 class PostViewModel extends ChangeNotifier {
-  final User? user;
-  final PostApiService postApiService; // Not nullable
+  User? _user;
+  final PostApiService postApiService;
 
-  PostViewModel(this.user) : postApiService = PostApiService(user!.token);
+  PostViewModel(this._user) : postApiService = _user != null ? PostApiService(_user!.token) : PostApiService(''); // Provide a default value or handle null case accordingly
+
+
+  User? get user => _user;
 
   List<Post> _userAssignedPosts = [];
   List<Post> get userAssignedPosts => _userAssignedPosts;
 
-  Future<void> fetchUserAssignedPosts() async {
+  Future<void> fetchUserAssignedPosts(User user) async {
     try {
-      final posts = await postApiService.getUserAssignedPosts(user!.userId!);
+      _user = user; // Update the user when fetching posts for a new user
+      final posts = await postApiService.getUserAssignedPosts(user.userId!);
       _userAssignedPosts = posts;
       print('Updated userAssignedPosts length: ${_userAssignedPosts.length}');
       notifyListeners();
@@ -22,8 +26,13 @@ class PostViewModel extends ChangeNotifier {
       print('Error fetching user assigned posts: $e');
     }
   }
+
   void clearAssignedPosts() {
-    _userAssignedPosts.clear();
-    notifyListeners();
+    if (_user != null) {
+      _userAssignedPosts.clear();
+      print('Clearing userAssignedPosts');
+      print('userAssignedPosts cleared, length: ${_userAssignedPosts.length}');
+      notifyListeners();
+    }
   }
 }
