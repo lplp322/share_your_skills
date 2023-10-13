@@ -12,6 +12,8 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+  bool currentEventsExpanded = true; // Track the state of current events.
+
   @override
   Widget build(BuildContext context) {
     final postViewModel = Provider.of<PostViewModel>(context);
@@ -20,38 +22,58 @@ class _EventPageState extends State<EventPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: EdgeInsets.only(left: 16.0),
-            child: Text(
+          ListTile(
+            title: Text(
               'Current Events',
               style: TextStyle(
                 fontSize: 30,
                 color: Colors.black,
               ),
             ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: postViewModel.userAssignedPosts.length,
-              itemBuilder: (context, index) {
-                final post = postViewModel.userAssignedPosts[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => ShowPostPage(post: post),
-                      ),
-                    );
-                  },
-                  child: EventCard(
-                    title: post.title,
-                    location: post.status,
-                    date: post.deadline,
-                  ),
-                );
+            trailing: IconButton(
+              icon: Icon(currentEventsExpanded
+                  ? Icons.expand_less
+                  : Icons.expand_more),
+              onPressed: () {
+                setState(() {
+                  currentEventsExpanded = !currentEventsExpanded;
+                });
               },
             ),
           ),
+          if (currentEventsExpanded) // Display current events if expanded.
+            Expanded(
+              child: ListView.builder(
+                itemCount: postViewModel.userAssignedPosts.length,
+                itemBuilder: (context, index) {
+                  final post = postViewModel.userAssignedPosts[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ShowPostPage(post: post),
+                        ),
+                      );
+                    },
+                    child: EventCard(
+                      title: post.title,
+                      location: post.location,
+                      date: post.deadline,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ListTile(
+            title: Text(
+              'Completed Events',
+              style: TextStyle(
+                fontSize: 30,
+                color: Colors.black,
+              ),
+            ),
+          ),
+         
         ],
       ),
     );

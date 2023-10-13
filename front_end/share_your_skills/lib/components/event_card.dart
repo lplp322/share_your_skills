@@ -11,6 +11,19 @@ class EventCard extends StatelessWidget {
     required this.date,
   });
 
+  String getImageAssetPath() {
+    switch (title) {
+      case "Cooking":
+        return 'images/cooking.jpg';
+      case "Garderning":
+        return 'images/gardening.webp';
+      case "Cleaning":
+        return 'images/cleaning.jpeg';
+      default:
+        return 'images/cleaning.jpeg';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String formattedDate =
@@ -32,7 +45,7 @@ class EventCard extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: Image.asset(
-                      'images/gardening.webp',
+                      getImageAssetPath(), // Use the image asset path based on the title
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -62,7 +75,7 @@ class EventCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      formattedDate, // Use the manually formatted date
+                      formattedDate,
                       style: TextStyle(
                         fontSize: 25,
                         color: Color(0xFF7B7B7B),

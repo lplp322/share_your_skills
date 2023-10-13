@@ -5,6 +5,7 @@ class Post {
   String content;
   DateTime deadline;
   String status;
+  String location;
   String? userId;
   List<String> skillIds;
   String? assignedUserId;
@@ -15,6 +16,7 @@ class Post {
     required this.content,
     required this.deadline,
     required this.status,
+    required this.location,
     required this.userId,
     required this.skillIds,
     this.assignedUserId,
@@ -27,6 +29,7 @@ class Post {
       content: json['content'],
       deadline: DateTime.parse(json['deadline']),
       status: json['status'],
+      location: json['location'],
       userId: json['userId'],
       skillIds: List<String>.from(json['skillIds']),
       assignedUserId: json['assignedUserId'],
