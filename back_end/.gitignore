@@ -130,9 +130,7 @@ dist
 .pnp.*
 
 ## All build JS files
-/build/*
-
-!/build/config
+*.js
 
 
 cosign.pub

@@ -4,7 +4,7 @@ import * as postServices from "../services/postService";
 import * as skillServices from "../services/skillService";
 import { IPost } from "../models/postModel";
 import { CustomRequest } from "../middleware/auth";
-
+const postStatus = require("../config/postStatus");
 const messages = require("../config/messages");
 
 export const getAll = async (req: Request, res: Response) => {
@@ -112,7 +112,7 @@ export const createOne = async (req: Request, res: Response) => {
       title: req.body.title,
       content: req.body.content,
       deadline: deadline,
-      status: req.body.status,
+      status: postStatus.PENDING,
       location: req.body.location,
       userId: userId,
       skillIds: skillIds,
@@ -148,8 +148,12 @@ export const updateOne = async (req: Request, res: Response) => {
       location: req.body.location,
       userId: userId,
       skillIds: skillIds,
-      assignedUserId: assignedUserId,
     };
+
+    if (req.body.assignedUserId) {
+      post.assignedUserId = assignedUserId;
+    }
+
     await postServices.updateOne(postId, post);
     res.status(messages.SUCCESSFUL_UPDATE).send("Post updated");
   } catch (err) {
