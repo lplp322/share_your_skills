@@ -130,7 +130,11 @@ dist
 .pnp.*
 
 ## All build JS files
-*.js
+/build/*
+
+!/build/config
+
 
 cosign.pub
 http_ca.crt
+test_elasticS.js
