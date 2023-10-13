@@ -45,10 +45,15 @@ export async function getPost(idToFind: Types.ObjectId) {
 
 export async function getMyPosts(userId: Types.ObjectId) {
   try {
-    const foundPosts = await PostModel.find({
+    const assignedPosts = await PostModel.find({
       userId: userId,
-      status: postStatus.PENDING || postStatus.ASSIGNED,
+      status: postStatus.ASSIGNED,
     });
+    const pendingPosts = await PostModel.find({
+      userId: userId,
+      status: postStatus.PENDING,
+    });
+    const foundPosts = assignedPosts.concat(pendingPosts);
     return foundPosts;
   } catch (error) {
     return null;
@@ -57,10 +62,15 @@ export async function getMyPosts(userId: Types.ObjectId) {
 
 export async function getMyPastPosts(userId: Types.ObjectId) {
   try {
-    const foundPosts = await PostModel.find({
+    const completedPosts = await PostModel.find({
       userId: userId,
-      status: postStatus.COMPLETED || postStatus.EXPIRED,
+      status: postStatus.COMPLETED,
     });
+    const expiredPosts = await PostModel.find({
+      userId: userId,
+      status: postStatus.EXPIRED,
+    });
+    const foundPosts = completedPosts.concat(expiredPosts);
     return foundPosts;
   } catch (error) {
     return null;
@@ -81,10 +91,15 @@ export async function getAssignedPosts(userId: Types.ObjectId) {
 
 export async function getPastAssignedPosts(userId: Types.ObjectId) {
   try {
-    const foundPosts = await PostModel.find({
+    const completedPosts = await PostModel.find({
       assignedUserId: userId,
-      status: postStatus.COMPLETED || postStatus.EXPIRED,
+      status: postStatus.COMPLETED,
     });
+    const expiredPosts = await PostModel.find({
+      assignedUserId: userId,
+      status: postStatus.EXPIRED,
+    });
+    const foundPosts = completedPosts.concat(expiredPosts);
     return foundPosts;
   } catch (error) {
     return null;
@@ -161,7 +176,6 @@ export async function updateAssignedUser(
       {
         assignedUserId: assignedUserId,
         status: postStatus.ASSIGNED,
-        location: "Assigned",
       }
     );
   } catch (error) {
