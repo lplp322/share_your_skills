@@ -9,6 +9,8 @@ module.exports = function (app: Express) {
 
   app.get("/posts/getMyPosts", auth, postController.getMyPosts);
 
+  app.get("/posts/getMyPastPosts", auth, postController.getMyPastPosts);
+
   app.get("/posts/getAssignedPosts", auth, postController.getAssignedPosts);
 
   app.get(

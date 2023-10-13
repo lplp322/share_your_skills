@@ -38,6 +38,18 @@ export const getMyPosts = async (req: Request, res: Response) => {
   }
 };
 
+export const getMyPastPosts = async (req: Request, res: Response) => {
+  try {
+    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const posts = await postServices.getMyPastPosts(userId);
+    res.status(messages.SUCCESSFUL).send(posts);
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("getMyPastPosts : " + err);
+  }
+};
+
 export const getAssignedPosts = async (req: Request, res: Response) => {
   try {
     const userId = new Types.ObjectId((req as CustomRequest).user_id);
