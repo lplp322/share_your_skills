@@ -91,7 +91,6 @@ class _LoginPageState extends State<LoginPage> {
 
               ElevatedButton(
                 onPressed: () {
-                  print('Login button pressed'); // Add this line for debugging
                   userViewModel.loginUser(
                     emailController.text,
                     passwordController.text,
