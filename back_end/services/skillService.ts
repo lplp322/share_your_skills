@@ -105,8 +105,12 @@ export async function deleteOne(
       throw new Error("Skill not found");
     }
 
-    user.skillIds = user.skillIds?.filter((id) => id !== skillId);
-    skill.users = skill.users?.filter((id) => id !== userId);
+    user.skillIds = user.skillIds?.filter(
+      (id) => id.toString() !== skillId.toString()
+    );
+    skill.users = skill.users?.filter(
+      (id) => id.toString() !== userId.toString()
+    );
 
     await user.save();
     await skill.save();
