@@ -5,6 +5,7 @@ import 'package:share_your_skills/views/show_post_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
 import 'package:share_your_skills/models/post.dart';
+import 'package:share_your_skills/views/create_event_details_page.dart';
 class AddEventPage extends StatefulWidget {
   const AddEventPage({Key? key});
 
@@ -43,9 +44,7 @@ class _AddEventPageState extends State<AddEventPage> {
                   // Navigate to the Create Post Page
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) =>
-                          CreateEventPage(),
-
+                      builder: (context) => CreateEventDetailPage(),
                     ),
                   );
                 },
@@ -86,7 +85,7 @@ class _AddEventPageState extends State<AddEventPage> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ShowPostPage(post: post),
+                                builder: (context) => ShowPostPage(post: post, isEditable: true,),
                               ),
                             );
                           },

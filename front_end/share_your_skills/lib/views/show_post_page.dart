@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
-import 'package:provider/provider.dart';
-import 'package:share_your_skills/views/create_event_details_page.dart';
 import 'package:share_your_skills/models/post.dart';
-class ShowPostPage extends StatelessWidget {
+import 'package:share_your_skills/views/create_event_details_page.dart';
+
+class ShowPostPage extends StatefulWidget {
   final Post post;
+  final bool isEditable;
 
-  ShowPostPage({required this.post});
+  ShowPostPage({required this.post, this.isEditable = false});
 
-  String getImageAssetPath(String title) {
-    switch (title) {
-      case "Cooking":
-        return 'images/cooking.jpg';
-      case "Gardening":
-        return 'images/gardening.webp';
-      case "Cleaning":
-        return 'images/cleaning.jpeg';
-      default:
-        return 'images/cleaning.jpeg';
-    }
-  }
+  @override
+  _ShowPostPageState createState() => _ShowPostPageState();
+}
 
+class _ShowPostPageState extends State<ShowPostPage> {
   void deletePost(BuildContext context) {
     showDialog(
       context: context,
@@ -48,11 +40,19 @@ class ShowPostPage extends StatelessWidget {
     );
   }
 
+  void editPost() {
+    // Navigate to the CreateEventPage for editing
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CreateEventDetailPage(
+          postId: widget.post.id,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final postViewModel = Provider.of<UserViewModel>(context).postViewModel;
-    final isEditable = post.status != "completed"; // Check if the post is editable
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -69,22 +69,15 @@ class ShowPostPage extends StatelessWidget {
                     icon: Icon(Icons.arrow_back),
                   ),
                   Text(
-                    '${post.title}',
+                    '${widget.post.title}',
                     style: TextStyle(fontSize: 30),
                   ),
                   Spacer(),
-                  if (isEditable) // Only show the "Edit" button if the post is editable
+                  if (widget.isEditable) // Only show the "Edit" button if the post is editable
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        // Navigate to the CreateEventPage for editing
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CreateEventPage(
-                              postId: post.id!,
-                            ),
-                          ),
-                        );
+                        editPost(); // Navigate to the edit page
                       },
                     ),
                 ],
@@ -96,29 +89,29 @@ class ShowPostPage extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16.0),
                   image: DecorationImage(
-                    image: AssetImage(getImageAssetPath(post.title)),
+                    image: AssetImage(getImageAssetPath(widget.post.title)),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
               SizedBox(height: 16.0),
               Text(
-                'Status: ${post.status}',
+                'Status: ${widget.post.status}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
               Text(
-                'Date: ${post.deadline}',
+                'Date: ${widget.post.deadline}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
               Text(
-                'User ID: ${post.userId}',
+                'User ID: ${widget.post.userId}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
               Text(
-                'Description: ${post.content}',
+                'Description: ${widget.post.content}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
@@ -143,7 +136,7 @@ class ShowPostPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (isEditable) // Only show the "Delete" button if the post is editable
+                  if (widget.isEditable) // Only show the "Delete" button if the post is editable
                     ElevatedButton(
                       onPressed: () {
                         deletePost(context); // Prompt the user for post deletion
@@ -169,5 +162,18 @@ class ShowPostPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String getImageAssetPath(String title) {
+    switch (title) {
+      case "Cooking":
+        return 'images/cooking.jpg';
+      case "Gardening":
+        return 'images/gardening.webp';
+      case "Cleaning":
+        return 'images/cleaning.jpeg';
+      default:
+        return 'images/cleaning.jpeg';
+    }
   }
 }

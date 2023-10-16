@@ -1,26 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'app_bar.dart' as MyAppbar;
 
-class CreateEventPage extends StatefulWidget {
-  
-  const CreateEventPage({Key? key,}) : super(key: key);
+class CreateEventDetailPage extends StatefulWidget {
+  final String? postId;
+
+  CreateEventDetailPage({Key? key, this.postId}) : super(key: key);
 
   @override
-  _CreateEventPageState createState() => _CreateEventPageState();
+  _CreateEventDetailPageState createState() => _CreateEventDetailPageState();
 }
 
-class _CreateEventPageState extends State<CreateEventPage> {
+class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
   late TextEditingController titleController;
   late TextEditingController contentController;
   late TextEditingController locationController;
-  late DateTime selectedDate;
-  late TimeOfDay selectedTime;
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
   String? selectedSkill;
-  bool isCreatingEvent = false;
+  Post? existingPost;
+
+  final List<String> predefinedSkills = ['Skill A', 'Skill B', 'Skill C'];
 
   @override
   void initState() {
@@ -28,28 +29,29 @@ class _CreateEventPageState extends State<CreateEventPage> {
     titleController = TextEditingController();
     contentController = TextEditingController();
     locationController = TextEditingController();
-    selectedDate = DateTime.now();
-    selectedTime = TimeOfDay.now();
+
+    if (widget.postId != null) {
+      fetchExistingPost(widget.postId!);
+    }
   }
 
-  List<String> predefinedSkills = [
-    "Cleaning",
-    "Cooking",
-    "Gardening",
-  ];
+  void fetchExistingPost(String postId) {
+    final postViewModel = Provider.of<UserViewModel>(context, listen: false).postViewModel;
+    final post = postViewModel.userPosts.firstWhere((post) => post.id == postId);
 
-  @override
-  void dispose() {
-    titleController.dispose();
-    contentController.dispose();
-    locationController.dispose();
-    super.dispose();
+    titleController.text = post.title;
+    contentController.text = post.content;
+    locationController.text = post.location;
+    selectedDate = post.deadline;
+    selectedTime = TimeOfDay.fromDateTime(selectedDate);
+    selectedSkill = post.skillIds.isNotEmpty ? post.skillIds[0] : null;
+
+    existingPost = post;
   }
 
   @override
   Widget build(BuildContext context) {
     final postViewModel = Provider.of<UserViewModel>(context).postViewModel;
-    final user = Provider.of<UserViewModel>(context).user;
 
     return SafeArea(
       child: Scaffold(
@@ -68,7 +70,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       icon: Icon(Icons.arrow_back),
                     ),
                     Text(
-                      'Create Event',
+                      widget.postId != null ? 'Edit Event' : 'Create Event',
                       style: TextStyle(fontSize: 30),
                     ),
                   ],
@@ -94,67 +96,52 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 ),
                 SizedBox(height: 16),
                 Text('Date', style: TextStyle(fontSize: 20)),
-                InkWell(
-                  onTap: () {
-                    showDatePicker(
+                ElevatedButton(
+                  onPressed: () async {
+                    final DateTime? date = await showDatePicker(
                       context: context,
                       initialDate: selectedDate,
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2101),
-                    ).then((date) {
-                      if (date != null) {
-                        setState(() {
-                          selectedDate = date;
-                        });
-                      }
-                    });
+                    );
+
+                    if (date != null) {
+                      setState(() {
+                        selectedDate = date;
+                      });
+                    }
                   },
-                  child: InputDecorator(
-                    decoration: InputDecoration(labelText: 'Select date'),
-                    child: Text(
-                      "${selectedDate.toLocal()}".split(' ')[0],
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
+                  child: Text("Select Date"),
                 ),
                 SizedBox(height: 16),
                 Text('Time', style: TextStyle(fontSize: 20)),
-                InkWell(
-                  onTap: () {
-                    showTimePicker(
+                ElevatedButton(
+                  onPressed: () async {
+                    final TimeOfDay? time = await showTimePicker(
                       context: context,
                       initialTime: selectedTime,
-                    ).then((time) {
-                      if (time != null) {
-                        setState(() {
-                          selectedTime = time;
-                        });
-                      }
-                    });
+                    );
+
+                    if (time != null) {
+                      setState(() {
+                        selectedTime = time;
+                      });
+                    }
                   },
-                  child: InputDecorator(
-                    decoration: InputDecoration(labelText: 'Select time'),
-                    child: Text(
-                      selectedTime.format(context),
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
+                  child: Text("Select Time"),
                 ),
                 SizedBox(height: 16),
-                Text('Select a skill:', style: TextStyle(fontSize: 20)),
+                Text('Skill', style: TextStyle(fontSize: 20)),
                 Column(
                   children: predefinedSkills.map((skill) {
                     return Row(
-                      children: [
-                        Checkbox(
-                          value: selectedSkill == skill,
-                          onChanged: (bool? value) {
+                      children: <Widget>[
+                        Radio(
+                          value: skill,
+                          groupValue: selectedSkill,
+                          onChanged: (String? value) {
                             setState(() {
-                              if (value != null && value) {
-                                selectedSkill = skill;
-                              } else {
-                                selectedSkill = null;
-                              }
+                              selectedSkill = value;
                             });
                           },
                         ),
@@ -164,57 +151,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   }).toList(),
                 ),
                 SizedBox(height: 32),
-                isCreatingEvent
-                    ? CircularProgressIndicator() // Show loading indicator when creating the event
-                    : ElevatedButton(
-                        onPressed: () async {
-                          if (selectedSkill == null) {
-                            // Handle the case where no skill is selected
-                            return;
-                          }
-                          setState(() {
-                            isCreatingEvent = true;
-                          });
-                          final skillId =
-                              await postViewModel.fetchSkillIdByName(
-                                  selectedSkill!); // Get the skill ID
-
-                          final newEvent = Post(
-                            title: titleController.text,
-                            content: contentController.text,
-                            location: locationController.text,
-                            deadline: DateTime(
-                              selectedDate.year,
-                              selectedDate.month,
-                              selectedDate.day,
-                              selectedTime.hour,
-                              selectedTime.minute,
-                            ).toUtc(),
-                            userId: user?.userId, // Set the user ID as needed
-                            skillIds: [skillId], // Use the selected skill
-                            assignedUserId:
-                                null, // Set assigned user ID as needed
-                          );
-                          print(newEvent);
-                          postViewModel.addPost(newEvent);
-                          Provider.of<AppState>(context, listen: false)
-                              .setSelectedIndex(1);
-                          setState(() {});
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => MyAppbar.AppBar(
-                                token: user?.token,
-                              ),
-                            ),
-                          );
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            Color(0xFF588F2C),
-                          ),
-                        ),
-                        child: Text('Create'),
-                      ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (selectedSkill == null) {
+                      return;
+                    }
+                    setState(() {
+                      // Handle button press and post creation or update here
+                    });
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  ),
+                  child: Text(widget.postId != null ? 'Save Changes' : 'Create'),
+                ),
               ],
             ),
           ),
