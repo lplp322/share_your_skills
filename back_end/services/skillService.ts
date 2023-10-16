@@ -129,7 +129,7 @@ export async function forceAddSkillToDB(skill: ISkill) {
   try {
     const newSkill = new SkillModel({
       name: skill.name,
-      imageURL: skill.imageURL,
+      imageURL: skill.icon,
       users: skill.users,
     });
     await newSkill.save();

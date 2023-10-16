@@ -83,7 +83,7 @@ export const forceAddSkillToDB = async (req: Request, res: Response) => {
   try {
     const skill: ISkill = {
       name: req.body.name,
-      imageURL: req.body.imageURL,
+      icon: req.body.imageURL,
       users: [],
     };
     const skill_id = await skillService.forceAddSkillToDB(skill);

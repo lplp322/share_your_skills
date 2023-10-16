@@ -2,13 +2,13 @@ import { model, Model, Schema, Types } from "mongoose";
 
 export interface ISkill {
   name: string;
-  imageURL?: string;
+  icon?: string;
   users?: Array<Types.ObjectId>;
 }
 
 const SkillSchema = new Schema<ISkill>({
   name: { type: String, required: true },
-  imageURL: { type: String, required: false },
+  icon: { type: String, required: false },
   users: [{ type: Types.ObjectId, ref: "User" }],
 });
 
