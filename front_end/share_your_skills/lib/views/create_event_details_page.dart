@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'app_bar.dart' as MyAppbar;
 
 class CreateEventPage extends StatefulWidget {
-  const CreateEventPage({Key? key}) : super(key: key);
+  
+  const CreateEventPage({Key? key,}) : super(key: key);
 
   @override
   _CreateEventPageState createState() => _CreateEventPageState();
@@ -17,18 +20,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   late DateTime selectedDate;
   late TimeOfDay selectedTime;
   String? selectedSkill;
-  List<String> predefinedSkills = [
-    "Cleaning",
-    "Cooking",
-    "Gardening",
-  ];
-
-  // Map skill names to their corresponding IDs
-  final Map<String, String> skillIdToName = {
-    "65256b8601db3b3814171c5f": "Cleaning",
-    "65256b7a01db3b3814171c5d": "Gardening",
-    "65256b7101db3b3814171c5b": "Cooking",
-  };
+  bool isCreatingEvent = false;
 
   @override
   void initState() {
@@ -39,6 +31,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
     selectedDate = DateTime.now();
     selectedTime = TimeOfDay.now();
   }
+
+  List<String> predefinedSkills = [
+    "Cleaning",
+    "Cooking",
+    "Gardening",
+  ];
 
   @override
   void dispose() {
@@ -51,6 +49,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     final postViewModel = Provider.of<UserViewModel>(context).postViewModel;
+    final user = Provider.of<UserViewModel>(context).user;
+
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -142,16 +142,19 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 ),
                 SizedBox(height: 16),
                 Text('Select a skill:', style: TextStyle(fontSize: 20)),
-                Row(
+                Column(
                   children: predefinedSkills.map((skill) {
                     return Row(
                       children: [
-                        Radio<String>(
-                          value: skill,
-                          groupValue: selectedSkill,
-                          onChanged: (String? value) {
+                        Checkbox(
+                          value: selectedSkill == skill,
+                          onChanged: (bool? value) {
                             setState(() {
-                              selectedSkill = value;
+                              if (value != null && value) {
+                                selectedSkill = skill;
+                              } else {
+                                selectedSkill = null;
+                              }
                             });
                           },
                         ),
@@ -161,47 +164,57 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   }).toList(),
                 ),
                 SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (selectedSkill == null) {
-                      // Handle the case where no skill is selected
-                      return;
-                    }
+                isCreatingEvent
+                    ? CircularProgressIndicator() // Show loading indicator when creating the event
+                    : ElevatedButton(
+                        onPressed: () async {
+                          if (selectedSkill == null) {
+                            // Handle the case where no skill is selected
+                            return;
+                          }
+                          setState(() {
+                            isCreatingEvent = true;
+                          });
+                          final skillId =
+                              await postViewModel.fetchSkillIdByName(
+                                  selectedSkill!); // Get the skill ID
 
-                    // Use the selectedSkill directly as the skill name
-                    final deadline = DateTime(
-                      selectedDate.year,
-                      selectedDate.month,
-                      selectedDate.day,
-                      selectedTime.hour,
-                      selectedTime.minute,
-                    );
-
-                    // Use the skill ID directly from the map
-                    final skillId = skillIdToName[selectedSkill!];
-
-                    final newEvent = Post(
-                      id: '', // Assign an empty ID or generate one on the server
-                      title: titleController.text,
-                      content: contentController.text,
-                      location: locationController.text,
-                      deadline: deadline.toUtc(), // Format the deadline
-                      status: 'pending', // Set status as needed
-                      userId: '', // Set the user ID as needed
-                      skillIds: [skillId!], // Use the selected skill
-                      assignedUserId: null, // Set assigned user ID as needed
-                    );
-                    postViewModel.addPost(newEvent);
-                    // Send an API request to create the new event
-                    // Handle success or error responses
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                      Color(0xFF588F2C), // Set the color to #588F2C
-                    ),
-                  ),
-                  child: Text('Create'),
-                ),
+                          final newEvent = Post(
+                            title: titleController.text,
+                            content: contentController.text,
+                            location: locationController.text,
+                            deadline: DateTime(
+                              selectedDate.year,
+                              selectedDate.month,
+                              selectedDate.day,
+                              selectedTime.hour,
+                              selectedTime.minute,
+                            ).toUtc(),
+                            userId: user?.userId, // Set the user ID as needed
+                            skillIds: [skillId], // Use the selected skill
+                            assignedUserId:
+                                null, // Set assigned user ID as needed
+                          );
+                          print(newEvent);
+                          postViewModel.addPost(newEvent);
+                          Provider.of<AppState>(context, listen: false)
+                              .setSelectedIndex(1);
+                          setState(() {});
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MyAppbar.AppBar(
+                                token: user?.token,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                            Color(0xFF588F2C),
+                          ),
+                        ),
+                        child: Text('Create'),
+                      ),
               ],
             ),
           ),

@@ -7,7 +7,7 @@ import 'package:share_your_skills/views/event_page.dart';
 import 'package:share_your_skills/views/home_page.dart';
 import 'package:share_your_skills/views/profile_page.dart';
 import 'package:share_your_skills/models/app_state.dart';
-import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
+import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 
 class AppBar extends StatefulWidget {
   final token;
@@ -33,55 +33,56 @@ class _AppBarState extends State<AppBar> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: Consumer<AppState>(
-            builder: (context, appState, _) {
-              // Use the selected index to determine the body widget
-              Widget selectedPage = _buildPage(appState.selectedIndex);
-    
-              return selectedPage;
-            },
-          ),
-        ),
-        bottomNavigationBar: Consumer<AppState>(
-          builder: (context, appState, _) {
-            return BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              currentIndex: appState.selectedIndex,
-              onTap: (int newIndex) {
-                // Use the provided callback to update the state of the app
-                setState(() {
-                  appState.selectedIndex = newIndex;
-                });
+            body: Center(
+              child: Consumer<AppState>(
+                builder: (context, appState, _) {
+                  // Use the selected index to determine the body widget
+                  Widget selectedPage = _buildPage(appState.selectedIndex);
+        
+                  return selectedPage;
+                },
+              ),
+            ),
+            bottomNavigationBar: Consumer<AppState>(
+              builder: (context, appState, _) {
+                return BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  currentIndex: appState.selectedIndex,
+                  onTap: (int newIndex) {
+                    // Use the provided callback to update the state of the app
+                    setState(() {
+                      appState.selectedIndex = newIndex;
+                    });
+                  },
+                  selectedItemColor: Colors.green, // Color for selected item
+                  unselectedItemColor: Colors.black, // Color for unselected items
+                  items: const [
+                    BottomNavigationBarItem(
+                      label: 'My Events',
+                      icon: Icon(Icons.event),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Add Event',
+                      icon: Icon(Icons.add),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Home',
+                      icon: Icon(Icons.home),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Chat',
+                      icon: Icon(Icons.chat),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Profile',
+                      icon: Icon(Icons.person),
+                    ),
+                  ],
+                );
               },
-              selectedItemColor: Colors.green, // Color for selected item
-              unselectedItemColor: Colors.black, // Color for unselected items
-              items: const [
-                BottomNavigationBarItem(
-                  label: 'My Events',
-                  icon: Icon(Icons.event),
-                ),
-                BottomNavigationBarItem(
-                  label: 'Add Event',
-                  icon: Icon(Icons.add),
-                ),
-                BottomNavigationBarItem(
-                  label: 'Home',
-                  icon: Icon(Icons.home),
-                ),
-                BottomNavigationBarItem(
-                  label: 'Chat',
-                  icon: Icon(Icons.chat),
-                ),
-                BottomNavigationBarItem(
-                  label: 'Profile',
-                  icon: Icon(Icons.person),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+            ),
+          ),
+        
     );
   }
 

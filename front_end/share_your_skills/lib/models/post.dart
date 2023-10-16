@@ -1,21 +1,21 @@
 import 'user.dart';
 class Post {
-  String id;
+  String? id;
   String title;
   String content;
   DateTime deadline;
-  String status;
+  String? status;
   String location;
   String? userId;
   List<String> skillIds;
   String? assignedUserId;
 
   Post({
-    required this.id,
+     this.id,
     required this.title,
     required this.content,
     required this.deadline,
-    required this.status,
+     this.status,
     required this.location,
     required this.userId,
     required this.skillIds,
@@ -49,5 +49,18 @@ class Post {
       'skillIds': skillIds,
       'assignedUserId': assignedUserId,
     };
+  }
+   @override
+  String toString() {
+    return 'Post {\n'
+        '  id: $id,\n'
+        '  title: $title,\n'
+        '  content: $content,\n'
+        '  location: $location,\n'
+        '  deadline: $deadline,\n'
+        '  userId: $userId,\n'
+        '  skillIds: $skillIds,\n'
+        '  assignedUserId: $assignedUserId,\n'
+        '}';
   }
 }

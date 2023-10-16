@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:share_your_skills/views/show_post_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
+import 'package:share_your_skills/models/post.dart';
 class AddEventPage extends StatefulWidget {
   const AddEventPage({Key? key});
 
@@ -18,6 +19,12 @@ class _AddEventPageState extends State<AddEventPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      
+      child:RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(Duration(seconds: 1));
+          setState(() {});
+        },
       child: Scaffold(
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +44,8 @@ class _AddEventPageState extends State<AddEventPage> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) =>
-                          CreateEventPage(), // Navigate to the CreateEventPage
+                          CreateEventPage(),
+
                     ),
                   );
                 },
@@ -125,7 +133,7 @@ class _AddEventPageState extends State<AddEventPage> {
                         final post = postViewModel.userPastPosts[index];
                         return GestureDetector(
                           onTap: () {
-                            Navigator.of(context).push(
+                            Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
                                 builder: (context) => ShowPostPage(post: post),
                               ),
@@ -144,6 +152,7 @@ class _AddEventPageState extends State<AddEventPage> {
               ),
           ],
         ),
+      ),
       ),
     );
   }

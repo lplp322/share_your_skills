@@ -102,9 +102,7 @@ class PostApiService {
           await http.post(url, headers: headers, body: jsonEncode(body));
 
       if (response.statusCode == 201) {
-        // Successfully created a new post
-        final postId = response.body; // Using response.body as the postId
-        return post;
+        return await getPost(response.body);
       } else {
         // Handle other status codes as needed
         return post;
@@ -117,9 +115,9 @@ class PostApiService {
 
   Future<Post> getPost(String postId) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/getPost'),
-        body: json.encode({'postId': postId}),
+      final response = await http.get(
+        Uri.parse(
+            '$baseUrl/getPost?postId=$postId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${user.token}',
@@ -145,13 +143,12 @@ class PostApiService {
 
   Future<String> findSkillIdByName(String skillName) async {
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/getSkillId'),
+      final response = await http.get(
+        Uri.parse('http://localhost:8000/skills/getSkillId?name=$skillName'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${user.token}',
         },
-        body: json.encode({'name': skillName}),
       );
 
       if (response.statusCode == 200) {
