@@ -105,8 +105,12 @@ export async function deleteOne(
       throw new Error("Skill not found");
     }
 
-    user.skillIds = user.skillIds?.filter((id) => id !== skillId);
-    skill.users = skill.users?.filter((id) => id !== userId);
+    user.skillIds = user.skillIds?.filter(
+      (id) => id.toString() !== skillId.toString()
+    );
+    skill.users = skill.users?.filter(
+      (id) => id.toString() !== userId.toString()
+    );
 
     await user.save();
     await skill.save();
@@ -129,7 +133,7 @@ export async function forceAddSkillToDB(skill: ISkill) {
   try {
     const newSkill = new SkillModel({
       name: skill.name,
-      imageURL: skill.imageURL,
+      imageURL: skill.icon,
       users: skill.users,
     });
     await newSkill.save();

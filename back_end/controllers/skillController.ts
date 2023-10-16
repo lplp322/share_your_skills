@@ -33,7 +33,8 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getSkillId = async (req: Request, res: Response) => {
   try {
-    const skillId = await skillService.getSkillId(req.body.name);
+    const skillId = await skillService.getSkillId(req.query.name as string);
+
     res.status(messages.SUCCESSFUL).send(skillId);
   } catch (err) {
     return res
@@ -56,9 +57,10 @@ export const getSkills = async (req: Request, res: Response) => {
 
 export const deleteOne = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId(req.params.userId);
-    const skillId = new Types.ObjectId(req.params.skillId);
+    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const skillId = new Types.ObjectId(req.query.skillId as string);
     await skillService.deleteOne(userId, skillId);
+    res.status(messages.SUCCESSFUL_DELETE).send("Skill deleted");
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)
@@ -83,7 +85,7 @@ export const forceAddSkillToDB = async (req: Request, res: Response) => {
   try {
     const skill: ISkill = {
       name: req.body.name,
-      imageURL: req.body.imageURL,
+      icon: req.body.imageURL,
       users: [],
     };
     const skill_id = await skillService.forceAddSkillToDB(skill);

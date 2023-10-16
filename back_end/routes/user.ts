@@ -17,6 +17,7 @@ module.exports = function (app: Express) {
 
   app.delete("/users", auth, userController.deleteAll);
 
+  // TODO : ALL of the following should be made with a PUT request
   app.post("/users/changeAddress", auth, userController.changeAddress);
   app.post("/users/changeName", auth, userController.changeName);
   app.post("/users/changeLogin", auth, userController.changeLogin);

@@ -18,7 +18,7 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getPost = async (req: Request, res: Response) => {
   try {
-    const postId = new Types.ObjectId(req.body.postId as string);
+    const postId = new Types.ObjectId(req.query.postId as string);
     const post = await postServices.getPost(postId);
     res.status(messages.SUCCESSFUL).send(post);
   } catch (err) {
@@ -76,7 +76,7 @@ export const getPastAssignedPosts = async (req: Request, res: Response) => {
 
 export const getPostsBySkill = async (req: Request, res: Response) => {
   try {
-    const skillId = new Types.ObjectId(req.body.skillId as string);
+    const skillId = new Types.ObjectId(req.query.skillId as string);
     const posts = await postServices.getPostsBySkill(skillId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -168,37 +168,43 @@ export const assignOne = async (req: Request, res: Response) => {
     const assignedUserId = new Types.ObjectId((req as CustomRequest).user_id);
     const postId = new Types.ObjectId(req.body.postId);
 
-    const userSkills = await skillServices.getSkills(assignedUserId);
-    const post = await postServices.getPost(postId);
-
-    if (!post) {
-      throw new Error("Post not found");
-    }
-    if (!userSkills) {
-      throw new Error("User skills not found");
-    }
-    if (!post.skillIds) {
-      throw new Error("Post skills not found");
-    }
-
-    // the assigned user cannot be the post owner
-    if (post.userId.toString() === assignedUserId.toString()) {
-      throw new Error("Cannot assign post to owner");
-    }
-
-    // verify that users skills match at least one post skills
-    let found = false;
-    for (const userSkill of userSkills) {
-      if (post.skillIds.includes(userSkill._id)) {
-        found = true;
-        break;
+    return Promise.all([
+      postServices.getPost(postId),
+      skillServices.getSkills(assignedUserId),
+    ]).then(([post, userSkills]) => {
+      if (!post) {
+        throw new Error("Post not found");
       }
-    }
-    if (!found) {
-      throw new Error("User skills do not match post skills");
-    }
-    await postServices.updateAssignedUser(postId, assignedUserId);
-    res.status(messages.SUCCESSFUL_UPDATE).send("Post assigned");
+      if (!userSkills) {
+        throw new Error("User skills not found");
+      }
+      if (!post.skillIds) {
+        throw new Error("Post skills not found");
+      }
+
+      // the assigned user cannot be the post owner
+      if (post.userId.toString() === assignedUserId.toString()) {
+        throw new Error("Cannot assign post to owner");
+      }
+
+      // verify that users skills match at least one post skills
+      let found = false;
+      for (const userSkill of userSkills) {
+        if (post.skillIds.includes(userSkill._id)) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        throw new Error("User skills do not match post skills");
+      }
+
+      return postServices
+        .updateAssignedUser(postId, assignedUserId)
+        .then(() => {
+          res.status(messages.SUCCESSFUL_UPDATE).send("Post assigned");
+        });
+    });
   } catch (err) {
     return res
       .status(messages.INTERNAL_SERVER_ERROR)

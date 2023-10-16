@@ -9,6 +9,7 @@ module.exports = function (app: Express) {
 
   app.get("/skills/getSkills", auth, skillController.getSkills);
 
+  // TODO : should be a PUT request
   app.post("/skills/addSkill", auth, skillController.createOne);
 
   //   app.delete("/skills/modifySkill", auth, skillController.modifyOne);
