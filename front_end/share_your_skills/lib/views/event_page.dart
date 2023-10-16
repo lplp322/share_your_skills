@@ -3,22 +3,21 @@ import 'package:share_your_skills/components/event_card.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/views/show_post_page.dart';
+import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 
 class EventPage extends StatefulWidget {
-  const EventPage({Key? key}) : super(key: key);
+  const EventPage({Key? key});
 
   @override
   State<EventPage> createState() => _EventPageState();
 }
 
 class _EventPageState extends State<EventPage> {
-  bool currentEventsExpanded = true; // Track the state of current events.
-  bool completedEventsExpanded = true; // Track the state of completed events.
+  bool currentEventsExpanded = true; 
+  bool completedEventsExpanded = true; 
 
   @override
   Widget build(BuildContext context) {
-    final postViewModel = Provider.of<PostViewModel>(context, listen: false);
-
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -45,8 +44,10 @@ class _EventPageState extends State<EventPage> {
             ),
             if (currentEventsExpanded)
               Expanded(
-                child: Consumer<PostViewModel>(
-                  builder: (context, postViewModel, child) {
+                child: Consumer<UserViewModel>(
+                  builder: (context, userViewModel, child) {
+                    final postViewModel = userViewModel.postViewModel;
+                    print(postViewModel.userAssignedPosts.length);
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: postViewModel.userAssignedPosts.length,
@@ -93,8 +94,9 @@ class _EventPageState extends State<EventPage> {
             ),
             if (completedEventsExpanded)
               Expanded(
-                child: Consumer<PostViewModel>(
-                  builder: (context, postViewModel, child) {
+                child: Consumer<UserViewModel>(
+                  builder: (context, userViewModel, child) {
+                    final postViewModel = userViewModel.postViewModel;
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: postViewModel.userAssignedPosts.length,

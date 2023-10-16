@@ -3,9 +3,11 @@ import 'package:share_your_skills/components/event_card.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/views/show_post_page.dart';
+import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 
 class AddEventPage extends StatefulWidget {
-  const AddEventPage({Key? key}) : super(key: key);
+
+  const AddEventPage({Key? key});
 
   @override
   State<AddEventPage> createState() => _AddEventPageState();
@@ -17,8 +19,6 @@ class _AddEventPageState extends State<AddEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    final postViewModel = Provider.of<PostViewModel>(context);
-
     return SafeArea(
       child: Scaffold(
         body: Column(
@@ -62,24 +62,29 @@ class _AddEventPageState extends State<AddEventPage> {
             // Placeholder for Ongoing Posts list (using userAssignedPosts for now)
             if (ongoingPostsExpanded)
               Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: postViewModel.userAssignedPosts.length,
-                  itemBuilder: (context, index) {
-                    final post = postViewModel.userAssignedPosts[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ShowPostPage(post: post),
+                child: Consumer<UserViewModel>(
+                  builder: (context, userViewModel, child) {
+                    final postViewModel = userViewModel.postViewModel;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: postViewModel.userAssignedPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = postViewModel.userAssignedPosts[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ShowPostPage(post: post),
+                              ),
+                            );
+                          },
+                          child: EventCard(
+                            title: post.title,
+                            location: post.location,
+                            date: post.deadline,
                           ),
                         );
                       },
-                      child: EventCard(
-                        title: post.title,
-                        location: post.location,
-                        date: post.deadline,
-                      ),
                     );
                   },
                 ),
@@ -107,24 +112,29 @@ class _AddEventPageState extends State<AddEventPage> {
             // Placeholder for Past Posts list (using userAssignedPosts for now)
             if (pastPostsExpanded)
               Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: postViewModel.userAssignedPosts.length,
-                  itemBuilder: (context, index) {
-                    final post = postViewModel.userAssignedPosts[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => ShowPostPage(post: post),
+                child: Consumer<UserViewModel>(
+                  builder: (context, userViewModel, child) {
+                    final postViewModel = userViewModel.postViewModel;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: postViewModel.userAssignedPosts.length,
+                      itemBuilder: (context, index) {
+                        final post = postViewModel.userAssignedPosts[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ShowPostPage(post: post),
+                              ),
+                            );
+                          },
+                          child: EventCard(
+                            title: post.title,
+                            location: post.location,
+                            date: post.deadline,
                           ),
                         );
                       },
-                      child: EventCard(
-                        title: post.title,
-                        location: post.location,
-                        date: post.deadline,
-                      ),
                     );
                   },
                 ),

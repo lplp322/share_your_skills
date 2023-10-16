@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context,
-        listen: true); // Get the UserViewModel instance
+        listen: true); 
     errorMessage = userViewModel
         .loginErrorMessage; // Get the error message from the UserViewModelƒ
     return Scaffold(

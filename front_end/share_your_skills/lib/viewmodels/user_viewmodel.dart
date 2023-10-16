@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/services/user_api_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -8,6 +9,7 @@ import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
+import 'package:share_your_skills/models/post_manager.dart';
 
 class UserViewModel extends ChangeNotifier {
   User? _user;
@@ -16,10 +18,14 @@ class UserViewModel extends ChangeNotifier {
   final UserApiService _userApiService;
   final BuildContext context;
   late SharedPreferences _prefs;
+  late PostViewModelManager postViewModelManager;
   late PostViewModel postViewModel;
-  UserViewModel(this._userApiService, this.context) {
+  UserViewModel(
+    this._userApiService,
+    this.context,
+  ) {
     initSharedPrefs();
-    postViewModel = PostViewModel(_user);
+    postViewModelManager = PostViewModelManager();
   }
 
   User? get user => _user;
@@ -109,9 +115,10 @@ class UserViewModel extends ChangeNotifier {
         if (!JwtDecoder.isExpired(token)) {
           _user = loggedInUser;
           loginErrorMessage = null;
-          postViewModel = PostViewModel(_user);
-          await postViewModel.fetchUserAssignedPosts(_user!);
-
+          postViewModelManager.onUserLogin(loggedInUser);
+          postViewModel =
+              postViewModelManager.userPostViewModels[loggedInUser]!;
+          postViewModel.fetchUserAssignedPosts();
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
           Navigator.of(context).pushReplacement(
@@ -139,11 +146,9 @@ class UserViewModel extends ChangeNotifier {
   }
 
   void logout(BuildContext context) {
+    postViewModel.fetchUserAssignedPosts();
     _user = null;
     _prefs.remove('token');
-
-    postViewModel.clearAssignedPosts();
-
     notifyListeners();
   }
 }

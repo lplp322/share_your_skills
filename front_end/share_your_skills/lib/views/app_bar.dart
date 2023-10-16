@@ -6,8 +6,8 @@ import 'package:share_your_skills/views/chat_page.dart';
 import 'package:share_your_skills/views/event_page.dart';
 import 'package:share_your_skills/views/home_page.dart';
 import 'package:share_your_skills/views/profile_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_your_skills/models/app_state.dart';
+import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 
 class AppBar extends StatefulWidget {
   final token;
@@ -45,7 +45,7 @@ class _AppBarState extends State<AppBar> {
       bottomNavigationBar: Consumer<AppState>(
         builder: (context, appState, _) {
           return BottomNavigationBar(
-             type: BottomNavigationBarType.fixed,
+            type: BottomNavigationBarType.fixed,
             currentIndex: appState.selectedIndex,
             onTap: (int newIndex) {
               // Use the provided callback to update the state of the app
@@ -86,9 +86,13 @@ class _AppBarState extends State<AppBar> {
   Widget _buildPage(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return EventPage();
+        return EventPage(
+     
+        );
       case 1:
-        return AddEventPage();
+        return AddEventPage(
+   
+        );
       case 2:
         return HomePage();
       case 3:

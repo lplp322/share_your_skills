@@ -5,16 +5,19 @@ import 'package:share_your_skills/models/post.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class PostApiService {
-  final String token;
-  PostApiService(this.token);
+   User user;
+  PostApiService(this.user){
+      print('PostAPiService initialized');
+  }
 
-  Future<List<Post>> getUserAssignedPosts(String userId) async {
+  Future<List<Post>> getUserAssignedPosts() async {
     try {
+       print("API for fetch is called");
       final response = await http.get(
         Uri.parse('http://localhost:8000/posts/getAssignedPosts'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer ${user.token}",
         },
       );
 
