@@ -13,6 +13,12 @@ class PostViewModel extends ChangeNotifier {
 
   List<Post> _userAssignedPosts = [];
   List<Post> get userAssignedPosts => _userAssignedPosts;
+  List<Post> _userPosts = [];
+  List<Post> get userPosts => _userPosts;
+  List<Post> _userPastPosts = [];
+  List<Post> get userPastPosts => _userPastPosts;
+  List<Post> _userCompletedPosts = [];
+  List<Post> get userCompletedPosts => _userCompletedPosts;
 
   Future<void> fetchUserAssignedPosts() async {
     try {
@@ -27,8 +33,34 @@ class PostViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchPosts() async {
+    try {
+      final posts = await postApiService.getPosts();
+      _userPosts.clear();
+      _userPosts = posts;
+
+      notifyListeners(); // Notify listeners when data changes
+    } catch (e) {
+      print('Error fetching user assigned posts: $e');
+    }
+  }
+
+// add post
+  Future<Post> addPost(Post post) async {
+    try {
+      final createdpost = await postApiService.addPost(post);
+      _userPosts.add(createdpost);
+      notifyListeners();
+      return createdpost;
+    } catch (e) {
+      print('Error adding post: $e');
+      return post;
+    }
+  }
+
   void clearAssignedPosts() {
     _userAssignedPosts.clear();
+    _userPosts.clear();
     print('Clearing userAssignedPosts');
     print('userAssignedPosts cleared, length: ${_userAssignedPosts.length}');
     notifyListeners(); // Notify listeners when data changes

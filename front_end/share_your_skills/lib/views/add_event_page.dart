@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:share_your_skills/components/event_card.dart';
-import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/views/show_post_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
-
+import 'package:share_your_skills/views/create_event_details_page.dart';
 class AddEventPage extends StatefulWidget {
-
   const AddEventPage({Key? key});
 
   @override
@@ -36,6 +34,12 @@ class _AddEventPageState extends State<AddEventPage> {
                 icon: Icon(Icons.add),
                 onPressed: () {
                   // Navigate to the Create Post Page
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CreateEventPage(), // Navigate to the CreateEventPage
+                    ),
+                  );
                 },
               ),
             ),
@@ -59,7 +63,7 @@ class _AddEventPageState extends State<AddEventPage> {
                 },
               ),
             ),
-            // Placeholder for Ongoing Posts list (using userAssignedPosts for now)
+
             if (ongoingPostsExpanded)
               Expanded(
                 child: Consumer<UserViewModel>(
@@ -67,9 +71,9 @@ class _AddEventPageState extends State<AddEventPage> {
                     final postViewModel = userViewModel.postViewModel;
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: postViewModel.userAssignedPosts.length,
+                      itemCount: postViewModel.userPosts.length,
                       itemBuilder: (context, index) {
-                        final post = postViewModel.userAssignedPosts[index];
+                        final post = postViewModel.userPosts[index];
                         return GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
@@ -99,9 +103,8 @@ class _AddEventPageState extends State<AddEventPage> {
                 ),
               ),
               trailing: IconButton(
-                icon: Icon(pastPostsExpanded
-                    ? Icons.expand_less
-                    : Icons.expand_more),
+                icon: Icon(
+                    pastPostsExpanded ? Icons.expand_less : Icons.expand_more),
                 onPressed: () {
                   setState(() {
                     pastPostsExpanded = !pastPostsExpanded;
@@ -117,9 +120,9 @@ class _AddEventPageState extends State<AddEventPage> {
                     final postViewModel = userViewModel.postViewModel;
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: postViewModel.userAssignedPosts.length,
+                      itemCount: postViewModel.userPastPosts.length,
                       itemBuilder: (context, index) {
-                        final post = postViewModel.userAssignedPosts[index];
+                        final post = postViewModel.userPastPosts[index];
                         return GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(

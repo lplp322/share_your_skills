@@ -34,6 +34,20 @@ class Post {
       skillIds: List<String>.from(json['skillIds']),
       assignedUserId: json['assignedUserId'],
     );
+    
   }
-  
+  // to json
+   Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'title': title,
+      'content': content,
+      'deadline': deadline.toIso8601String(),
+      'status': status,
+      'location': location,
+      'userId': userId,
+      'skillIds': skillIds,
+      'assignedUserId': assignedUserId,
+    };
+  }
 }

@@ -31,54 +31,56 @@ class _AppBarState extends State<AppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Consumer<AppState>(
+    return SafeArea(
+      child: Scaffold(
+        body: Center(
+          child: Consumer<AppState>(
+            builder: (context, appState, _) {
+              // Use the selected index to determine the body widget
+              Widget selectedPage = _buildPage(appState.selectedIndex);
+    
+              return selectedPage;
+            },
+          ),
+        ),
+        bottomNavigationBar: Consumer<AppState>(
           builder: (context, appState, _) {
-            // Use the selected index to determine the body widget
-            Widget selectedPage = _buildPage(appState.selectedIndex);
-
-            return selectedPage;
+            return BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: appState.selectedIndex,
+              onTap: (int newIndex) {
+                // Use the provided callback to update the state of the app
+                setState(() {
+                  appState.selectedIndex = newIndex;
+                });
+              },
+              selectedItemColor: Colors.green, // Color for selected item
+              unselectedItemColor: Colors.black, // Color for unselected items
+              items: const [
+                BottomNavigationBarItem(
+                  label: 'My Events',
+                  icon: Icon(Icons.event),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Add Event',
+                  icon: Icon(Icons.add),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Home',
+                  icon: Icon(Icons.home),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Chat',
+                  icon: Icon(Icons.chat),
+                ),
+                BottomNavigationBarItem(
+                  label: 'Profile',
+                  icon: Icon(Icons.person),
+                ),
+              ],
+            );
           },
         ),
-      ),
-      bottomNavigationBar: Consumer<AppState>(
-        builder: (context, appState, _) {
-          return BottomNavigationBar(
-            type: BottomNavigationBarType.fixed,
-            currentIndex: appState.selectedIndex,
-            onTap: (int newIndex) {
-              // Use the provided callback to update the state of the app
-              setState(() {
-                appState.selectedIndex = newIndex;
-              });
-            },
-            selectedItemColor: Colors.green, // Color for selected item
-            unselectedItemColor: Colors.black, // Color for unselected items
-            items: const [
-              BottomNavigationBarItem(
-                label: 'My Events',
-                icon: Icon(Icons.event),
-              ),
-              BottomNavigationBarItem(
-                label: 'Add Event',
-                icon: Icon(Icons.add),
-              ),
-              BottomNavigationBarItem(
-                label: 'Home',
-                icon: Icon(Icons.home),
-              ),
-              BottomNavigationBarItem(
-                label: 'Chat',
-                icon: Icon(Icons.chat),
-              ),
-              BottomNavigationBarItem(
-                label: 'Profile',
-                icon: Icon(Icons.person),
-              ),
-            ],
-          );
-        },
       ),
     );
   }

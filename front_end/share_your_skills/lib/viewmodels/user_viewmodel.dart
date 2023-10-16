@@ -119,6 +119,7 @@ class UserViewModel extends ChangeNotifier {
           postViewModel =
               postViewModelManager.userPostViewModels[loggedInUser]!;
           postViewModel.fetchUserAssignedPosts();
+          postViewModel.fetchPosts();
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
           Navigator.of(context).pushReplacement(
@@ -144,7 +145,14 @@ class UserViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
+  Future <void> addPost(Post post) async {
+    try {
+      await postViewModel.addPost(post);
+      notifyListeners();
+    } catch (e) {
+      print('Error adding post: $e');
+    }
+  }
   void logout(BuildContext context) {
     postViewModel.fetchUserAssignedPosts();
     _user = null;

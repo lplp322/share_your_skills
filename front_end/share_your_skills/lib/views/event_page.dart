@@ -99,9 +99,9 @@ class _EventPageState extends State<EventPage> {
                     final postViewModel = userViewModel.postViewModel;
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: postViewModel.userAssignedPosts.length,
+                      itemCount: postViewModel.userCompletedPosts.length,
                       itemBuilder: (context, index) {
-                        final post = postViewModel.userAssignedPosts[index];
+                        final post = postViewModel.userCompletedPosts[index];
                         return GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
