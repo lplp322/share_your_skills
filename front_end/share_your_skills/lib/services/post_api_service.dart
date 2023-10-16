@@ -4,6 +4,7 @@ import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:share_your_skills/models/skill.dart';
+
 class PostApiService {
   User user;
   String baseUrl = 'http://localhost:8000/posts';
@@ -86,6 +87,7 @@ class PostApiService {
 
   // add post
   Future<Post> addPost(Post post) async {
+    print("API - Add post is called");
     final url =
         Uri.parse('$baseUrl/addPost'); // Replace with your actual API endpoint
     final headers = {
@@ -102,8 +104,7 @@ class PostApiService {
       if (response.statusCode == 201) {
         // Successfully created a new post
         final postId = response.body; // Using response.body as the postId
-        final createdPost = await getPost(postId);
-        return createdPost;
+        return post;
       } else {
         // Handle other status codes as needed
         return post;
@@ -141,30 +142,28 @@ class PostApiService {
       throw Exception('Failed to load post. Error: $e');
     }
   }
-    Future<List<Skill>> GetSkills() async {
-    try {
-      final response = await http.get(Uri.parse('$baseUrl/skills'));
-
-      if (response.statusCode == 200) {
-        final List<dynamic> skillList = json.decode(response.body);
-        final skills = skillList.map((json) => Skill.fromJson(json)).toList();
-        return skills;
-      } else {
-        throw Exception('Failed to load skills. Status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Failed to load skills: $e');
-    }
-  }
 
   Future<String> findSkillIdByName(String skillName) async {
-    final skills = await GetSkills();
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/getSkillId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${user.token}',
+        },
+        body: json.encode({'name': skillName}),
+      );
 
-    final skill = skills.firstWhere(
-      (s) => s.name == skillName,
-      orElse: () => Skill(id: '', name: ''),
-    );
-
-    return skill.id;
+      if (response.statusCode == 200) {
+        final skillId = response.body;
+        print('Skill ID for $skillName: $skillId');
+        return skillId;
+      } else {
+        throw Exception(
+            'Failed to load skill ID. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load skill ID: $e');
+    }
   }
 }

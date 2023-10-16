@@ -114,7 +114,6 @@ class UserApiService {
           "65256b8601db3b3814171c5f": "Cleaning",
           "65256b7a01db3b3814171c5d": "Gardening",
           "65256b7101db3b3814171c5b": "Cooking",
-          // Add more skill ID to name mappings as needed
         };
 
         final List<String> userSkills = skillIds?.map((skillId) {

@@ -48,6 +48,7 @@ class PostViewModel extends ChangeNotifier {
 // add post
   Future<Post> addPost(Post post) async {
     try {
+      print("PostViewModel - Add post is called");
       final createdpost = await postApiService.addPost(post);
       _userPosts.add(createdpost);
       notifyListeners();
@@ -57,7 +58,17 @@ class PostViewModel extends ChangeNotifier {
       return post;
     }
   }
-
+/*
+  Future<String> fetchSkillIdByName(String name) async {
+    try {
+      final skillId = await postApiService.findSkillIdByName(name);
+      return skillId;
+    } catch (e) {
+      print('Error fetching skill id: $e');
+      throw 'Failed to fetch skill ID'; // Throw an exception on error
+    }
+  }
+*/
   void clearAssignedPosts() {
     _userAssignedPosts.clear();
     _userPosts.clear();
