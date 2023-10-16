@@ -23,98 +23,100 @@ class _LoginPageState extends State<LoginPage> {
         listen: true); 
     errorMessage = userViewModel
         .loginErrorMessage; // Get the error message from the UserViewModelƒ
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Login Page',
-                style: TextStyle(fontSize: 30),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: "Email",
-                    errorText: _isNotValidate ? "Enter Proper Info" : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    return SafeArea(
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Login Page',
+                  style: TextStyle(fontSize: 30),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextField(
+                    controller: emailController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "Email",
+                      errorText: _isNotValidate ? "Enter Proper Info" : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                child: TextField(
-                  controller: passwordController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: "Password",
-                    errorText: _isNotValidate ? "Enter Proper Info" : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextField(
+                    controller: passwordController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: "Password",
+                      errorText: _isNotValidate ? "Enter Proper Info" : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
                     ),
+                    obscureText: true,
                   ),
-                  obscureText: true,
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              // wrap the errormassage in a consumer to lsiten the changes of userviewmodel
-              Consumer<UserViewModel>(
-                builder: (context, userViewModel, _) {
-                  return errorMessage != null
-                      ? Text(
-                          errorMessage!,
-                          style: TextStyle(
-                            color: Colors.red,
-                          ), // Display error in red text
-                        )
-                      : SizedBox();
-                },
-              ),
-
-              ElevatedButton(
-                onPressed: () {
-                  userViewModel.loginUser(
-                    emailController.text,
-                    passwordController.text,
-                    context,
-                  );
-                },
-                child: Text(
-                  'Login',
-                  style: TextStyle(fontSize: 20),
+                SizedBox(
+                  height: 10,
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegistrationPage()),
-                  );
-                },
-                child: Text('Register'),
-              ),
-            ],
+                // wrap the errormassage in a consumer to lsiten the changes of userviewmodel
+                Consumer<UserViewModel>(
+                  builder: (context, userViewModel, _) {
+                    return errorMessage != null
+                        ? Text(
+                            errorMessage!,
+                            style: TextStyle(
+                              color: Colors.red,
+                            ), // Display error in red text
+                          )
+                        : SizedBox();
+                  },
+                ),
+    
+                ElevatedButton(
+                  onPressed: () {
+                    userViewModel.loginUser(
+                      emailController.text,
+                      passwordController.text,
+                      context,
+                    );
+                  },
+                  child: Text(
+                    'Login',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegistrationPage()),
+                    );
+                  },
+                  child: Text('Register'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
