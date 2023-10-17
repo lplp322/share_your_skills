@@ -13,7 +13,7 @@ class SkillApiService {
   Future<List<Skill>> getAllSkills() async {
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.10.165:8000/skills'),
+        Uri.parse('http://localhost:8000/skills'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",

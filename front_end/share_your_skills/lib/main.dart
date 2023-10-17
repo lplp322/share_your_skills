@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<UserApiService>(
-          create: (context) => UserApiService('http://192.168.10.165:8000/users'),
+          create: (context) => UserApiService('http://localhost:8000/users'),
         ),
         ChangeNotifierProvider<UserViewModel>(
           create: (context) => UserViewModel(

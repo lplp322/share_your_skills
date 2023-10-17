@@ -252,7 +252,7 @@ class UserApiService {
           "Authorization": "Bearer $token",
       };
       final uri = Uri.http(
-        '192.168.10.165:8000', 
+        'localhost:8000', 
         '/skills/addSkill', 
         {"skillId": skillId}
       );
@@ -288,7 +288,7 @@ class UserApiService {
           "Authorization": "Bearer $token",
       };
       final uri = Uri.http(
-        '192.168.10.165:8000', 
+        'localhost:8000', 
         '/skills/deleteSkill', 
         {"skillId": skillId}
       );
@@ -330,7 +330,7 @@ class UserApiService {
 
         for (final skillData in data) {
           final Skill skill = Skill.fromJson(skillData);
-          skillMap[skill.skillId] = skill.name;
+          skillMap[skill.id] = skill.name;
         }
 
         return skillMap;
