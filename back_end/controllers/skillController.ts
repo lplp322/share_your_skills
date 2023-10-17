@@ -11,7 +11,7 @@ export const createOne = async (req: Request, res: Response) => {
   try {
     // we convert the string to an ObjectId
     const userId = new Types.ObjectId((req as CustomRequest).user_id);
-    const skillId = new Types.ObjectId(req.body.skillId);
+    const skillId = new Types.ObjectId(req.query.skillId as string);
 
     await skillService.createOne(userId, skillId);
     res.status(messages.SUCCESSFUL_CREATION).send("Skill added");
