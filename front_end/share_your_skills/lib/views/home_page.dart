@@ -64,11 +64,19 @@ class _HomePageState extends State<HomePage> {
                     itemCount: postViewModel.displayPosts.length,
                     itemBuilder: (context, index) {
                       final post = postViewModel.displayPosts[index];
-                      return EventCard(
+                      return GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => ShowPostPage(post: post, isEditable: false,),
+                              ),
+                            );
+                          }, 
+                      child:EventCard(
                         title: post.title,
                         location: post.location,
                         date: post.deadline,
-                      );
+                      ));
                     },
                   );
                 },
