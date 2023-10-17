@@ -6,28 +6,6 @@ const postStatus = require("../config/postStatus");
 export async function getAll() {
   try {
     const posts = await PostModel.find({});
-    for (const post of posts) {
-      // get the current time of the day
-      const currentTime = new Date().getTime();
-      // get the deadline of the post
-      const deadline = post.deadline.getTime();
-      // if the post is expired, update the status
-      if (currentTime > deadline) {
-        if (post.status === postStatus.ASSIGNED) {
-          await PostModel.updateOne(
-            { _id: post._id },
-            { status: postStatus.COMPLETED },
-            { new: true }
-          );
-        } else if (post.status === postStatus.PENDING) {
-          await PostModel.updateOne(
-            { _id: post._id },
-            { status: postStatus.EXPIRED },
-            { new: true }
-          );
-        }
-      }
-    }
     return posts;
   } catch (error) {
     throw error;
@@ -142,7 +120,6 @@ export async function getRecommendedPosts(userId: Types.ObjectId) {
         }
       }
     }
-
     return recommendedPosts;
   } catch (error) {
     return null;
@@ -161,6 +138,8 @@ export async function createOne(post: IPost) {
 export async function updateOne(id: Types.ObjectId, post: IPost) {
   try {
     await PostModel.updateOne({ _id: id }, post);
+    const postUpdated = await PostModel.find({ _id: id });
+    updateStatus(postUpdated[0]);
   } catch (error) {
     throw error;
   }
@@ -196,5 +175,33 @@ export async function deleteAll() {
     await PostModel.deleteMany({});
   } catch (error) {
     throw error;
+  }
+}
+
+export async function updateStatus(
+  post: Document<unknown, {}, IPost> &
+    IPost & {
+      _id: Types.ObjectId;
+    }
+) {
+  // get the current time of the day
+  const currentTime = new Date().getTime();
+  // get the deadline of the post
+  const deadline = post.deadline.getTime();
+  // if the post is expired, update the status
+  if (currentTime > deadline) {
+    if (post.status === postStatus.ASSIGNED) {
+      await PostModel.updateOne(
+        { _id: post._id },
+        { status: postStatus.COMPLETED },
+        { new: true }
+      );
+    } else if (post.status === postStatus.PENDING) {
+      await PostModel.updateOne(
+        { _id: post._id },
+        { status: postStatus.EXPIRED },
+        { new: true }
+      );
+    }
   }
 }
