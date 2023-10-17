@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
+import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 
 class ShowPostPage extends StatefulWidget {
   final Post post;
@@ -13,7 +15,9 @@ class ShowPostPage extends StatefulWidget {
 }
 
 class _ShowPostPageState extends State<ShowPostPage> {
-  void deletePost(BuildContext context) {
+  void deletePost(BuildContext context) async {
+    final postViewModel =
+        Provider.of<UserViewModel>(context, listen: false).postViewModel;
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -29,7 +33,8 @@ class _ShowPostPageState extends State<ShowPostPage> {
             ),
             TextButton(
               child: Text("Delete"),
-              onPressed: () {
+              onPressed: () async {
+                await postViewModel.deletePost(widget.post.id!);
                 Navigator.of(dialogContext).pop(); // Close the dialog
                 Navigator.of(context).pop(); // Close the ShowPostPage
               },
@@ -73,7 +78,8 @@ class _ShowPostPageState extends State<ShowPostPage> {
                     style: TextStyle(fontSize: 30),
                   ),
                   Spacer(),
-                  if (widget.isEditable) // Only show the "Edit" button if the post is editable
+                  if (widget
+                      .isEditable) // Only show the "Edit" button if the post is editable
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
@@ -136,10 +142,12 @@ class _ShowPostPageState extends State<ShowPostPage> {
                       ),
                     ),
                   ),
-                  if (widget.isEditable) // Only show the "Delete" button if the post is editable
+                  if (widget
+                      .isEditable) // Only show the "Delete" button if the post is editable
                     ElevatedButton(
                       onPressed: () {
-                        deletePost(context); // Prompt the user for post deletion
+                        deletePost(
+                            context); // Prompt the user for post deletion
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(

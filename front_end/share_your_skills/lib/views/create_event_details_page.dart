@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import for date formatting
 import 'package:share_your_skills/models/post.dart';
+import 'package:share_your_skills/models/skill.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +23,10 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
   String? selectedSkill;
   Post? existingPost;
 
-  final List<String> predefinedSkills = ['Skill A', 'Skill B', 'Skill C'];
+  final List<String> predefinedSkills = ['Cleaning', 'Cooking', 'Gardening'];
+
+  String selectedDateText = '';
+  String selectedTimeText = '';
 
   @override
   void initState() {
@@ -36,8 +41,10 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
   }
 
   void fetchExistingPost(String postId) {
-    final postViewModel = Provider.of<UserViewModel>(context, listen: false).postViewModel;
-    final post = postViewModel.userPosts.firstWhere((post) => post.id == postId);
+    final postViewModel =
+        Provider.of<UserViewModel>(context, listen: false).postViewModel;
+    final post =
+        postViewModel.userPosts.firstWhere((post) => post.id == postId);
 
     titleController.text = post.title;
     contentController.text = post.content;
@@ -108,11 +115,20 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                     if (date != null) {
                       setState(() {
                         selectedDate = date;
+                        selectedDateText = DateFormat('MMM dd, yyyy')
+                            .format(date); // Format the date
                       });
                     }
                   },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  ),
                   child: Text("Select Date"),
                 ),
+                Text(
+                    'Selected Date: $selectedDateText'), // Display selected date
+
                 SizedBox(height: 16),
                 Text('Time', style: TextStyle(fontSize: 20)),
                 ElevatedButton(
@@ -125,14 +141,23 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                     if (time != null) {
                       setState(() {
                         selectedTime = time;
+                        selectedTimeText =
+                            time.format(context); // Format the time
                       });
                     }
                   },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  ),
                   child: Text("Select Time"),
                 ),
+                Text(
+                    'Selected Time: $selectedTimeText'), // Display selected time
+
                 SizedBox(height: 16),
                 Text('Skill', style: TextStyle(fontSize: 20)),
-                Column(
+                Row(
                   children: predefinedSkills.map((skill) {
                     return Row(
                       children: <Widget>[
@@ -156,15 +181,59 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                     if (selectedSkill == null) {
                       return;
                     }
-                    setState(() {
-                      // Handle button press and post creation or update here
-                    });
+
+                    if (widget.postId != null) {
+                      // Update an existing post
+                      Post updatedPost = Post(
+                        id: widget.postId, // Include the post ID for updating
+                        title: titleController.text,
+                        content: contentController.text,
+                        location: locationController.text,
+                        deadline: DateTime(
+                            selectedDate.year,
+                            selectedDate.month,
+                            selectedDate.day,
+                            selectedTime.hour,
+                            selectedTime.minute),
+                        userId: existingPost?.userId,
+                        skillIds: [selectedSkill!],
+                        assignedUserId: existingPost?.assignedUserId,
+                      );
+                      //update post
+                      await postViewModel.updatePost(updatedPost);
+                    } else {
+                      // Create a new post
+                      final  skillId = await postViewModel.fetchSkillIdByName(selectedSkill!);
+                      Post newPost = Post(
+                        id: null,
+                        title: titleController.text,
+                        content: contentController.text,
+                        location: locationController.text,
+                        deadline: DateTime(
+                            selectedDate.year,
+                            selectedDate.month,
+                            selectedDate.day,
+                            selectedTime.hour,
+                            selectedTime.minute),
+                        skillIds: [skillId],
+                        userId: postViewModel.user?.userId!,
+                        assignedUserId: null
+                       
+                      );
+
+                    //create post
+                      await postViewModel.addPost(newPost);
+                    }
+
+                    Navigator.of(context).pop();
                   },
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
                   ),
-                  child: Text(widget.postId != null ? 'Save Changes' : 'Create'),
-                ),
+                  child:
+                      Text(widget.postId != null ? 'Save Changes' : 'Create'),
+                )
               ],
             ),
           ),

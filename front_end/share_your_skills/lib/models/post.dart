@@ -1,4 +1,3 @@
-import 'user.dart';
 class Post {
   String? id;
   String title;

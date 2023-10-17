@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:share_your_skills/components/event_card.dart';
-import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/views/show_post_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';

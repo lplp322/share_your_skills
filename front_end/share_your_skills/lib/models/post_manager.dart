@@ -1,7 +1,6 @@
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:flutter/foundation.dart';
-import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 class PostViewModelManager extends ChangeNotifier{
   Map<User, PostViewModel> userPostViewModels = {};
 

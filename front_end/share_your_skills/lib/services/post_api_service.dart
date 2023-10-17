@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/models/post.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:share_your_skills/models/skill.dart';
 
 class PostApiService {
   User user;
@@ -27,7 +25,7 @@ class PostApiService {
         final jsonResponse = jsonDecode(response.body);
         print(jsonResponse);
         if (jsonResponse is List) {
-          final posts = jsonResponse as List;
+          final posts = jsonResponse;
           for (var post in posts) {
             print(post["title"]);
           }
@@ -63,7 +61,7 @@ class PostApiService {
         final jsonResponse = jsonDecode(response.body);
         print(jsonResponse);
         if (jsonResponse is List) {
-          final posts = jsonResponse as List;
+          final posts = jsonResponse;
           for (var post in posts) {
             print(post["title"]);
           }
@@ -103,6 +101,33 @@ class PostApiService {
 
       if (response.statusCode == 201) {
         return await getPost(response.body);
+      } else {
+        // Handle other status codes as needed
+        return post;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return post;
+    }
+  }
+  // update post
+  Future<Post> updatePost(Post post) async {
+    print("API - Update post is called");
+    final url =
+        Uri.parse('$baseUrl/updatePost'); // Replace with your actual API endpoint
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${user.token}',
+    };
+
+    final body = post.toJson(); // Convert the Post object to JSON
+
+    try {
+      final response =
+          await http.put(url, headers: headers, body: jsonEncode(body));
+
+      if (response.statusCode == 201) {
+        return await getPost(post.id!);
       } else {
         // Handle other status codes as needed
         return post;
@@ -161,6 +186,27 @@ class PostApiService {
       }
     } catch (e) {
       throw Exception('Failed to load skill ID: $e');
+    }
+  }
+  //delet post
+  Future<void> deletePost(String postId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/deletePost?postId=$postId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${user.token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Post deleted successfully');
+      } else {
+        throw Exception(
+            'Failed to delete post. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete post: $e');
     }
   }
 }

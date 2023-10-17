@@ -58,6 +58,20 @@ class PostViewModel extends ChangeNotifier {
       return post;
     }
   }
+  // call update post
+  Future<Post> updatePost(Post post) async {
+    try {
+      print("PostViewModel - Update post is called");
+      final updatedpost = await postApiService.updatePost(post);
+      _userPosts.removeWhere((post) => post.id == updatedpost.id);
+      _userPosts.add(updatedpost);
+      notifyListeners();
+      return updatedpost;
+    } catch (e) {
+      print('Error updating post: $e');
+      return post;
+    }
+  }
 
   Future<String> fetchSkillIdByName(String name) async {
     try {
@@ -85,5 +99,15 @@ class PostViewModel extends ChangeNotifier {
     print('Clearing userAssignedPosts');
     print('userAssignedPosts cleared, length: ${_userAssignedPosts.length}');
     notifyListeners(); // Notify listeners when data changes
+  }
+  // call post delete
+  Future<void> deletePost(String postId) async {
+    try {
+      await postApiService.deletePost(postId);
+      _userPosts.removeWhere((post) => post.id == postId);
+      notifyListeners();
+    } catch (e) {
+      print('Error deleting post: $e');
+    }
   }
 }

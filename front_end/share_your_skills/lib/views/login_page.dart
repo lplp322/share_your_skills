@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import provider package
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart'; // Import your UserViewModel
 import 'package:share_your_skills/views/registration.dart';
-import 'package:share_your_skills/views/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key});

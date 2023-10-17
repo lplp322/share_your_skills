@@ -7,7 +7,6 @@ import 'package:share_your_skills/views/event_page.dart';
 import 'package:share_your_skills/views/home_page.dart';
 import 'package:share_your_skills/views/profile_page.dart';
 import 'package:share_your_skills/models/app_state.dart';
-import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 
 class AppBar extends StatefulWidget {
   final token;

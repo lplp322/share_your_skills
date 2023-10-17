@@ -172,7 +172,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   builder: (context, userViewModel, _) {
                     return errorMessage != null
                         ? Text(
-                            errorMessage!,
+                            errorMessage,
                             style: TextStyle(
                               color: Colors.red,
                             ),

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:share_your_skills/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 class UserApiService {
   final String baseUrl; // Replace with your API base URL
