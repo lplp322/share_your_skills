@@ -117,7 +117,6 @@ class _AddEventPageState extends State<AddEventPage> {
                 },
               ),
             ),
-            // Placeholder for Past Posts list (using userAssignedPosts for now)
             if (pastPostsExpanded)
               Expanded(
                 child: Consumer<UserViewModel>(

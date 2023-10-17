@@ -16,12 +16,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController houseNumberController = TextEditingController();
   List<String> selectedSkills = [];
   final Map<String, String> skillNameToId = {
-    "Cleaning": "65256b8601db3b3814171c5f",
-    "Cooking": "65256b7101db3b3814171c5b",
-    "Gardening": "65256b7a01db3b3814171c5d",
+    "Cleaning": "652e223fbf0dea6755b2198b",
+    "Cooking": "652e2246bf0dea6755b2198d",
+    "Gardening": "652e224cbf0dea6755b2198f",
     // Add more skills and their corresponding IDs here
   };
-
   List<String> predefinedSkills = [
     "Cleaning",
     "Cooking",
@@ -126,8 +125,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 Text("Select up to 3 skills:"),
                 Row(
                   children: predefinedSkills.map((skill) {
-                    final skillId =
-                        skillNameToId[skill] ?? ''; // Get the ID from the map
+                       final skillId =
+                      skillNameToId[skill] ?? ''; 
                     return Row(
                       children: [
                         Checkbox(
@@ -154,6 +153,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
+              
                     userViewModel.registerUser(
                       fullName: nameController.text,
                       email: emailController.text,

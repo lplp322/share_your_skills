@@ -165,6 +165,42 @@ class PostApiService {
       throw Exception('Failed to load post. Error: $e');
     }
   }
+  // get my past posts
+  Future<List<Post>> getMyPastPosts() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/getMyPastPosts'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${user.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        print(jsonResponse);
+        if (jsonResponse is List) {
+          final posts = jsonResponse;
+          for (var post in posts) {
+            print(post["title"]);
+          }
+          return jsonResponse
+              .map<Post>((postJson) => Post.fromJson(postJson))
+              .toList();
+        } else {
+          print('Unexpected response format. Response Body: ${response.body}');
+          return []; // Handle cases where the response format is not as expected
+        }
+      } else {
+        print(
+            'Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return []; // Handle the case where the server responds with an error
+      }
+    } catch (e) {
+      print('Posts API Error: $e');
+      return []; // Handle exceptions (e.g., network errors)
+    }
+  }
 
   Future<String> findSkillIdByName(String skillName) async {
     try {
@@ -207,6 +243,34 @@ class PostApiService {
       }
     } catch (e) {
       throw Exception('Failed to delete post: $e');
+    }
+  }
+  // get user name by id
+  Future<String> getUserNameById(String userId) async {
+     print("API - getUserNameById is called");
+    try {
+     
+      final response = await http.get(
+        Uri.parse('$baseUrl/getUser?userId=$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${user.token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // extract user name from response
+
+        final jsonData = json.decode(response.body);
+        final userName = jsonData['name'];
+        print('User name for $userId: $userName');
+        return userName;
+      } else {
+        throw Exception(
+            'Failed to load user name. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load user name: $e');
     }
   }
 }

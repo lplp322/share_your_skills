@@ -44,6 +44,18 @@ class PostViewModel extends ChangeNotifier {
       print('Error fetching user assigned posts: $e');
     }
   }
+  // fetch user past posts
+  Future<void> fetchUserPastPosts() async {
+    try {
+      final posts = await postApiService.getMyPastPosts();
+      _userPastPosts.clear();
+      _userPastPosts = posts;
+
+      notifyListeners(); // Notify listeners when data changes
+    } catch (e) {
+      print('Error fetching user assigned posts: $e');
+    }
+  }
 
 // add post
   Future<Post> addPost(Post post) async {
@@ -83,15 +95,6 @@ class PostViewModel extends ChangeNotifier {
     }
   }
 
-  void fetchUserPosts() async {
-    try {
-      await fetchPosts();
-      await fetchUserAssignedPosts();
-      notifyListeners(); // Notify listeners when data changes
-    } catch (e) {
-      print('Error fetching user posts: $e');
-    }
-  }
 
   void clearAssignedPosts() {
     _userAssignedPosts.clear();
@@ -108,6 +111,17 @@ class PostViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error deleting post: $e');
+    }
+  }
+  // call get user name by id
+  Future<String> getUserNameById(String userId) async {
+    try {
+      print("PostViewModel - getUserNameById is called");
+      final userName = await postApiService.getUserNameById(userId);
+      return userName;
+    } catch (e) {
+      print('Error fetching user name: $e');
+      throw 'Failed to fetch user name'; // Throw an exception on error
     }
   }
 }

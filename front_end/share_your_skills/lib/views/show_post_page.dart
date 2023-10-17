@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class ShowPostPage extends StatefulWidget {
   final Post post;
@@ -18,6 +19,7 @@ class _ShowPostPageState extends State<ShowPostPage> {
   void deletePost(BuildContext context) async {
     final postViewModel =
         Provider.of<UserViewModel>(context, listen: false).postViewModel;
+
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -58,6 +60,9 @@ class _ShowPostPageState extends State<ShowPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final formattedDate =
+        DateFormat('yyyy-MM-dd HH:mm').format(widget.post.deadline);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -73,17 +78,20 @@ class _ShowPostPageState extends State<ShowPostPage> {
                     },
                     icon: Icon(Icons.arrow_back),
                   ),
-                  Text(
-                    '${widget.post.title}',
-                    style: TextStyle(fontSize: 30),
+                  Flexible(
+                    child: Center(
+                      child: Text(
+                        '${widget.post.title}',
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    ),
                   ),
                   Spacer(),
-                  if (widget
-                      .isEditable) // Only show the "Edit" button if the post is editable
+                  if (widget.isEditable)
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        editPost(); // Navigate to the edit page
+                        editPost();
                       },
                     ),
                 ],
@@ -107,12 +115,12 @@ class _ShowPostPageState extends State<ShowPostPage> {
               ),
               SizedBox(height: 16.0),
               Text(
-                'Date: ${widget.post.deadline}',
+                'Date: $formattedDate',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
               Text(
-                'User ID: ${widget.post.userId}',
+                'User name: ${widget.post.userId}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
@@ -124,34 +132,14 @@ class _ShowPostPageState extends State<ShowPostPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle cancel button action
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(
-                          Color.fromARGB(255, 148, 71, 47)),
-                    ),
-                    child: Container(
-                      width: 150,
-                      child: Center(
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (widget
-                      .isEditable) // Only show the "Delete" button if the post is editable
+                  if (widget.isEditable)
                     ElevatedButton(
                       onPressed: () {
-                        deletePost(
-                            context); // Prompt the user for post deletion
+                        deletePost(context);
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.red), // Use red color for delete button
+                            Colors.red),
                       ),
                       child: Container(
                         width: 150,

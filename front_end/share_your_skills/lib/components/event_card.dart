@@ -15,7 +15,7 @@ class EventCard extends StatelessWidget {
     switch (title) {
       case "Cooking":
         return 'images/cooking.jpg';
-      case "Garderning":
+      case "Gardening":
         return 'images/gardening.webp';
       case "Cleaning":
         return 'images/cleaning.jpeg';

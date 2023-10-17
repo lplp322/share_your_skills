@@ -73,7 +73,9 @@ class UserViewModel extends ChangeNotifier {
             _user = registeredUser;
             registrationErrorMessage = null;
             _prefs.setString('token', token);
-
+         postViewModelManager.onUserLogin(registeredUser);
+          postViewModel =
+              postViewModelManager.userPostViewModels[registeredUser]!;
             if (context != null) {
               Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
               Navigator.of(context).pushReplacement(
@@ -145,6 +147,8 @@ class UserViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  /*
   Future <void> addPost(Post post) async {
     try {
       await postViewModel.addPost(post);
@@ -152,7 +156,18 @@ class UserViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error adding post: $e');
     }
+  }*/
+  // call fetch skills from api
+  Future<Map<String, String>> fetchSkills() async {
+    try {
+      final skills = await _userApiService.fetchSkills();
+      return skills;
+    } catch (e) {
+      print('Error fetching skills: $e');
+      return {}; // Return an empty map as a fallback
+    }
   }
+
   void logout(BuildContext context) {
     postViewModel.fetchUserAssignedPosts();
     _user = null;

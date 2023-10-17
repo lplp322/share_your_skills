@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:share_your_skills/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
+import 'package:share_your_skills/models/skill.dart';
 
 class UserApiService {
   final String baseUrl; // Replace with your API base URL
@@ -29,7 +30,8 @@ class UserApiService {
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
 
-          final user = extractUserFromToken(token, userJson); // Use the extract method
+          final user =
+              extractUserFromToken(token, userJson); // Use the extract method
           return user;
         } else {
           print('Token or user data is null or empty');
@@ -98,8 +100,8 @@ class UserApiService {
     }
   }
 
-  User? extractUserFromToken(String token, Map <String, dynamic>? userJson) {
-
+  Future<User?> extractUserFromToken(
+      String token, Map<String, dynamic>? userJson) async {
     try {
       if (userJson != null) {
         final String? userId = userJson['_id'];
@@ -109,17 +111,19 @@ class UserApiService {
             List<String>.from(userJson['skillIds'] ?? []);
 
         // Create a mapping of skill IDs to skill names
-        final Map<String, String> skillIdToName = {
+        final Map<String, String> skillIdToName = await fetchSkills();
+        /*
+        {
           "65256b8601db3b3814171c5f": "Cleaning",
           "65256b7a01db3b3814171c5d": "Gardening",
           "65256b7101db3b3814171c5b": "Cooking",
         };
-
+*/
         final List<String> userSkills = skillIds?.map((skillId) {
               final skillName = skillIdToName[skillId];
               if (skillName == null) {
                 print("Unknown skill ID: $skillId");
-                return skillId; // Use skill ID if no mapping found
+                return skillId; // Use skill ID as a string if no mapping is found
               }
               return skillName;
             }).toList() ??
@@ -129,7 +133,6 @@ class UserApiService {
         final String? city = addressData?['city'];
         final String? street = addressData?['street'];
         final String? houseNumber = addressData?['houseNumber'];
-
 
         // Create a new User object with updated information
         final updatedUser = User(
@@ -153,6 +156,35 @@ class UserApiService {
     } catch (e) {
       print("User Data Extraction Error: $e");
       return null; // Handle data extraction errors
+    }
+  }
+
+  // get skills list
+  Future<Map<String, String>> fetchSkills() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:8000/skills'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final Map<String, String> skillMap = {};
+
+        for (final skillData in data) {
+          final Skill skill = Skill.fromJson(skillData);
+          skillMap[skill.id] = skill.name;
+        }
+
+        return skillMap;
+      } else {
+        throw Exception(
+            'Failed to load skills. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load skills: $e');
     }
   }
 }

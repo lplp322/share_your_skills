@@ -12,8 +12,8 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  bool currentEventsExpanded = true; 
-  bool completedEventsExpanded = true; 
+  bool currentEventsExpanded = true;
+  bool completedEventsExpanded = true;
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,27 @@ class _EventPageState extends State<EventPage> {
                       itemBuilder: (context, index) {
                         final post = postViewModel.userCompletedPosts[index];
                         return GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            final userNameFuture =
+                                postViewModel.getUserNameById(post.userId!);
+
+                            // Show a loading indicator while fetching the username
+                            showDialog(
+                              context: context,
+                              barrierDismissible:
+                                  false, // Prevent the user from dismissing the dialog
+                              builder: (dialogContext) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            );
+
+                             post.userId = await userNameFuture;
+
+                            // Dismiss the loading indicator
+                            Navigator.of(context).pop();
+
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => ShowPostPage(post: post),
