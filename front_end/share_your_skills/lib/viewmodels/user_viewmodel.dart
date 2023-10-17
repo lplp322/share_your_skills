@@ -26,7 +26,6 @@ class UserViewModel extends ChangeNotifier {
   ) {
     initSharedPrefs();
     postViewModelManager = PostViewModelManager();
-    postViewModel = PostViewModel(_user);
   }
 
   // Controllers to edit fields
@@ -302,7 +301,7 @@ class UserViewModel extends ChangeNotifier {
   }
 
   void logout(BuildContext context) {
-    postViewModel.fetchUserAssignedPosts();
+    // postViewModel.fetchUserAssignedPosts();
     _user = null;
     _prefs.remove('token');
     notifyListeners();

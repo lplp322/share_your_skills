@@ -284,7 +284,7 @@ class PostApiService {
         Uri.parse('http://localhost:8000/posts'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $user.token",
+          "Authorization": "Bearer ${user.token}",
         },
       );
 
@@ -320,7 +320,7 @@ class PostApiService {
         Uri.parse('http://localhost:8000/posts/getRecommendedPosts'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $user.token",
+          "Authorization": "Bearer ${user.token}",
         },
       );
 
@@ -348,7 +348,7 @@ class PostApiService {
     try {
       final headers = {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $user.token",
+          "Authorization": "Bearer ${user.token}",
       };
       final uri = Uri.http(
         'localhost:8000', 
