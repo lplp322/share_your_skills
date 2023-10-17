@@ -1,18 +1,22 @@
 class Skill {
-  String id;
-  String name;
-
+  final String skillId;
+  final String name;
+  final List<String>? users;
+  final String? icon;
 
   Skill({
-    required this.id,
+    required this.skillId,
     required this.name,
-
+    this.users,
+    this.icon,
   });
 
   factory Skill.fromJson(Map<String, dynamic> json) {
     return Skill(
-      id: json['_id'],
+      skillId: json['_id'],
       name: json['name'],
+      users: List<String>.from(json['users']),
+      icon: json['icon'],
     );
   }
 }

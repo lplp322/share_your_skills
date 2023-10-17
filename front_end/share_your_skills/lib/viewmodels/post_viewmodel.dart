@@ -13,7 +13,11 @@ class PostViewModel extends ChangeNotifier {
 
   List<Post> _userAssignedPosts = [];
   List<Post> get userAssignedPosts => _userAssignedPosts;
-  List<Post> _userPosts = [];
+
+  List<Post> _displayPosts = [];
+  List<Post> get displayPosts => _displayPosts;
+
+    List<Post> _userPosts = [];
   List<Post> get userPosts => _userPosts;
   List<Post> _userPastPosts = [];
   List<Post> get userPastPosts => _userPastPosts;
@@ -94,6 +98,30 @@ class PostViewModel extends ChangeNotifier {
       throw 'Failed to fetch skill ID'; 
     }
   }
+
+
+  Future<void> fetchRecommendedPosts(User user) async {
+    try {
+      final posts = await postApiService.getRecommendedPosts(user.userId!);
+      _displayPosts = posts;
+      print('Updated recommended posts length: ${_displayPosts.length}');
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching recommended posts: $e');
+    }
+  }
+
+  Future<void> fetchPostsBySkill(String skillId) async {
+    try {
+      final posts = await postApiService.getPostsBySkill(skillId);
+      _displayPosts = posts;
+      print('Updated recommended posts length: ${_displayPosts.length}');
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching recommended posts: $e');
+    }
+  }
+
 
 
   void clearAssignedPosts() {

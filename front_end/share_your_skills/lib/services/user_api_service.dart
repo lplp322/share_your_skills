@@ -161,6 +161,159 @@ class UserApiService {
     }
   }
 
+  Future<String?> changeName(User user, String name) async {
+    final token = user.token;
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/changeName'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+          },
+        body: jsonEncode({
+          "name": name
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print(
+            'Updating name failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return null; // Handle login failure
+      }
+    } catch (e) {
+      print('Updating name API Error: $e');
+      return null; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> changeEmail(User user, String email) async {
+    final token = user.token;
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/changeLogin'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+          },
+        body: jsonEncode({
+          "newLogin": email
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print(
+            'Updating email failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return null; // Handle login failure
+      }
+    } catch (e) {
+      print('Updating email API Error: $e');
+      return null; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> changeAddress(User user, Address address) async {
+    final token = user.token;
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/changeAddress'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+          },
+        body: jsonEncode({
+          "city": address.city,
+          "street": address.street,
+          "houseNumber": address.houseNumber
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print(
+            'Updating address failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return null; // Handle login failure
+      }
+    } catch (e) {
+      print('Updating address API Error: $e');
+      return null; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> addSkill(User user, String skillId) async {
+    try {
+      final token = user.token;
+      final headers = {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+      };
+      final uri = Uri.http(
+        '192.168.10.165:8000', 
+        '/skills/addSkill', 
+        {"skillId": skillId}
+      );
+      
+      final response = await http.post(
+        uri,
+        headers: headers,
+      );
+    
+      if (response.statusCode == 201) {
+          return response.body;
+      } else if ((response.statusCode == 500)) {
+        print(
+            'Skill already added. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      } else{
+        print(
+            'Adding skill failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      }
+    } catch (e) {
+      print('Adding skill failed API Error: $e');
+      return ''; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> deleteSkill(User user, String skillId) async {
+    try {
+      print('entering call ${skillId}');
+      final token = user.token;
+      final headers = {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+      };
+      final uri = Uri.http(
+        '192.168.10.165:8000', 
+        '/skills/deleteSkill', 
+        {"skillId": skillId}
+      );
+      
+      final response = await http.delete(
+        uri,
+        headers: headers,
+      );
+      if (response.statusCode == 201) {
+          return response.body;
+      } else if ((response.statusCode == 500)) {
+        print(
+            'Skill deleted. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      } else{
+        print(
+            'Deleting skill failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      }
+    } catch (e) {
+      print('Adding skill failed API Error: $e');
+      return ''; // Handle exceptions (e.g., network errors)
+    }
+  }
+
   // get skills list
   Future<Map<String, String>> fetchSkills() async {
     try {
@@ -177,7 +330,7 @@ class UserApiService {
 
         for (final skillData in data) {
           final Skill skill = Skill.fromJson(skillData);
-          skillMap[skill.id] = skill.name;
+          skillMap[skill.skillId] = skill.name;
         }
 
         return skillMap;

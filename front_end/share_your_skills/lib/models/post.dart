@@ -23,15 +23,15 @@ class Post {
   // fromjson to list of events
  factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      id: json['_id'],
-      title: json['title'],
-      content: json['content'],
+      id: json['_id'] ?? 'No Id',
+      title: json['title'] ?? 'No Title',
+      content: json['content'] ?? 'No Content',
       deadline: DateTime.parse(json['deadline']),
-      status: json['status'],
-      location: json['location'],
-      userId: json['userId'],
+      status: json['status'] ?? 'No Status',
+      location: json['location'] ?? 'No Location',
+      userId: json['userId'] ?? 'No User',
       skillIds: List<String>.from(json['skillIds']),
-      assignedUserId: json['assignedUserId'],
+      assignedUserId: json['assignedUserId'] ?? 'No User Assigned',
     );
     
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_your_skills/components/select_user_skills.dart';
 import 'package:share_your_skills/models/user.dart'; // Import your User model
+import 'package:share_your_skills/viewmodels/skill_viewmodel.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/views/login_page.dart';
 
@@ -15,43 +17,164 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context);
-
-    // Access user details from userViewModel.user
+    final skillViewModel = Provider.of<SkillViewModel>(context, listen: false);
     final User? user = userViewModel.user;
 
     return SafeArea(
-      child: Column(
-        children: [
-          SizedBox(height: 30),
-          Text('Profile Page'),
-          // Display user name
-          Text('User Name: ${user?.name ?? ''}'),
-          // Display user email
-          Text('Email: ${user?.email ?? ''}'),
-          // Display user skills (assuming it's a List<String>)
-          Text('Skills: ${user?.skillIds?.join(', ') ?? ''}'),
-          // Display user address (assuming it's an Address object)
-          SizedBox(height: 10),
-          if (user?.address != null) ...[
-            Text('Address:'),
-            SizedBox(height: 5),
-            Text('City: ${user?.address?.city ?? ''}'),
-            Text('Street: ${user?.address?.street ?? ''}'),
-            Text('House Number: ${user?.address?.houseNumber ?? ''}'),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            SizedBox(height: 30),
+            HeaderProfile(
+                name: user?.name ?? '',
+                icon: Icons.portrait_rounded,
+                fieldController: userViewModel.nameController),
+            Field(
+              fieldLabel: 'Email',
+              fieldValue: user?.email ?? '',
+              fieldController: userViewModel.emailController,
+            ),
+            Field(
+                fieldLabel: 'City',
+                fieldValue: user?.address?.city ?? '',
+                fieldController: userViewModel.cityController),
+            Field(
+                fieldLabel: 'Street',
+                fieldValue: user?.address?.street ?? '',
+                fieldController: userViewModel.streetController),
+            Field(
+                fieldLabel: 'Street Number',
+                fieldValue: user?.address?.houseNumber ?? '',
+                fieldController: userViewModel.streetNoController),
+            SizedBox(height: 40),
+            SelectUserSkills(
+                skillViewModel: skillViewModel, userViewModel: userViewModel),
+            SizedBox(height: 130),
+            ElevatedButton(
+              onPressed: () async {
+                bool change = false;
+                final futures = <Future>[];
+                if (userViewModel.nameController.text != user?.name) {
+                  change = true;
+                  futures.add(userViewModel
+                      .updateName(user!, userViewModel.nameController.text)
+                      .then((_) {}));
+                }
+                if (userViewModel.emailController.text != user?.email) {
+                  change = true;
+                  futures.add(userViewModel
+                      .updateEmail(user!, userViewModel.emailController.text)
+                      .then((_) {}));
+                }
+
+                if (user?.address?.city != userViewModel.cityController.text ||
+                    user?.address?.street !=
+                        userViewModel.streetController.text ||
+                    user?.address?.houseNumber !=
+                        userViewModel.streetNoController.text) {
+                  change = true;
+                  // print('${user?.address?.city}-${userViewModel.cityController.text}');
+                  // print('${user?.address?.street}-${userViewModel.streetController.text}');
+                  // print('${user?.address?.houseNumber}-${userViewModel.streetNoController.text}');
+                  final newAddress = Address(
+                      city: userViewModel.cityController.text,
+                      street: userViewModel.streetController.text,
+                      houseNumber: userViewModel.streetNoController.text);
+                  futures.add(userViewModel.updateAddress(user!, newAddress).then((_) {}));
+                }
+                await Future.wait(
+                    futures); // Wait for async operations to complete
+
+                if (change) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Changes saved successfully'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              child: Text('Save Profile'),
+            ),
+            SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: () {
+                userViewModel.logout(context);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              },
+              child: Text('Logout'),
+            ),
           ],
-          SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: () {
-            
-              userViewModel.logout(context); 
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            },
-            child: Text('Logout'),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+class Field extends StatelessWidget {
+  final String fieldValue;
+  final String fieldLabel;
+  final TextEditingController fieldController;
+
+  Field(
+      {required this.fieldValue,
+      required this.fieldLabel,
+      required this.fieldController});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      decoration: InputDecoration(
+        hintText: fieldLabel,
+        border: InputBorder.none,
+        suffixIcon: Icon(
+          Icons.add_circle_outline_sharp,
+          size: 24, // Adjust the size as needed
+        ),
+      ),
+      controller: fieldController, // Bind the controller to the TextField
+    );
+  }
+}
+
+class HeaderProfile extends StatelessWidget {
+  final String name;
+  final IconData icon;
+
+  final TextEditingController fieldController;
+
+  HeaderProfile(
+      {required this.name, required this.icon, required this.fieldController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Icon(
+          Icons.portrait_rounded,
+          size: 90,
+        ),
+        SizedBox(width: 10),
+        Expanded(
+          child: TextField(
+            decoration: InputDecoration(
+              // labelText: "Name",
+              labelStyle: TextStyle(fontSize: 20),
+              hintText: 'Name',
+              border: InputBorder.none,
+              suffixIcon: Icon(
+                Icons.add_circle_outline_sharp,
+                size: 24, // Adjust the size as needed
+              ),
+            ),
+            controller: fieldController, // Bind the controller to the TextField
+          ),
+        ),
+      ],
     );
   }
 }
