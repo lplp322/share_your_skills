@@ -22,6 +22,137 @@ class UserViewModel extends ChangeNotifier {
     postViewModel = PostViewModel(_user);
   }
 
+  // Controllers to edit fields
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _cityController = TextEditingController();
+  TextEditingController _streetController = TextEditingController();
+  TextEditingController _streetNoController = TextEditingController();
+
+  get nameController => _nameController;
+  get emailController => _emailController;
+  get cityController => _cityController;
+  get streetController => _streetController;
+  get streetNoController => _streetNoController;
+
+  void initControllerFields() {
+    // Initialize text controllers with the user's current profile information
+    _nameController.text = _user?.name ?? '';
+    _emailController.text = _user?.email ?? '';
+
+    _cityController.text = user?.address?.city ?? '';
+    _streetController.text = user?.address?.street ?? '';
+    _streetNoController.text = user?.address?.houseNumber ?? '';
+  }
+
+  Future<void> updateName(User user, String newName) async {
+    
+    final updatedName = await _userApiService.changeName(user, newName);
+
+    final updatedUser = User(
+        userId: user.userId,
+        name: newName,
+        email: user.email,
+        token: user.token,
+        address: user.address,
+        skillIds: user.skillIds,
+      );
+
+    _user = updatedUser;
+    print(updatedName);
+    notifyListeners();
+  }
+
+  Future<void> updateEmail(User user, String newEmail) async {
+    final updatedEmail = await _userApiService.changeEmail(user, newEmail);
+    print(updatedEmail);
+
+    final updatedUser = User(
+        userId: user.userId,
+        name: user.email,
+        email: newEmail,
+        token: user.token,
+        address: user.address,
+        skillIds: user.skillIds,
+      );
+
+    _user = updatedUser;
+    notifyListeners();
+  }
+
+  Future<void> updateAddress(User user, Address newAddress) async {
+    final updatedAddress =
+        await _userApiService.changeAddress(user, newAddress);
+    final updatedUser = User(
+        userId: user.userId,
+        name: user.email,
+        email: user.email,
+        token: user.token,
+        address: newAddress,
+        skillIds: user.skillIds,
+      );
+
+    _user = updatedUser;
+    print(updatedAddress);
+    notifyListeners();
+  }
+
+  void updateSkills(User user, List<String> updatedSkills) async {
+    try {
+      // Create a new User object with the updated skillIds
+      final updatedUser = User(
+        userId: user.userId, // copy other properties as needed
+        name: user.name,
+        email: user.email,
+        token: user.token,
+        address: user.address,
+        skillIds: updatedSkills, // update skillIds
+      );
+
+      _user = updatedUser; // Replace the old User with the updated one
+
+      final userSkills = user?.skillIds;
+
+      List<String> removedSkillIds = userSkills!
+          .where((userSkillId) => !updatedSkills.contains(userSkillId))
+          .toList();
+
+      // Find skill IDs that were added
+      List<String> addedSkillIds = updatedSkills
+          .where((updatedSkillId) => !userSkills.contains(updatedSkillId))
+          .toList();
+      addSkills(user, addedSkillIds);
+      deleteSkills(user, removedSkillIds);
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching user assigned posts: $e');
+    }
+  }
+
+  Future<void> addSkills(User user, List<String> newSkills) async {
+    try {
+      for (String skill in newSkills) {
+        final skills = await _userApiService.addSkill(user, skill);
+      }
+      print('Updated skills length: ${newSkills.length}');
+      print(newSkills);
+    } catch (e) {
+      print('Error fetching user assigned posts: $e');
+    }
+  }
+
+  Future<void> deleteSkills(User user, List<String> deletedSkills) async {
+    try {
+      for (String skill in deletedSkills) {
+        final skills = await _userApiService.deleteSkill(user, skill);
+      }
+      print('Deleted skills length: ${deletedSkills.length}');
+      print(deletedSkills);
+    } catch (e) {
+      print('Error fetching user assigned posts: $e');
+    }
+  }
+
   User? get user => _user;
 
   Future<void> initSharedPrefs() async {
@@ -112,6 +243,7 @@ class UserViewModel extends ChangeNotifier {
           postViewModel = PostViewModel(_user);
           await postViewModel.fetchUserAssignedPosts(_user!);
 
+          initControllerFields();
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
           Navigator.of(context).pushReplacement(

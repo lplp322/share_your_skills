@@ -58,26 +58,27 @@ class EventCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 6),
+                    SizedBox(height: 4),
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 35),
                     Text(
                       location,
                       style: TextStyle(
-                        fontSize: 25,
+                        fontSize: 20,
                         color: Color(0xFF7B7B7B),
                       ),
                     ),
+                    SizedBox(height: 35),
                     Text(
                       formattedDate,
                       style: TextStyle(
-                        fontSize: 25,
+                        fontSize: 20,
                         color: Color(0xFF7B7B7B),
                       ),
                     ),

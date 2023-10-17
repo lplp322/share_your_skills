@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_your_skills/viewmodels/skill_viewmodel.dart';
 import 'package:share_your_skills/views/login_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/models/app_state.dart';
@@ -12,7 +13,7 @@ void main() {
     MultiProvider(
       providers: [
         Provider<UserApiService>(
-          create: (context) => UserApiService('http://localhost:8000/users'),
+          create: (context) => UserApiService('http://192.168.10.165:8000/users'),
         ),
         ChangeNotifierProvider<UserViewModel>(
           create: (context) => UserViewModel(
@@ -28,6 +29,12 @@ void main() {
             Provider.of<UserViewModel>(context, listen: false).user,
           ),
         ),
+        ChangeNotifierProvider<SkillViewModel>(
+          create: (context) => SkillViewModel(
+            Provider.of<UserViewModel>(context, listen: false).user,
+            Provider.of<PostViewModel>(context, listen: false),
+          ),
+        ),
       ],
       child: MyApp(),
     ),
@@ -40,7 +47,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Your App',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: Consumer<UserViewModel>(
         builder: (context, userViewModel, _) {

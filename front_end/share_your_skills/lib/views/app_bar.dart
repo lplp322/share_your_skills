@@ -54,7 +54,7 @@ class _AppBarState extends State<AppBar> {
               });
             },
             selectedItemColor: Colors.green, // Color for selected item
-            unselectedItemColor: Colors.black, // Color for unselected items
+            unselectedItemColor: Colors.grey, // Color for unselected items
             items: const [
               BottomNavigationBarItem(
                 label: 'My Events',
@@ -66,11 +66,11 @@ class _AppBarState extends State<AppBar> {
               ),
               BottomNavigationBarItem(
                 label: 'Home',
-                icon: Icon(Icons.home),
+                icon: Icon(Icons.home_filled),
               ),
               BottomNavigationBarItem(
                 label: 'Chat',
-                icon: Icon(Icons.chat),
+                icon: Icon(Icons.chat_bubble),
               ),
               BottomNavigationBarItem(
                 label: 'Profile',
