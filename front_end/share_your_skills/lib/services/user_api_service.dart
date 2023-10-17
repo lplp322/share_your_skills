@@ -330,7 +330,7 @@ class UserApiService {
 
         for (final skillData in data) {
           final Skill skill = Skill.fromJson(skillData);
-          skillMap[skill.id] = skill.name;
+          skillMap[skill.skillId] = skill.name;
         }
 
         return skillMap;
