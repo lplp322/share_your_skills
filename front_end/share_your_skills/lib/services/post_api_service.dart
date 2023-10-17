@@ -34,16 +34,16 @@ class PostApiService {
               .toList();
         } else {
           print('Unexpected response format. Response Body: ${response.body}');
-          return []; // Handle cases where the response format is not as expected
+          return [];
         }
       } else {
         print(
             'Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
-        return []; // Handle the case where the server responds with an error
+        return [];
       }
     } catch (e) {
       print('Posts API Error: $e');
-      return []; // Handle exceptions (e.g., network errors)
+      return []; 
     }
   }
 
@@ -105,7 +105,7 @@ class PostApiService {
         print(response.body);
         return await getPost(response.body);
       } else {
-        // Handle other status codes as needed
+        
         return post;
       }
     } catch (e) {
@@ -117,7 +117,7 @@ class PostApiService {
   Future<Post> updatePost(Post post) async {
     print("API - Update post is called");
     final url =
-        Uri.parse('$baseUrl/updatePost'); // Replace with your actual API endpoint
+        Uri.parse('$baseUrl/updatePost'); 
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${user.token}',
@@ -159,12 +159,12 @@ class PostApiService {
         final post = Post.fromJson(jsonData);
         return post;
       } else {
-        // Handle any error or return null if not found
+       
         throw Exception(
             'Failed to load post. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      // Handle exceptions or errors
+     
       print('Error: $e');
       throw Exception('Failed to load post. Error: $e');
     }
@@ -193,16 +193,16 @@ class PostApiService {
               .toList();
         } else {
           print('Unexpected response format. Response Body: ${response.body}');
-          return []; // Handle cases where the response format is not as expected
+          return []; 
         }
       } else {
         print(
             'Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
-        return []; // Handle the case where the server responds with an error
+        return []; 
       }
     } catch (e) {
       print('Posts API Error: $e');
-      return []; // Handle exceptions (e.g., network errors)
+      return [];
     }
   }
 

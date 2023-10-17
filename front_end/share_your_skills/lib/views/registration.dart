@@ -34,7 +34,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Future<void> _fetchSkills() async {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     final skills = await userViewModel.fetchSkills();
-     print("Skills: $skills");
+    print("Skills: $skills");
     setState(() {
       predefinedSkills = skills.keys.toList();
       skillIdToName = skills;
@@ -49,6 +49,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Color(0xFF588F2C),
           title: Text('Registration Page'),
         ),
         body: Padding(
@@ -191,6 +192,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       context: context,
                     );
                   },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  ),
                   child: Text('Register'),
                 ),
                 SizedBox(height: 10),

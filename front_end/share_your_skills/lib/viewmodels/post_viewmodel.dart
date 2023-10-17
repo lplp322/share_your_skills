@@ -27,7 +27,7 @@ class PostViewModel extends ChangeNotifier {
       _userAssignedPosts.clear();
       _userAssignedPosts = posts;
       print('Updated userAssignedPosts length: ${_userAssignedPosts.length}');
-      notifyListeners(); // Notify listeners when data changes
+      notifyListeners(); 
     } catch (e) {
       print('Error fetching user assigned posts: $e');
     }
@@ -39,7 +39,7 @@ class PostViewModel extends ChangeNotifier {
       _userPosts.clear();
       _userPosts = posts;
 
-      notifyListeners(); // Notify listeners when data changes
+      notifyListeners(); 
     } catch (e) {
       print('Error fetching user assigned posts: $e');
     }
@@ -51,7 +51,7 @@ class PostViewModel extends ChangeNotifier {
       _userPastPosts.clear();
       _userPastPosts = posts;
 
-      notifyListeners(); // Notify listeners when data changes
+      notifyListeners(); 
     } catch (e) {
       print('Error fetching user assigned posts: $e');
     }
@@ -91,7 +91,7 @@ class PostViewModel extends ChangeNotifier {
       return skillId;
     } catch (e) {
       print('Error fetching skill id: $e');
-      throw 'Failed to fetch skill ID'; // Throw an exception on error
+      throw 'Failed to fetch skill ID'; 
     }
   }
 
@@ -101,7 +101,7 @@ class PostViewModel extends ChangeNotifier {
     _userPosts.clear();
     print('Clearing userAssignedPosts');
     print('userAssignedPosts cleared, length: ${_userAssignedPosts.length}');
-    notifyListeners(); // Notify listeners when data changes
+    notifyListeners();
   }
   // call post delete
   Future<void> deletePost(String postId) async {
@@ -114,6 +114,7 @@ class PostViewModel extends ChangeNotifier {
     }
   }
   // call get user name by id
+  /*
   Future<String> getUserNameById(String userId) async {
     try {
       print("PostViewModel - getUserNameById is called");
@@ -121,7 +122,7 @@ class PostViewModel extends ChangeNotifier {
       return userName;
     } catch (e) {
       print('Error fetching user name: $e');
-      throw 'Failed to fetch user name'; // Throw an exception on error
+      throw 'Failed to fetch user name';
     }
-  }
+  }*/
 }

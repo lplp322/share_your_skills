@@ -18,8 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final userViewModel = Provider.of<UserViewModel>(context,
-        listen: true); 
+    final userViewModel = Provider.of<UserViewModel>(context, listen: true);
     errorMessage = userViewModel
         .loginErrorMessage; // Get the error message from the UserViewModelƒ
     return SafeArea(
@@ -88,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                         : SizedBox();
                   },
                 ),
-    
+
                 ElevatedButton(
                   onPressed: () {
                     userViewModel.loginUser(
@@ -97,6 +96,10 @@ class _LoginPageState extends State<LoginPage> {
                       context,
                     );
                   },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  ),
                   child: Text(
                     'Login',
                     style: TextStyle(fontSize: 20),
@@ -109,9 +112,14 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => RegistrationPage()),
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationPage()),
                     );
                   },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  ),
                   child: Text('Register'),
                 ),
               ],

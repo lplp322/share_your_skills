@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPre
 import 'package:share_your_skills/models/skill.dart';
 
 class UserApiService {
-  final String baseUrl; // Replace with your API base URL
+  final String baseUrl;
 
   UserApiService(this.baseUrl);
 
@@ -27,9 +27,10 @@ class UserApiService {
 
         if (token != null && token.isNotEmpty && userJson != null) {
           // Save the token to SharedPreferences
+          /*
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
-
+*/
           final user =
               extractUserFromToken(token, userJson); // Use the extract method
           return user;
@@ -73,9 +74,10 @@ class UserApiService {
 
         if (token != null && token.isNotEmpty && userJson != null) {
           // Save the token to SharedPreferences
+          /*
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
-
+          */
           final extractedUser = extractUserFromToken(token, userJson);
 
           return extractedUser; // Registration successful, return user object
@@ -105,7 +107,7 @@ class UserApiService {
     try {
       if (userJson != null) {
         final String? userId = userJson['_id'];
-        final String? email = userJson['login']; // Update to 'email' for email
+        final String? email = userJson['login']; 
         final String? name = userJson['name'];
         final List<String>? skillIds =
             List<String>.from(userJson['skillIds'] ?? []);
