@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:intl/intl.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/models/skill.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
@@ -22,8 +22,8 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
   TimeOfDay selectedTime = TimeOfDay.now();
   String? selectedSkill;
   Post? existingPost;
-
-  final List<String> predefinedSkills = ['Cleaning', 'Cooking', 'Gardening'];
+  String? skillId;
+  final List<String> predefinedSkills = [];
 
   String selectedDateText = '';
   String selectedTimeText = '';
@@ -34,10 +34,22 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
     titleController = TextEditingController();
     contentController = TextEditingController();
     locationController = TextEditingController();
-
+    _fetchSkills();
     if (widget.postId != null) {
       fetchExistingPost(widget.postId!);
     }
+  }
+
+  Future<void> _fetchSkills() async {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final fetchedskills = await userViewModel.fetchSkills();
+
+    setState(() {
+      fetchedskills.forEach((key, value) {
+        predefinedSkills.add(value);
+      });
+      ;
+    });
   }
 
   void fetchExistingPost(String postId) {
@@ -126,8 +138,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                   ),
                   child: Text("Select Date"),
                 ),
-                Text(
-                    'Selected Date: $selectedDateText'), // Display selected date
+                Text('Selected Date: $selectedDateText'),
 
                 SizedBox(height: 16),
                 Text('Time', style: TextStyle(fontSize: 20)),
@@ -202,26 +213,24 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       //update post
                       await postViewModel.updatePost(updatedPost);
                     } else {
-                      // Create a new post
-                      final  skillId = await postViewModel.fetchSkillIdByName(selectedSkill!);
+                    
+                    
                       Post newPost = Post(
-                        id: null,
-                        title: titleController.text,
-                        content: contentController.text,
-                        location: locationController.text,
-                        deadline: DateTime(
-                            selectedDate.year,
-                            selectedDate.month,
-                            selectedDate.day,
-                            selectedTime.hour,
-                            selectedTime.minute),
-                        skillIds: [skillId],
-                        userId: postViewModel.user?.userId!,
-                        assignedUserId: null
-                       
-                      );
+                          id: null,
+                          title: titleController.text,
+                          content: contentController.text,
+                          location: locationController.text,
+                          deadline: DateTime(
+                              selectedDate.year,
+                              selectedDate.month,
+                              selectedDate.day,
+                              selectedTime.hour,
+                              selectedTime.minute),
+                          skillIds: [selectedSkill!],
+                          userId: postViewModel.user?.userId!,
+                          assignedUserId: null);
 
-                    //create post
+                    
                       await postViewModel.addPost(newPost);
                     }
 

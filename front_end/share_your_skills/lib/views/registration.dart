@@ -15,17 +15,32 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController streetController = TextEditingController();
   final TextEditingController houseNumberController = TextEditingController();
   List<String> selectedSkills = [];
+  /*
   final Map<String, String> skillNameToId = {
     "Cleaning": "652e223fbf0dea6755b2198b",
     "Cooking": "652e2246bf0dea6755b2198d",
     "Gardening": "652e224cbf0dea6755b2198f",
     // Add more skills and their corresponding IDs here
-  };
-  List<String> predefinedSkills = [
-    "Cleaning",
-    "Cooking",
-    "Gardening",
-  ];
+  };*/
+  List<String> predefinedSkills = [];
+  Map<String, String> skillIdToName = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchSkills();
+  }
+
+  Future<void> _fetchSkills() async {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final skills = await userViewModel.fetchSkills();
+     print("Skills: $skills");
+    setState(() {
+      predefinedSkills = skills.keys.toList();
+      skillIdToName = skills;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: true);
@@ -122,30 +137,26 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 SizedBox(height: 10),
-                Text("Select up to 3 skills:"),
+                Text("Select skills:"),
                 Row(
                   children: predefinedSkills.map((skill) {
-                       final skillId =
-                      skillNameToId[skill] ?? ''; 
                     return Row(
                       children: [
                         Checkbox(
-                          value: selectedSkills.contains(skillId),
+                          value: selectedSkills.contains(skill),
                           onChanged: (bool? value) {
                             if (value != null) {
                               setState(() {
                                 if (value) {
-                                  if (selectedSkills.length < 3) {
-                                    selectedSkills.add(skillId);
-                                  }
+                                  selectedSkills.add(skill);
                                 } else {
-                                  selectedSkills.remove(skillId);
+                                  selectedSkills.remove(skill);
                                 }
                               });
                             }
                           },
                         ),
-                        Text(skill),
+                        Text(skillIdToName[skill] ?? skill),
                       ],
                     );
                   }).toList(),
@@ -153,12 +164,27 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
-              
+                    final List<String> userSkills = selectedSkills
+                        .map((skillName) {
+                          final skillId = skillName;
+                          return skillId;
+                        })
+                        .whereType<
+                            String>() // Filter out null values and cast to List<String>
+                        .toList();
+
+                    // Check if the user has selected at least one skill
+                    if (userSkills.isEmpty) {
+                      print("Please select at least one skill.");
+                      return;
+                    }
+                    print("User Skills: $userSkills");
+                    // Perform user registration with skill IDs
                     userViewModel.registerUser(
                       fullName: nameController.text,
                       email: emailController.text,
                       password: passwordController.text,
-                      selectedSkills: selectedSkills,
+                      selectedSkills: userSkills,
                       city: cityController.text,
                       street: streetController.text,
                       houseNumber: houseNumberController.text,

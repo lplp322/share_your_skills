@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
+import 'package:provider/provider.dart';
 
-class EventCard extends StatelessWidget {
+class EventCard extends StatefulWidget {
   final String title;
   final String location;
   final DateTime date;
@@ -11,8 +13,13 @@ class EventCard extends StatelessWidget {
     required this.date,
   });
 
+  @override
+  State<EventCard> createState() => _EventCardState();
+}
+
+class _EventCardState extends State<EventCard> {
   String getImageAssetPath() {
-    switch (title) {
+    switch (widget.title) {
       case "Cooking":
         return 'images/cooking.jpg';
       case "Gardening":
@@ -27,7 +34,7 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String formattedDate =
-        "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+        "${widget.date.year}-${widget.date.month.toString().padLeft(2, '0')}-${widget.date.day.toString().padLeft(2, '0')}";
 
     return Column(
       children: [
@@ -60,7 +67,7 @@ class EventCard extends StatelessWidget {
                   children: [
                     SizedBox(height: 6),
                     Text(
-                      title,
+                      widget.title,
                       style: TextStyle(
                         fontSize: 30,
                         color: Colors.black,
@@ -68,7 +75,7 @@ class EventCard extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      location,
+                      widget.location,
                       style: TextStyle(
                         fontSize: 25,
                         color: Color(0xFF7B7B7B),

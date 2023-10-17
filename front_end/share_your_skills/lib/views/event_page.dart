@@ -52,6 +52,7 @@ class _EventPageState extends State<EventPage> {
                       itemCount: postViewModel.userAssignedPosts.length,
                       itemBuilder: (context, index) {
                         final post = postViewModel.userAssignedPosts[index];
+                        final skillName = postViewModel.fetchSkillIdByName(post.skillIds[0]);
                         return GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(
