@@ -214,7 +214,8 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       await postViewModel.updatePost(updatedPost);
                     } else {
                     
-                    
+                      final String skillId = await postViewModel
+                          .fetchSkillIdByName(selectedSkill!);
                       Post newPost = Post(
                           id: null,
                           title: titleController.text,
@@ -226,7 +227,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                               selectedDate.day,
                               selectedTime.hour,
                               selectedTime.minute),
-                          skillIds: [selectedSkill!],
+                          skillIds: [skillId],
                           userId: postViewModel.user?.userId!,
                           assignedUserId: null);
 

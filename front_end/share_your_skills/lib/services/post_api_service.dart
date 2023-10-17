@@ -48,6 +48,7 @@ class PostApiService {
   }
 
   Future<List<Post>> getPosts() async {
+    print("API - getPosts is called");
     try {
       final response = await http.get(
         Uri.parse('$baseUrl/getMyPosts'),
@@ -70,36 +71,38 @@ class PostApiService {
               .toList();
         } else {
           print('Unexpected response format. Response Body: ${response.body}');
-          return []; // Handle cases where the response format is not as expected
+          return []; 
         }
       } else {
         print(
             'Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
-        return []; // Handle the case where the server responds with an error
+        return [];
       }
     } catch (e) {
       print('Posts API Error: $e');
-      return []; // Handle exceptions (e.g., network errors)
+      return [];
     }
   }
 
   // add post
   Future<Post> addPost(Post post) async {
+    try {
     print("API - Add post is called");
     final url =
-        Uri.parse('$baseUrl/addPost'); // Replace with your actual API endpoint
+        Uri.parse('$baseUrl/addPost'); 
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${user.token}',
     };
 
-    final body = post.toJson(); // Convert the Post object to JSON
+    final body = post.toJson(); 
 
-    try {
+      print(body);
       final response =
           await http.post(url, headers: headers, body: jsonEncode(body));
 
       if (response.statusCode == 201) {
+        print(response.body);
         return await getPost(response.body);
       } else {
         // Handle other status codes as needed
@@ -127,9 +130,10 @@ class PostApiService {
           await http.put(url, headers: headers, body: jsonEncode(body));
 
       if (response.statusCode == 201) {
+      
         return await getPost(post.id!);
       } else {
-        // Handle other status codes as needed
+      
         return post;
       }
     } catch (e) {
