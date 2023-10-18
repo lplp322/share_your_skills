@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_your_skills/components/event_card.dart';
 import 'package:provider/provider.dart';
+import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:share_your_skills/views/show_post_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
@@ -19,12 +20,15 @@ class _AddEventPageState extends State<AddEventPage> {
 
   @override
   Widget build(BuildContext context) {
+    final postViewModel = Provider.of<UserViewModel>(context, listen: false).postViewModel;
     return SafeArea(
       
       child:RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(Duration(seconds: 1));
-          setState(() {});
+          setState(() {
+            postViewModel.fetchAllPosts();
+          });
         },
       child: Scaffold(
         body: Column(

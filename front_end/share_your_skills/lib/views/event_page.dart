@@ -17,11 +17,14 @@ class _EventPageState extends State<EventPage> {
 
   @override
   Widget build(BuildContext context) {
+        final postViewModel = Provider.of<UserViewModel>(context, listen: false).postViewModel;
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(Duration(seconds: 1));
-          setState(() {});
+          setState(() {
+            postViewModel.fetchAllPosts();
+          });
         },
         child: Scaffold(
           body: Column(

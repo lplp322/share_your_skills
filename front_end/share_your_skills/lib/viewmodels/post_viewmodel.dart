@@ -35,9 +35,16 @@ class PostViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error fetching user assigned posts: $e');
     }
+  } 
+  void fetchAllPosts() {
+    fetchUserAssignedPosts();
+    fetchUserPosts();
+    fetchUserPastPosts();
+    fetchUserCompletedPosts();
   }
 
-  Future<void> fetchPosts() async {
+  // fetch user posts
+  Future<void> fetchUserPosts() async {
     try {
       final posts = await postApiService.getPosts();
       _userPosts.clear();
@@ -54,6 +61,19 @@ class PostViewModel extends ChangeNotifier {
       final posts = await postApiService.getMyPastPosts();
       _userPastPosts.clear();
       _userPastPosts = posts;
+
+      notifyListeners(); 
+    } catch (e) {
+      print('Error fetching user assigned posts: $e');
+    }
+  }
+
+  // fetch user completed posts
+  Future<void> fetchUserCompletedPosts() async {
+    try {
+      final posts = await postApiService.getUserPastAssignedPosts();
+      _userCompletedPosts.clear();
+      _userCompletedPosts = posts;
 
       notifyListeners(); 
     } catch (e) {

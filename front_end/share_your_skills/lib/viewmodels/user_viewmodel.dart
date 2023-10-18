@@ -251,8 +251,7 @@ class UserViewModel extends ChangeNotifier {
           postViewModelManager.onUserLogin(loggedInUser);
           postViewModel =
               postViewModelManager.userPostViewModels[loggedInUser]!;
-          postViewModel.fetchUserAssignedPosts();
-          postViewModel.fetchPosts();
+          postViewModel.fetchAllPosts();
           initControllerFields();
           print('Navigator context: $context');
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);

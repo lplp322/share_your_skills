@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:http/http.dart' as http;
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/models/post.dart';
@@ -374,6 +375,42 @@ class PostApiService {
     } catch (e) {
       print('Posts API Error: $e');
       return []; // Handle exceptions (e.g., network errors)
+    }
+  }
+  // get userpastassigned posts 
+  Future<List<Post>> getUserPastAssignedPosts() async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/getPastAssignedPosts'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${user.token}",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        print(jsonResponse);
+        if (jsonResponse is List) {
+          final posts = jsonResponse;
+          for (var post in posts) {
+            print(post["title"]);
+          }
+          return jsonResponse
+              .map<Post>((postJson) => Post.fromJson(postJson))
+              .toList();
+        } else {
+          print('Unexpected response format. Response Body: ${response.body}');
+          return [];
+        }
+      } else {
+        print(
+            'Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return [];
+      }
+    } catch (e) {
+      print('Posts API Error: $e');
+      return [];
     }
   }
 }
