@@ -108,27 +108,9 @@ class UserApiService {
         final String? userId = userJson['_id'];
         final String? email = userJson['login']; 
         final String? name = userJson['name'];
-        final List<String>? skillIds =
-            List<String>.from(userJson['skillIds'] ?? []);
 
-        // Create a mapping of skill IDs to skill names
-        final Map<String, String> skillIdToName = await fetchSkills();
-        /*
-        {
-          "65256b8601db3b3814171c5f": "Cleaning",
-          "65256b7a01db3b3814171c5d": "Gardening",
-          "65256b7101db3b3814171c5b": "Cooking",
-        };
-*/
-        final List<String> userSkills = skillIds?.map((skillId) {
-              final skillName = skillIdToName[skillId];
-              if (skillName == null) {
-                print("Unknown skill ID: $skillId");
-                return skillId; // Use skill ID as a string if no mapping is found
-              }
-              return skillName;
-            }).toList() ??
-            [];
+
+  
 
         final Map<String, dynamic>? addressData = userJson['address'];
         final String? city = addressData?['city'];
@@ -140,7 +122,7 @@ class UserApiService {
           userId: userId,
           name: name ?? '', // Provide a default value if name is null
           email: email ?? '', // Provide a default value if email is null
-          skillIds: userSkills,
+          skillIds: userJson['skillIds'] ?? [],
           token: token,
           address: Address(
             city: city,
