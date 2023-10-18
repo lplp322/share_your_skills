@@ -24,7 +24,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
   Post? existingPost;
   String? skillId;
   final List<String> predefinedSkills = [];
-   final List<String> skills = [];
+  final List<String> skills = [];
 
   String selectedDateText = '';
   String selectedTimeText = '';
@@ -49,7 +49,6 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
       fetchedskills.forEach((key, value) {
         predefinedSkills.add(value);
         skills.add(key);
-
       });
       ;
     });
@@ -123,7 +122,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                     final DateTime? date = await showDatePicker(
                       context: context,
                       initialDate: selectedDate,
-                      firstDate: DateTime.now(),
+                      firstDate: DateTime.now().subtract(Duration(days: 7)),
                       lastDate: DateTime(2101),
                     );
 
@@ -198,7 +197,8 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
 
                     if (widget.postId != null) {
                       // Update an existing post
-                       final skillId = skills[predefinedSkills.indexOf(selectedSkill!)];
+                      final skillId =
+                          skills[predefinedSkills.indexOf(selectedSkill!)];
                       Post updatedPost = Post(
                         id: widget.postId, // Include the post ID for updating
                         title: titleController.text,
@@ -218,7 +218,8 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       await postViewModel.updatePost(updatedPost);
                     } else {
                       // Create a new post
-                      final skillId = skills[predefinedSkills.indexOf(selectedSkill!)];
+                      final skillId =
+                          skills[predefinedSkills.indexOf(selectedSkill!)];
                       Post newPost = Post(
                           id: null,
                           title: titleController.text,
@@ -234,7 +235,6 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                           userId: postViewModel.user?.userId!,
                           assignedUserId: null);
 
-                    
                       await postViewModel.addPost(newPost);
                     }
 

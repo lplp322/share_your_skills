@@ -29,9 +29,9 @@ class UserApiService {
           /*
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
-*/
-          final user =
-              extractUserFromToken(token, userJson); // Use the extract method
+*/       // print(userJson);
+          final user = User.fromJson(jsonResponse); 
+          print(" API ${user}");
           return user;
         } else {
           print('Token or user data is null or empty');
@@ -77,7 +77,7 @@ class UserApiService {
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
           */
-          final extractedUser = extractUserFromToken(token, userJson);
+          final extractedUser = User.fromJson(jsonResponse); 
 
           return extractedUser; // Registration successful, return user object
         } else {
@@ -100,7 +100,7 @@ class UserApiService {
       return null; // Handle exceptions (e.g., network errors), return null
     }
   }
-
+/*
   Future<User?> extractUserFromToken(
       String token, Map<String, dynamic>? userJson) async {
     try {
@@ -141,7 +141,7 @@ class UserApiService {
       return null; // Handle data extraction errors
     }
   }
-
+*/
   Future<String?> changeName(User user, String name) async {
     final token = user.token;
     try {

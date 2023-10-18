@@ -42,4 +42,32 @@ class User {
     this.skillIds,
     this.address,
   });
+  factory User.fromJson(Map<String, dynamic> json) {
+    final Map<String, dynamic> userJson = json['user'];
+    final String userId = userJson['_id'];
+    final String email = userJson['login'];
+    final String name = userJson['name'];
+
+    final Map<String, dynamic>? addressData = userJson['address'];
+    final String? city = addressData?['city'];
+    final String? street = addressData?['street'];
+    final String? houseNumber = addressData?['houseNumber'];
+
+    final String token = json['token'];
+
+    return User(
+      userId: userId,
+      email: email,
+      name: name,
+      token: token, // Assign the token to the User object
+      skillIds: (userJson['skillIds'] as List<dynamic>?)
+          ?.map((id) => id.toString())
+          .toList(),
+      address: Address(
+        city: city,
+        street: street,
+        houseNumber: houseNumber,
+      ),
+    );
+  }
 }

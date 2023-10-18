@@ -241,7 +241,7 @@ class UserViewModel extends ChangeNotifier {
   ) async {
     try {
       final loggedInUser = await _userApiService.loginUser(email, password);
-
+      print(loggedInUser);
       if (loggedInUser != null) {
         final token = loggedInUser.token;
 
