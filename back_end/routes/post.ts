@@ -45,13 +45,13 @@ module.exports = function (app: Express) {
     postController.getRecommendedPosts
   );
 
-  app.post("/posts/addPost", auth, postController.createOne);
+  app.post("/posts/addPost", auth, updateStatus, postController.createOne);
 
-  app.put("/posts/updatePost", auth, postController.updateOne);
+  app.put("/posts/updatePost", auth, updateStatus, postController.updateOne);
 
-  app.put("/posts/assignPost", auth, postController.assignOne);
+  app.put("/posts/assignPost", auth, updateStatus, postController.assignOne);
 
-  app.delete("/posts/deletePost", auth, postController.deleteOne);
+  app.delete("/posts/deletePost", auth, updateStatus, postController.deleteOne);
 
-  app.delete("/posts/deleteAll", auth, postController.deleteAll);
+  app.delete("/posts/deleteAll", auth, updateStatus, postController.deleteAll);
 };
