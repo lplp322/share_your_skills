@@ -199,7 +199,7 @@ class PostApiService {
       return [];
     }
   }
-
+/*
   Future<String> findSkillIdByName(String skillName) async {
     try {
       final response = await http.get(
@@ -221,7 +221,7 @@ class PostApiService {
     } catch (e) {
       throw Exception('Failed to load skill ID: $e');
     }
-  }
+  }*/
 
   //delet post
   Future<void> deletePost(String postId) async {

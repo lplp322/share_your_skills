@@ -88,6 +88,7 @@ class PostViewModel extends ChangeNotifier {
       return post;
     }
   }
+  /*
 
   Future<String> fetchSkillIdByName(String name) async {
     try {
@@ -98,7 +99,7 @@ class PostViewModel extends ChangeNotifier {
       throw 'Failed to fetch skill ID'; 
     }
   }
-
+*/
 
   Future<void> fetchRecommendedPosts(User user) async {
     try {
