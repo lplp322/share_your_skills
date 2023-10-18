@@ -123,7 +123,7 @@ class PostApiService {
       'Authorization': 'Bearer ${user.token}',
     };
 
-    final body = post.toJson(); // Convert the Post object to JSON
+    final body = post.toJsonUpdate(); // Convert the Post object to JSON
 
     try {
       final response =

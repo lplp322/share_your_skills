@@ -49,6 +49,18 @@ class Post {
       'assignedUserId': assignedUserId,
     };
   }
+   // to json
+   Map<String, dynamic> toJsonUpdate() {
+    return {
+      'postId': id,
+      'title': title,
+      'content': content,
+      'deadline': deadline.toIso8601String(),
+      'location': location,
+      'userId': userId,
+      'skillIds': skillIds,
+    };
+  }
    @override
   String toString() {
     return 'Post {\n'

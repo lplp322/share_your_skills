@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:share_your_skills/models/user.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'package:share_your_skills/models/skill.dart';
 
 class UserApiService {

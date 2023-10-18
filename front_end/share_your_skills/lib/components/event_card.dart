@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
-import 'package:provider/provider.dart';
 
 class EventCard extends StatefulWidget {
   final String title;

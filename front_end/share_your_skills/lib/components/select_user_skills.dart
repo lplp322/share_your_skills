@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:share_your_skills/components/filter_skills.dart';
 import 'package:share_your_skills/models/skill.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/viewmodels/skill_viewmodel.dart';
@@ -18,9 +16,10 @@ class SelectUserSkills extends StatelessWidget {
   Widget build(BuildContext context) {
     User? user = userViewModel.user;
     List<String>? userSkillIds = user?.skillIds;
+
     List<Skill> initialSelectedSkills = userSkillIds?.map((skillId) {
           return skillViewModel.skillList
-              .firstWhere((skill) => skill.skillId == skillId, orElse: () => Skill(skillId: '', name: ''),);
+              .firstWhere((skill) => skill.skillId == skillId);
         }).toList() ??
         [];
     List<MultiSelectItem<Skill>> multiSelectSkills = skillViewModel.skillList
