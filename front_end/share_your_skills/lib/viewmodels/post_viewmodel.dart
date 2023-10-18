@@ -9,6 +9,7 @@ class PostViewModel extends ChangeNotifier {
 
   PostViewModel(user) : postApiService = PostApiService(user) {
     print('PostViewModel initialized');
+    fetchRecommendedPosts();
   }
 
   List<Post> _userAssignedPosts = [];
@@ -121,11 +122,11 @@ class PostViewModel extends ChangeNotifier {
   }
 */
 
-  Future<void> fetchRecommendedPosts(User user) async {
+  Future<void> fetchRecommendedPosts() async {
     try {
-      final posts = await postApiService.getRecommendedPosts(user.userId!);
+      final posts = await postApiService.getRecommendedPosts();
       _displayPosts = posts;
-      print('Updated recommended posts length: ${_displayPosts.length}');
+      print('Updated fetch recommended posts length: ${_displayPosts.length}');
       notifyListeners();
     } catch (e) {
       print('Error fetching recommended posts: $e');

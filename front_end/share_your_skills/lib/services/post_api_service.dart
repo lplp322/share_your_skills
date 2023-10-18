@@ -314,7 +314,7 @@ class PostApiService {
     }
   }
 
-  Future<List<Post>> getRecommendedPosts(String userId) async {
+  Future<List<Post>> getRecommendedPosts() async {
     try {
       final response = await http.get(
         Uri.parse('http://localhost:8000/posts/getRecommendedPosts'),
@@ -352,7 +352,10 @@ class PostApiService {
         "Authorization": "Bearer ${user.token}",
       };
       final uri = Uri.http(
-          'localhost:8000', '/posts/getPostsBySkill', {"skillId": skillId});
+        'localhost:8000', 
+        '/posts/getPostsBySkill', 
+        {"skillId": skillId}
+      );
       final response = await http.get(
         uri,
         headers: headers,

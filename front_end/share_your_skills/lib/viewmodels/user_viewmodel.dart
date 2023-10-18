@@ -20,6 +20,7 @@ class UserViewModel extends ChangeNotifier {
   late SharedPreferences _prefs;
   late PostViewModelManager postViewModelManager;
   late PostViewModel postViewModel;
+  
   UserViewModel(
     this._userApiService,
     this.context,
@@ -127,8 +128,14 @@ class UserViewModel extends ChangeNotifier {
       List<String> addedSkillIds = updatedSkills
           .where((updatedSkillId) => !userSkills.contains(updatedSkillId))
           .toList();
-      addSkills(user, addedSkillIds);
-      deleteSkills(user, removedSkillIds);
+
+      if(addedSkillIds.isNotEmpty){
+        await addSkills(user, addedSkillIds);
+      }
+      if(removedSkillIds.isNotEmpty){
+        await deleteSkills(user, removedSkillIds);
+      }
+      await postViewModel.fetchRecommendedPosts();
       notifyListeners();
     } catch (e) {
       print('Error fetching user assigned posts: $e');
@@ -140,7 +147,7 @@ class UserViewModel extends ChangeNotifier {
       for (String skill in newSkills) {
         final skills = await _userApiService.addSkill(user, skill);
       }
-      print('Updated skills length: ${newSkills.length}');
+      print('Updated skills added length: ${newSkills.length}');
       print(newSkills);
     } catch (e) {
       print('Error fetching user assigned posts: $e');

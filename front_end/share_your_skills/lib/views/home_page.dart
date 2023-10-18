@@ -30,8 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final skillViewModel = Provider.of<SkillViewModel>(context, listen: false);
-    final postViewModel = Provider.of<PostViewModel>(context, listen: false);
-
+    final postViewModel = Provider.of<PostViewModel>(context, listen: true);
     return Scaffold(
       // appBar: AppBar(),
       body: SafeArea(

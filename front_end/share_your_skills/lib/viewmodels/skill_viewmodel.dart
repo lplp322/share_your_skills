@@ -40,7 +40,7 @@ class SkillViewModel extends ChangeNotifier {
   void clearSelectedSkill() {
     if (_selectedSkill != null) {
       // Call the method from PostViewModel
-      postViewModel.fetchRecommendedPosts(_user!);
+      postViewModel.fetchRecommendedPosts();
       _selectedSkill = null;
       notifyListeners();
     }

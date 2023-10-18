@@ -45,12 +45,6 @@ class MyApp extends StatelessWidget {
             Provider.of<PostViewModel>(context, listen: false),
           ),
         ),
-        ChangeNotifierProvider<SkillViewModel>(
-          create: (context) => SkillViewModel(
-            Provider.of<UserViewModel>(context, listen: false).user,
-            Provider.of<PostViewModel>(context, listen: false),
-          ),
-        ),
       ],
       child: MaterialApp(
         title: 'Your App',
