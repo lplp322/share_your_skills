@@ -24,6 +24,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
   Post? existingPost;
   String? skillId;
   final List<String> predefinedSkills = [];
+   final List<String> skills = [];
 
   String selectedDateText = '';
   String selectedTimeText = '';
@@ -47,6 +48,8 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
     setState(() {
       fetchedskills.forEach((key, value) {
         predefinedSkills.add(value);
+        skills.add(key);
+
       });
       ;
     });
@@ -195,6 +198,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
 
                     if (widget.postId != null) {
                       // Update an existing post
+                       final skillId = skills[predefinedSkills.indexOf(selectedSkill!)];
                       Post updatedPost = Post(
                         id: widget.postId, // Include the post ID for updating
                         title: titleController.text,
@@ -207,14 +211,14 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                             selectedTime.hour,
                             selectedTime.minute),
                         userId: existingPost?.userId,
-                        skillIds: [selectedSkill!],
+                        skillIds: [skillId],
                         assignedUserId: existingPost?.assignedUserId,
                       );
                       //update post
                       await postViewModel.updatePost(updatedPost);
                     } else {
-                    
-                    
+                      // Create a new post
+                      final skillId = skills[predefinedSkills.indexOf(selectedSkill!)];
                       Post newPost = Post(
                           id: null,
                           title: titleController.text,
@@ -226,7 +230,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                               selectedDate.day,
                               selectedTime.hour,
                               selectedTime.minute),
-                          skillIds: [selectedSkill!],
+                          skillIds: [skillId],
                           userId: postViewModel.user?.userId!,
                           assignedUserId: null);
 

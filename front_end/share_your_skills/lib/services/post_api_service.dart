@@ -43,7 +43,7 @@ class PostApiService {
       }
     } catch (e) {
       print('Posts API Error: $e');
-      return []; 
+      return [];
     }
   }
 
@@ -71,7 +71,7 @@ class PostApiService {
               .toList();
         } else {
           print('Unexpected response format. Response Body: ${response.body}');
-          return []; 
+          return [];
         }
       } else {
         print(
@@ -87,15 +87,14 @@ class PostApiService {
   // add post
   Future<Post> addPost(Post post) async {
     try {
-    print("API - Add post is called");
-    final url =
-        Uri.parse('$baseUrl/addPost'); 
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${user.token}',
-    };
+      print("API - Add post is called");
+      final url = Uri.parse('$baseUrl/addPost');
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${user.token}',
+      };
 
-    final body = post.toJson(); 
+      final body = post.toJson();
 
       print(body);
       final response =
@@ -105,7 +104,6 @@ class PostApiService {
         print(response.body);
         return await getPost(response.body);
       } else {
-        
         return post;
       }
     } catch (e) {
@@ -113,11 +111,11 @@ class PostApiService {
       return post;
     }
   }
+
   // update post
   Future<Post> updatePost(Post post) async {
     print("API - Update post is called");
-    final url =
-        Uri.parse('$baseUrl/updatePost'); 
+    final url = Uri.parse('$baseUrl/updatePost');
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${user.token}',
@@ -130,10 +128,8 @@ class PostApiService {
           await http.put(url, headers: headers, body: jsonEncode(body));
 
       if (response.statusCode == 201) {
-      
         return await getPost(post.id!);
       } else {
-      
         return post;
       }
     } catch (e) {
@@ -145,8 +141,7 @@ class PostApiService {
   Future<Post> getPost(String postId) async {
     try {
       final response = await http.get(
-        Uri.parse(
-            '$baseUrl/getPost?postId=$postId'),
+        Uri.parse('$baseUrl/getPost?postId=$postId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${user.token}',
@@ -159,16 +154,15 @@ class PostApiService {
         final post = Post.fromJson(jsonData);
         return post;
       } else {
-       
         throw Exception(
             'Failed to load post. Status code: ${response.statusCode}');
       }
     } catch (e) {
-     
       print('Error: $e');
       throw Exception('Failed to load post. Error: $e');
     }
   }
+
   // get my past posts
   Future<List<Post>> getMyPastPosts() async {
     try {
@@ -193,12 +187,12 @@ class PostApiService {
               .toList();
         } else {
           print('Unexpected response format. Response Body: ${response.body}');
-          return []; 
+          return [];
         }
       } else {
         print(
             'Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
-        return []; 
+        return [];
       }
     } catch (e) {
       print('Posts API Error: $e');
@@ -228,17 +222,22 @@ class PostApiService {
       throw Exception('Failed to load skill ID: $e');
     }
   }
+
   //delet post
   Future<void> deletePost(String postId) async {
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/deletePost?postId=$postId'),
+        Uri.parse('$baseUrl/deletePost'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${user.token}',
         },
+            body: jsonEncode({
+          "postId": postId,
+        
+        }),
       );
-
+   
       if (response.statusCode == 200) {
         print('Post deleted successfully');
       } else {
@@ -249,11 +248,11 @@ class PostApiService {
       throw Exception('Failed to delete post: $e');
     }
   }
+
   // get user name by id
   Future<String> getUserNameById(String userId) async {
-     print("API - getUserNameById is called");
+    print("API - getUserNameById is called");
     try {
-     
       final response = await http.get(
         Uri.parse('$baseUrl/getUser?userId=$userId'),
         headers: {
@@ -335,7 +334,8 @@ class PostApiService {
           return []; // Handle cases where the response format is not as expected
         }
       } else {
-        print('Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        print(
+            'Posts failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
         return []; // Handle the case where the server responds with an error
       }
     } catch (e) {
@@ -347,14 +347,11 @@ class PostApiService {
   Future<List<Post>> getPostsBySkill(String skillId) async {
     try {
       final headers = {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer ${user.token}",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer ${user.token}",
       };
       final uri = Uri.http(
-        'localhost:8000', 
-        '/posts/getPostsBySkill', 
-        {"skillId": skillId}
-      );
+          'localhost:8000', '/posts/getPostsBySkill', {"skillId": skillId});
       final response = await http.get(
         uri,
         headers: headers,
