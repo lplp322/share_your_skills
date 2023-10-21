@@ -3,10 +3,7 @@ import SkillModel from "../models/skillModel";
 import UserModel from "../models/userModel";
 import { ISkill } from "../models/skillModel";
 
-export async function createOne(
-  userId: Types.ObjectId,
-  skillId: Types.ObjectId
-) {
+export async function addOne(userId: Types.ObjectId, skillId: Types.ObjectId) {
   try {
     const user = await UserModel.findById(userId);
     const skill = await SkillModel.findById(skillId);
@@ -16,18 +13,19 @@ export async function createOne(
     if (!skill) {
       throw new Error("Skill not found");
     }
-
-    // check if the skill is already added to the user (repetition of code but it's ok for now)
     if (user.skillIds?.includes(skillId)) {
       throw new Error("Skill already added to user");
     }
     if (skill.users?.includes(userId)) {
       throw new Error("User already added to skill");
     }
+
     skill.users?.push(userId);
-    user.skillIds?.push(skillId);
-    await user.save();
     await skill.save();
+
+    const skillIds: Types.ObjectId[] | undefined = user.skillIds;
+    skillIds?.push(skillId);
+    await UserModel.updateOne({ _id: userId }, { skillIds: skillIds });
   } catch (err) {
     throw err;
   }
@@ -58,7 +56,7 @@ export async function addUserToSkill(
 
 export async function getAll() {
   try {
-    const skills = SkillModel.find({});
+    const skills = await SkillModel.find({});
     return skills;
   } catch (err) {
     throw err;
@@ -105,15 +103,15 @@ export async function deleteOne(
       throw new Error("Skill not found");
     }
 
-    user.skillIds = user.skillIds?.filter(
-      (id) => id.toString() !== skillId.toString()
-    );
     skill.users = skill.users?.filter(
       (id) => id.toString() !== userId.toString()
     );
-
-    await user.save();
     await skill.save();
+
+    const skillIds: Types.ObjectId[] | undefined = user.skillIds?.filter(
+      (id) => id.toString() !== skillId.toString()
+    );
+    await UserModel.updateOne({ _id: userId }, { skillIds: skillIds });
   } catch (err) {
     throw err;
   }
@@ -126,8 +124,6 @@ export async function deleteAll() {
     throw err;
   }
 }
-
-// to be deleted
 
 export async function forceAddSkillToDB(skill: ISkill) {
   try {
