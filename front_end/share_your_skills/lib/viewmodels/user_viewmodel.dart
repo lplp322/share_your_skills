@@ -312,4 +312,15 @@ class UserViewModel extends ChangeNotifier {
     _prefs.remove('token');
     notifyListeners();
   }
+  //call fetch user name
+  Future<String> fetchUserName(User user, String userId) async {
+    try {
+      final name = await _userApiService.fetchUserName(user, userId);
+      return name;
+    } catch (e) {
+      print('Error fetching user name: $e');
+      return ''; // Return an empty map as a fallback
+    }
+  }
+
 }

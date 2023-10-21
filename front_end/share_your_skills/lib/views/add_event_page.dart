@@ -7,6 +7,7 @@ import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
+
 class AddEventPage extends StatefulWidget {
   const AddEventPage({Key? key});
 
@@ -20,142 +21,155 @@ class _AddEventPageState extends State<AddEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    final postViewModel = Provider.of<UserViewModel>(context, listen: false).postViewModel;
+    final postViewModel =
+        Provider.of<UserViewModel>(context, listen: false).postViewModel;
     return SafeArea(
-      
-      child:RefreshIndicator(
+      child: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(Duration(seconds: 1));
           setState(() {
             postViewModel.fetchAllPosts();
           });
         },
-      child: Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ListTile(
-              title: Text(
-                'Create a New Post',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black,
+        child: Scaffold(
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                title: Text(
+                  'Create a New Post',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.black,
+                  ),
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    // Navigate to the Create Post Page
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CreateEventDetailPage(),
+                      ),
+                    );
+                    setState(() {
+                      postViewModel.fetchAllPosts();
+                    });
+                  },
                 ),
               ),
-              trailing: IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  // Navigate to the Create Post Page
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => CreateEventDetailPage(),
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 16),
-            ListTile(
-              title: Text(
-                'Ongoing Posts',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black,
+              SizedBox(height: 16),
+              ListTile(
+                title: Text(
+                  'Ongoing Posts',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.black,
+                  ),
+                ),
+                trailing: IconButton(
+                  icon: Icon(ongoingPostsExpanded
+                      ? Icons.expand_less
+                      : Icons.expand_more),
+                  onPressed: () {
+                    setState(() {
+                      ongoingPostsExpanded = !ongoingPostsExpanded;
+                    });
+                  },
                 ),
               ),
-              trailing: IconButton(
-                icon: Icon(ongoingPostsExpanded
-                    ? Icons.expand_less
-                    : Icons.expand_more),
-                onPressed: () {
-                  setState(() {
-                    ongoingPostsExpanded = !ongoingPostsExpanded;
-                  });
-                },
-              ),
-            ),
 
-            if (ongoingPostsExpanded)
-              Expanded(
-                child: Consumer<UserViewModel>(
-                  builder: (context, userViewModel, child) {
-                    final postViewModel = userViewModel.postViewModel;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: postViewModel.userPosts.length,
-                      itemBuilder: (context, index) {
-                        final post = postViewModel.userPosts[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => ShowPostPage(post: post, isEditable: true,),
-                              ),
-                            );
-                          },
-                          child: EventCard(
-                            title: post.title,
-                            location: post.location,
-                            date: post.deadline,
-                          ),
-                        );
-                      },
-                    );
+              if (ongoingPostsExpanded)
+                Expanded(
+                  child: Consumer<UserViewModel>(
+                    builder: (context, userViewModel, child) {
+                      final postViewModel = userViewModel.postViewModel;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: postViewModel.userPosts.length,
+                        itemBuilder: (context, index) {
+                          final post = postViewModel.userPosts[index];
+                          return GestureDetector(
+                            onTap: () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ShowPostPage(
+                                    post: post,
+                                  
+                                    isEditable: true,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: EventCard(
+                              title: post.title,
+                              location: post.location,
+                              date: post.deadline,
+                            
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              SizedBox(height: 16),
+              ListTile(
+                title: Text(
+                  'Past Posts',
+                  style: TextStyle(
+                    fontSize: 30,
+                    color: Colors.black,
+                  ),
+                ),
+                trailing: IconButton(
+                  icon: Icon(pastPostsExpanded
+                      ? Icons.expand_less
+                      : Icons.expand_more),
+                  onPressed: () {
+                    setState(() {
+                      pastPostsExpanded = !pastPostsExpanded;
+                    });
                   },
                 ),
               ),
-            SizedBox(height: 16),
-            ListTile(
-              title: Text(
-                'Past Posts',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black,
+              // Placeholder for Past Posts list (using userAssignedPosts for now)
+              if (pastPostsExpanded)
+                Expanded(
+                  child: Consumer<UserViewModel>(
+                    builder: (context, userViewModel, child) {
+                      final postViewModel = userViewModel.postViewModel;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: postViewModel.userPastPosts.length,
+                        itemBuilder: (context, index) {
+                          final post = postViewModel.userPastPosts[index];
+                     
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ShowPostPage(
+                                    post: post,
+                                    isEditable: false,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: EventCard(
+                              title: post.title,
+                              location: post.location,
+                              date: post.deadline,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-              trailing: IconButton(
-                icon: Icon(
-                    pastPostsExpanded ? Icons.expand_less : Icons.expand_more),
-                onPressed: () {
-                  setState(() {
-                    pastPostsExpanded = !pastPostsExpanded;
-                  });
-                },
-              ),
-            ),
-            // Placeholder for Past Posts list (using userAssignedPosts for now)
-            if (pastPostsExpanded)
-              Expanded(
-                child: Consumer<UserViewModel>(
-                  builder: (context, userViewModel, child) {
-                    final postViewModel = userViewModel.postViewModel;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: postViewModel.userPastPosts.length,
-                      itemBuilder: (context, index) {
-                        final post = postViewModel.userPastPosts[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => ShowPostPage(post: post),
-                              ),
-                            );
-                          },
-                          child: EventCard(
-                            title: post.title,
-                            location: post.location,
-                            date: post.deadline,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }

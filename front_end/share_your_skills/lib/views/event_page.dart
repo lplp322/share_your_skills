@@ -17,7 +17,8 @@ class _EventPageState extends State<EventPage> {
 
   @override
   Widget build(BuildContext context) {
-        final postViewModel = Provider.of<UserViewModel>(context, listen: false).postViewModel;
+    final postViewModel =
+        Provider.of<UserViewModel>(context, listen: false).postViewModel;
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () async {
@@ -113,41 +114,36 @@ class _EventPageState extends State<EventPage> {
                         itemCount: postViewModel.userCompletedPosts.length,
                         itemBuilder: (context, index) {
                           final post = postViewModel.userCompletedPosts[index];
-                          return GestureDetector(
-                            onTap: () async {
-                              /*
-                              final userNameFuture =
-                                  postViewModel.getUserNameById(post.userId!);
-      
-                              // Show a loading indicator while fetching the username
-                              showDialog(
-                                context: context,
-                                barrierDismissible:
-                                    false, // Prevent the user from dismissing the dialog
-                                builder: (dialogContext) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                },
-                              );
-      
-                               post.userId = await userNameFuture;
-      
-                              // Dismiss the loading indicator
-                              Navigator.of(context).pop();
-      */
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ShowPostPage(post: post),
-                                ),
-                              );
+                          print(post);
+                          return FutureBuilder(
+                            future: userViewModel.fetchUserName(userViewModel.user!, post.assignedUserId!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator(); // Display a loading indicator while fetching data.
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                post.userId = snapshot.data;
+
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => ShowPostPage(
+                                          post: post,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: EventCard(
+                                    title: post.title,
+                                    location: post.location,
+                                    date: post.deadline,
+                                  ),
+                                );
+                              }
                             },
-                            child: EventCard(
-                              title: post.title,
-                              location: post.location,
-                              date: post.deadline,
-                            ),
                           );
                         },
                       );

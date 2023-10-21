@@ -29,8 +29,8 @@ class UserApiService {
           /*
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
-*/       // print(userJson);
-          final user = User.fromJson(jsonResponse); 
+*/ // print(userJson);
+          final user = User.fromJson(jsonResponse);
           print(" API ${user}");
           return user;
         } else {
@@ -77,7 +77,7 @@ class UserApiService {
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
           */
-          final extractedUser = User.fromJson(jsonResponse); 
+          final extractedUser = User.fromJson(jsonResponse);
 
           return extractedUser; // Registration successful, return user object
         } else {
@@ -100,6 +100,7 @@ class UserApiService {
       return null; // Handle exceptions (e.g., network errors), return null
     }
   }
+
 /*
   Future<User?> extractUserFromToken(
       String token, Map<String, dynamic>? userJson) async {
@@ -150,10 +151,8 @@ class UserApiService {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
-          },
-        body: jsonEncode({
-          "name": name
-        }),
+        },
+        body: jsonEncode({"name": name}),
       );
 
       if (response.statusCode == 200) {
@@ -177,10 +176,8 @@ class UserApiService {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
-          },
-        body: jsonEncode({
-          "newLogin": email
-        }),
+        },
+        body: jsonEncode({"newLogin": email}),
       );
 
       if (response.statusCode == 200) {
@@ -204,7 +201,7 @@ class UserApiService {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token"
-          },
+        },
         body: jsonEncode({
           "city": address.city,
           "street": address.street,
@@ -229,27 +226,24 @@ class UserApiService {
     try {
       final token = user.token;
       final headers = {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
       };
-      final uri = Uri.http(
-        'localhost:8000', 
-        '/skills/addSkill', 
-        {"skillId": skillId}
-      );
-      
+      final uri =
+          Uri.http('localhost:8000', '/skills/addSkill', {"skillId": skillId});
+
       final response = await http.post(
         uri,
         headers: headers,
       );
-    
+
       if (response.statusCode == 201) {
-          return response.body;
+        return response.body;
       } else if ((response.statusCode == 500)) {
         print(
             'Skill already added. Status Code: ${response.statusCode}, Response Body: ${response.body}');
         return ''; // Handle the case where the server responds with an error
-      } else{
+      } else {
         print(
             'Adding skill failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
         return ''; // Handle the case where the server responds with an error
@@ -265,26 +259,23 @@ class UserApiService {
       print('entering call ${skillId}');
       final token = user.token;
       final headers = {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
       };
       final uri = Uri.http(
-        'localhost:8000', 
-        '/skills/deleteSkill', 
-        {"skillId": skillId}
-      );
-      
+          'localhost:8000', '/skills/deleteSkill', {"skillId": skillId});
+
       final response = await http.delete(
         uri,
         headers: headers,
       );
       if (response.statusCode == 201) {
-          return response.body;
+        return response.body;
       } else if ((response.statusCode == 500)) {
         print(
             'Skill deleted. Status Code: ${response.statusCode}, Response Body: ${response.body}');
         return ''; // Handle the case where the server responds with an error
-      } else{
+      } else {
         print(
             'Deleting skill failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
         return ''; // Handle the case where the server responds with an error
@@ -321,6 +312,34 @@ class UserApiService {
       }
     } catch (e) {
       throw Exception('Failed to load skills: $e');
+    }
+  }
+
+  // get username
+  Future<String> fetchUserName(User user, String userId) async {
+    try {
+      final token = user.token;
+      print("token ${token}");
+      print("userId ${userId}");
+      final response = await http.get(
+        Uri.parse('http://localhost:8000/users/getUser?userId=${userId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final String name = data['name'];
+
+        return name;
+      } else {
+        throw Exception(
+            'Failed to load user. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load user: $e');
     }
   }
 }

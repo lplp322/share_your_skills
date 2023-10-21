@@ -120,7 +120,7 @@ class _ShowPostPageState extends State<ShowPostPage> {
               ),
               SizedBox(height: 16.0),
               Text(
-                'User name: ${widget.post.userId}',
+                'Publisher ID: ${widget.post.userId}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),

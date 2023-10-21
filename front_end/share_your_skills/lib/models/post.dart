@@ -59,6 +59,7 @@ class Post {
       'location': location,
       'userId': userId,
       'skillIds': skillIds,
+      'assignedUserId': assignedUserId,
     };
   }
    @override

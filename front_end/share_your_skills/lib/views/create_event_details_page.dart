@@ -216,6 +216,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       );
                       //update post
                       await postViewModel.updatePost(updatedPost);
+                        postViewModel.fetchAllPosts();
                     } else {
                       // Create a new post
                       final skillId =
@@ -236,6 +237,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                           assignedUserId: null);
 
                       await postViewModel.addPost(newPost);
+                      postViewModel.fetchAllPosts();
                     }
 
                     Navigator.of(context).pop();

@@ -4,11 +4,11 @@ class EventCard extends StatefulWidget {
   final String title;
   final String location;
   final DateTime date;
-
   EventCard({
     required this.title,
     required this.location,
     required this.date,
+
   });
 
   @override
