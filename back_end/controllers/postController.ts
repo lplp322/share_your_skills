@@ -18,7 +18,9 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getPost = async (req: Request, res: Response) => {
   try {
-    const postId = new Types.ObjectId(req.query.postId as string);
+    const postId: Types.ObjectId = new Types.ObjectId(
+      req.query.postId as string
+    );
     const post = await postServices.getPost(postId);
     res.status(messages.SUCCESSFUL).send(post);
   } catch (err) {
@@ -28,7 +30,9 @@ export const getPost = async (req: Request, res: Response) => {
 
 export const getMyPosts = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const posts = await postServices.getMyPosts(userId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -40,7 +44,9 @@ export const getMyPosts = async (req: Request, res: Response) => {
 
 export const getMyPastPosts = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const posts = await postServices.getMyPastPosts(userId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -52,7 +58,9 @@ export const getMyPastPosts = async (req: Request, res: Response) => {
 
 export const getAssignedPosts = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const posts = await postServices.getAssignedPosts(userId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -64,7 +72,9 @@ export const getAssignedPosts = async (req: Request, res: Response) => {
 
 export const getPastAssignedPosts = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const posts = await postServices.getPastAssignedPosts(userId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -76,7 +86,9 @@ export const getPastAssignedPosts = async (req: Request, res: Response) => {
 
 export const getPostsBySkill = async (req: Request, res: Response) => {
   try {
-    const skillId = new Types.ObjectId(req.query.skillId as string);
+    const skillId: Types.ObjectId = new Types.ObjectId(
+      req.query.skillId as string
+    );
     const posts = await postServices.getPostsBySkill(skillId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -88,7 +100,9 @@ export const getPostsBySkill = async (req: Request, res: Response) => {
 
 export const getRecommendedPosts = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const posts = await postServices.getRecommendedPosts(userId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
@@ -100,13 +114,17 @@ export const getRecommendedPosts = async (req: Request, res: Response) => {
 
 export const createOne = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const skillIds = req.body.skillIds.map(
       (skillId: string) => new Types.ObjectId(skillId)
     );
 
-    const assignedUserId = new Types.ObjectId(req.body.assignedUserId);
-    const deadline = new Date(req.body.deadline);
+    const assignedUserId: Types.ObjectId = new Types.ObjectId(
+      req.body.assignedUserId
+    );
+    const deadline: Date = new Date(req.body.deadline);
 
     const post: IPost = {
       title: req.body.title,
@@ -122,7 +140,7 @@ export const createOne = async (req: Request, res: Response) => {
       post.assignedUserId = assignedUserId;
     }
 
-    const postId = await postServices.createOne(post);
+    const postId: string = await postServices.createOne(post);
     res.status(messages.SUCCESSFUL_CREATION).send(postId);
   } catch (err) {
     return res
@@ -133,13 +151,19 @@ export const createOne = async (req: Request, res: Response) => {
 
 export const updateOne = async (req: Request, res: Response) => {
   try {
-    const userId = new Types.ObjectId((req as CustomRequest).user_id);
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const skillIds = req.body.skillIds.map(
       (skillId: string) => new Types.ObjectId(skillId)
     );
-    const postId = new Types.ObjectId(req.body.postId as string);
-    const assignedUserId = new Types.ObjectId(req.body.assignedUserId);
-    const deadline = new Date(req.body.deadline);
+    const postId: Types.ObjectId = new Types.ObjectId(
+      req.body.postId as string
+    );
+    const assignedUserId: Types.ObjectId = new Types.ObjectId(
+      req.body.assignedUserId
+    );
+    const deadline: Date = new Date(req.body.deadline);
     const post: IPost = {
       title: req.body.title,
       content: req.body.content,
@@ -165,8 +189,10 @@ export const updateOne = async (req: Request, res: Response) => {
 
 export const assignOne = async (req: Request, res: Response) => {
   try {
-    const assignedUserId = new Types.ObjectId((req as CustomRequest).user_id);
-    const postId = new Types.ObjectId(req.body.postId);
+    const assignedUserId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
+    const postId: Types.ObjectId = new Types.ObjectId(req.body.postId);
 
     return Promise.all([
       postServices.getPost(postId),
@@ -214,7 +240,7 @@ export const assignOne = async (req: Request, res: Response) => {
 
 export const deleteOne = async (req: Request, res: Response) => {
   try {
-    const postId = new Types.ObjectId(req.body.postId);
+    const postId: Types.ObjectId = new Types.ObjectId(req.body.postId);
     await postServices.deleteOne(postId);
     res.status(messages.SUCCESSFUL_DELETE).send("Post deleted");
   } catch (err) {

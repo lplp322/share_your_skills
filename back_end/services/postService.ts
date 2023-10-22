@@ -185,9 +185,9 @@ export async function updateStatus(
     }
 ) {
   // get the current time of the day
-  const currentTime = new Date().getTime();
+  const currentTime: number = new Date().getTime();
   // get the deadline of the post
-  const deadline = post.deadline.getTime();
+  const deadline: number = post.deadline.getTime();
   // if the post is expired, update the status
   if (currentTime > deadline) {
     if (post.status === postStatus.ASSIGNED) {
