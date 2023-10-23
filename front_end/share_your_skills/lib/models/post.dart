@@ -51,6 +51,7 @@ class Post {
   }
    // to json
    Map<String, dynamic> toJsonUpdate() {
+   // print('POST id: $id, title: $title, content: $content, deadline: $deadline, location: $location, userId: $userId, skillIds: $skillIds, assignedUserId: $assignedUserId');
     return {
       'postId': id,
       'title': title,
