@@ -88,7 +88,10 @@ export async function getPostsBySkill(skillId: Types.ObjectId) {
   try {
     const foundPosts = [];
     for (const post of await PostModel.find({})) {
-      if (post.skillIds.includes(skillId)) {
+      if (
+        post.skillIds.includes(skillId) &&
+        post.status === postStatus.PENDING
+      ) {
         foundPosts.push(post);
       }
     }
