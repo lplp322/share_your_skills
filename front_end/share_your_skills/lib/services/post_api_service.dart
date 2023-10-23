@@ -126,7 +126,7 @@ class PostApiService {
 
     try {
       final response =
-          await http.put(url, headers: headers, body: jsonEncode(body));
+          await http.post(url, headers: headers, body: jsonEncode(body));
 
       if (response.statusCode == 201) {
         return await getPost(post.id!);

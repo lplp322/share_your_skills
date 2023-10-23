@@ -316,7 +316,7 @@ class UserApiService {
   }
 
   // get username
-  Future<String> fetchUserName(User user, String userId) async {
+  Future<String?> fetchUserName(User user, String userId) async {
     try {
       final token = user.token;
       print("token ${token}");

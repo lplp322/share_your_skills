@@ -313,7 +313,7 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
   //call fetch user name
-  Future<String> fetchUserName(User user, String userId) async {
+  Future<String?> fetchUserName(User user, String userId) async {
     try {
       final name = await _userApiService.fetchUserName(user, userId);
       return name;

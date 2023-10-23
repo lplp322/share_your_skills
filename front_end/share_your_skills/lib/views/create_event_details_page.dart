@@ -107,7 +107,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                 TextFormField(
                   controller: contentController,
                   decoration: InputDecoration(labelText: 'Enter description'),
-                  maxLines: 4,
+                  maxLines: 2,
                 ),
                 SizedBox(height: 16),
                 Text('Location', style: TextStyle(fontSize: 20)),
@@ -216,7 +216,18 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       );
                       //update post
                       await postViewModel.updatePost(updatedPost);
-                        postViewModel.fetchAllPosts();
+                      postViewModel.fetchAllPosts();
+
+                      // Show a SnackBar to notify the user
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Post updated successfully'), // Change the message as needed
+                          duration: Duration(seconds: 2), // Adjust the duration
+                        ),
+                      );
+                      Navigator.of(context).pop();
                     } else {
                       // Create a new post
                       final skillId =
@@ -233,18 +244,30 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                               selectedTime.hour,
                               selectedTime.minute),
                           skillIds: [skillId],
-                          userId: postViewModel.user?.userId!,
+                          userId: postViewModel.user?.userId,
                           assignedUserId: null);
 
                       await postViewModel.addPost(newPost);
                       postViewModel.fetchAllPosts();
+                      // Show a SnackBar to notify the user
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Post created successfully'), // Change the message as needed
+                          duration: Duration(seconds: 2), // Adjust the duration
+                        ),
+                      );
+                      Navigator.of(context).pop();
                     }
 
-                    Navigator.of(context).pop();
+                    // Navigator.of(context).pop();
                   },
                   style: ButtonStyle(
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                    minimumSize: MaterialStateProperty.all<Size>(
+                        Size(double.infinity, 40)),
                   ),
                   child:
                       Text(widget.postId != null ? 'Save Changes' : 'Create'),

@@ -138,8 +138,10 @@ class _ShowPostPageState extends State<ShowPostPage> {
                         deletePost(context);
                       },
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.red),
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.red),
+                        minimumSize:
+                            MaterialStateProperty.all<Size>(Size(395, 40)),
                       ),
                       child: Container(
                         width: 150,
@@ -147,6 +149,7 @@ class _ShowPostPageState extends State<ShowPostPage> {
                           child: Text(
                             'Delete',
                             style: TextStyle(fontSize: 20, color: Colors.white),
+                            
                           ),
                         ),
                       ),
