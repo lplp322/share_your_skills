@@ -20,7 +20,7 @@ class UserViewModel extends ChangeNotifier {
   late SharedPreferences _prefs;
   late PostViewModelManager postViewModelManager;
   late PostViewModel postViewModel;
-  
+
   UserViewModel(
     this._userApiService,
     this.context,
@@ -53,17 +53,16 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> updateName(User user, String newName) async {
-    
     final updatedName = await _userApiService.changeName(user, newName);
 
     final updatedUser = User(
-        userId: user.userId,
-        name: newName,
-        email: user.email,
-        token: user.token,
-        address: user.address,
-        skillIds: user.skillIds,
-      );
+      userId: user.userId,
+      name: newName,
+      email: user.email,
+      token: user.token,
+      address: user.address,
+      skillIds: user.skillIds,
+    );
 
     _user = updatedUser;
     print(updatedName);
@@ -75,13 +74,13 @@ class UserViewModel extends ChangeNotifier {
     print(updatedEmail);
 
     final updatedUser = User(
-        userId: user.userId,
-        name: user.email,
-        email: newEmail,
-        token: user.token,
-        address: user.address,
-        skillIds: user.skillIds,
-      );
+      userId: user.userId,
+      name: user.email,
+      email: newEmail,
+      token: user.token,
+      address: user.address,
+      skillIds: user.skillIds,
+    );
 
     _user = updatedUser;
     notifyListeners();
@@ -91,13 +90,13 @@ class UserViewModel extends ChangeNotifier {
     final updatedAddress =
         await _userApiService.changeAddress(user, newAddress);
     final updatedUser = User(
-        userId: user.userId,
-        name: user.email,
-        email: user.email,
-        token: user.token,
-        address: newAddress,
-        skillIds: user.skillIds,
-      );
+      userId: user.userId,
+      name: user.email,
+      email: user.email,
+      token: user.token,
+      address: newAddress,
+      skillIds: user.skillIds,
+    );
 
     _user = updatedUser;
     print(updatedAddress);
@@ -129,10 +128,10 @@ class UserViewModel extends ChangeNotifier {
           .where((updatedSkillId) => !userSkills.contains(updatedSkillId))
           .toList();
 
-      if(addedSkillIds.isNotEmpty){
+      if (addedSkillIds.isNotEmpty) {
         await addSkills(user, addedSkillIds);
       }
-      if(removedSkillIds.isNotEmpty){
+      if (removedSkillIds.isNotEmpty) {
         await deleteSkills(user, removedSkillIds);
       }
       await postViewModel.fetchRecommendedPosts();
@@ -211,9 +210,9 @@ class UserViewModel extends ChangeNotifier {
             _user = registeredUser;
             registrationErrorMessage = null;
             _prefs.setString('token', token);
-         postViewModelManager.onUserLogin(registeredUser);
-          postViewModel =
-              postViewModelManager.userPostViewModels[registeredUser]!;
+            postViewModelManager.onUserLogin(registeredUser);
+            postViewModel =
+                postViewModelManager.userPostViewModels[registeredUser]!;
             if (context != null) {
               Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
               Navigator.of(context).pushReplacement(
@@ -258,9 +257,11 @@ class UserViewModel extends ChangeNotifier {
           postViewModelManager.onUserLogin(loggedInUser);
           postViewModel =
               postViewModelManager.userPostViewModels[loggedInUser]!;
+          postViewModel.clearAssignedPosts();
           postViewModel.fetchAllPosts();
+
           initControllerFields();
-          print('Navigator context: $context');
+
           Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
@@ -312,15 +313,17 @@ class UserViewModel extends ChangeNotifier {
     _prefs.remove('token');
     notifyListeners();
   }
+
   //call fetch user name
-  Future<String?> fetchUserName(User user, String userId) async {
+  Future<String> fetchUserName(User user, String userId) async {
     try {
+      print(userId);
       final name = await _userApiService.fetchUserName(user, userId);
+      print('Fetched user name: $name');
       return name;
     } catch (e) {
       print('Error fetching user name: $e');
       return ''; // Return an empty map as a fallback
     }
   }
-
 }

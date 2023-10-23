@@ -33,7 +33,7 @@ class _EventPageState extends State<EventPage> {
             children: [
               ListTile(
                 title: Text(
-                  'Current Events',
+                  'Current Posts',
                   style: TextStyle(
                     fontSize: 30,
                     color: Colors.black,
@@ -55,29 +55,44 @@ class _EventPageState extends State<EventPage> {
                   child: Consumer<UserViewModel>(
                     builder: (context, userViewModel, child) {
                       final postViewModel = userViewModel.postViewModel;
-                      print(postViewModel.userAssignedPosts.length);
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: postViewModel.userAssignedPosts.length,
                         itemBuilder: (context, index) {
                           final post = postViewModel.userAssignedPosts[index];
-                          /*
-                          final skillName = postViewModel
-                              .fetchSkillIdByName(post.skillIds[0]);*/
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ShowPostPage(post: post),
-                                ),
-                              );
+                          return FutureBuilder<String>(
+                            future: userViewModel.fetchUserName(
+                                userViewModel.user!, post.userId!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator(); // Loading indicator
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final String username = snapshot.data ??
+                                    ''; // Provide a default value ('') if snapshot.data is null
+                                return GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => ShowPostPage(
+                                          post: post,
+                                          username: username,
+                                          isEditable: true,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: EventCard(
+                                    title: post.title,
+                                    location: post.location,
+                                    date: post.deadline,
+                                    // Now you can use the 'username' variable here
+                                  ),
+                                );
+                              }
                             },
-                            child: EventCard(
-                              title: post.title,
-                              location: post.location,
-                              date: post.deadline,
-                            ),
                           );
                         },
                       );
@@ -87,7 +102,7 @@ class _EventPageState extends State<EventPage> {
               SizedBox(height: 16),
               ListTile(
                 title: Text(
-                  'Completed Events',
+                  'Completed Posts',
                   style: TextStyle(
                     fontSize: 30,
                     color: Colors.black,
@@ -114,24 +129,26 @@ class _EventPageState extends State<EventPage> {
                         itemCount: postViewModel.userCompletedPosts.length,
                         itemBuilder: (context, index) {
                           final post = postViewModel.userCompletedPosts[index];
-                          print(post);
-                          return FutureBuilder(
-                            future: userViewModel.fetchUserName(userViewModel.user!, post.assignedUserId!),
+                          return FutureBuilder<String>(
+                            future: userViewModel.fetchUserName(
+                                userViewModel.user!, post.userId!),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return CircularProgressIndicator(); // Display a loading indicator while fetching data.
+                                return CircularProgressIndicator(); // Loading indicator
                               } else if (snapshot.hasError) {
                                 return Text('Error: ${snapshot.error}');
                               } else {
-                                post.userId = snapshot.data;
-
+                                final String username = snapshot.data ??
+                                    ''; // Provide a default value ('') if snapshot.data is null
                                 return GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
+                                  onTap: () async {
+                                    await Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => ShowPostPage(
                                           post: post,
+                                          username: username,
+                                          isEditable: true,
                                         ),
                                       ),
                                     );
@@ -140,6 +157,7 @@ class _EventPageState extends State<EventPage> {
                                     title: post.title,
                                     location: post.location,
                                     date: post.deadline,
+                                    // Now you can use the 'username' variable here
                                   ),
                                 );
                               }

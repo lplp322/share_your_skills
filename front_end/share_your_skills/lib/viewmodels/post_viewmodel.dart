@@ -42,6 +42,7 @@ class PostViewModel extends ChangeNotifier {
     fetchUserPosts();
     fetchUserPastPosts();
     fetchUserCompletedPosts();
+    fetchRecommendedPosts();
   }
 
   // fetch user posts
@@ -161,8 +162,9 @@ class PostViewModel extends ChangeNotifier {
   void clearAssignedPosts() {
     _userAssignedPosts.clear();
     _userPosts.clear();
-    print('Clearing userAssignedPosts');
-    print('userAssignedPosts cleared, length: ${_userAssignedPosts.length}');
+    _userPastPosts.clear();
+    _userCompletedPosts.clear();
+    
     notifyListeners();
   }
   // call post delete

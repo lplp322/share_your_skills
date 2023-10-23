@@ -8,8 +8,9 @@ import 'package:provider/provider.dart';
 class ShowPostPage extends StatefulWidget {
   final Post post;
   final bool isEditable;
+  final String? username;
 
-  ShowPostPage({required this.post, this.isEditable = false});
+  ShowPostPage({required this.post, this.isEditable = false, this.username});
 
   @override
   _ShowPostPageState createState() => _ShowPostPageState();
@@ -63,9 +64,9 @@ class _ShowPostPageState extends State<ShowPostPage> {
     final formattedDate =
         DateFormat('yyyy-MM-dd HH:mm').format(widget.post.deadline);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
+    return SafeArea(
+      child: Scaffold(
+        body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +121,7 @@ class _ShowPostPageState extends State<ShowPostPage> {
               ),
               SizedBox(height: 16.0),
               Text(
-                'Publisher ID: ${widget.post.userId}',
+                'Publisher name: ${widget.username}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
@@ -149,7 +150,6 @@ class _ShowPostPageState extends State<ShowPostPage> {
                           child: Text(
                             'Delete',
                             style: TextStyle(fontSize: 20, color: Colors.white),
-                            
                           ),
                         ),
                       ),

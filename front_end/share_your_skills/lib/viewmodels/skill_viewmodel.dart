@@ -6,17 +6,19 @@ import 'package:share_your_skills/models/post_manager.dart';
 import 'package:share_your_skills/services/post_api_service.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
+import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import '../models/skill.dart';
 import '../services/skill_api_service.dart';
 
 class SkillViewModel extends ChangeNotifier {
   User? _user;
   final SkillApiService skillApiService;
-  final PostViewModel postViewModel;
+  // final PostViewModel postViewModel;
+  final UserViewModel userViewModel;
   
-  SkillViewModel(this._user, this.postViewModel)
-      : skillApiService = _user != null
-            ? SkillApiService(_user!.token)
+  SkillViewModel(this.userViewModel)
+      : skillApiService = userViewModel.user != null
+            ? SkillApiService(userViewModel.user!.token)
             : SkillApiService('') {
     fetchSkillsOnce();
   } // Provide a default value or handle null case accordingly
@@ -32,8 +34,8 @@ class SkillViewModel extends ChangeNotifier {
   void setSelectedSkill(Skill skill) {
     print('skill selected: ${skill.name}');
     if (_selectedSkill != skill) {
-      _selectedSkill = skill;
-      postViewModel.fetchPostsBySkill(skill.skillId);
+      _selectedSkill = skill;       
+      userViewModel.postViewModel.fetchPostsBySkill(skill.skillId);
       notifyListeners();
     }
   }
@@ -42,7 +44,7 @@ class SkillViewModel extends ChangeNotifier {
     if (_selectedSkill != null) {
       // Call the method from PostViewModel
       print("recommended selected");
-      postViewModel.fetchRecommendedPosts();
+      userViewModel.postViewModel.fetchRecommendedPosts();
       _selectedSkill = null;
       notifyListeners();
     }

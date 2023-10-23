@@ -57,11 +57,11 @@ class _AppBarState extends State<AppBar> {
                   unselectedItemColor: Colors.grey, // Color for unselected items
                   items: const [
                     BottomNavigationBarItem(
-                      label: 'My Events',
+                      label: 'My Posts',
                       icon: Icon(Icons.event),
                     ),
                     BottomNavigationBarItem(
-                      label: 'Add Event',
+                      label: 'Add Posts',
                       icon: Icon(Icons.add),
                     ),
                     BottomNavigationBarItem(

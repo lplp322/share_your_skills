@@ -316,11 +316,11 @@ class UserApiService {
   }
 
   // get username
-  Future<String?> fetchUserName(User user, String userId) async {
+  Future<String> fetchUserName(User user, String userId) async {
     try {
       final token = user.token;
       print("token ${token}");
-      print("userId ${userId}");
+      print("Fetch name: userId ${userId}");
       final response = await http.get(
         Uri.parse('http://localhost:8000/users/getUser?userId=${userId}'),
         headers: {

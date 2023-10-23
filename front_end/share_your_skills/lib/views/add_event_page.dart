@@ -89,30 +89,46 @@ class _AddEventPageState extends State<AddEventPage> {
                         itemCount: postViewModel.userPosts.length,
                         itemBuilder: (context, index) {
                           final post = postViewModel.userPosts[index];
-                          return GestureDetector(
-                            onTap: () async {
-                              await Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ShowPostPage(
-                                    post: post,
-                                  
-                                    isEditable: true,
+                          return FutureBuilder<String>(
+                            future: userViewModel.fetchUserName(
+                                userViewModel.user!, post.userId!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator(); // Loading indicator
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final String username = snapshot.data ??
+                                    ''; // Provide a default value ('') if snapshot.data is null
+                                return GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => ShowPostPage(
+                                          post: post,
+                                          username: username,
+                                          isEditable: true,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: EventCard(
+                                    title: post.title,
+                                    location: post.location,
+                                    date: post.deadline,
+                                    // Now you can use the 'username' variable here
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
-                            child: EventCard(
-                              title: post.title,
-                              location: post.location,
-                              date: post.deadline,
-                            
-                            ),
                           );
                         },
                       );
                     },
                   ),
                 ),
+
               SizedBox(height: 16),
               ListTile(
                 title: Text(
@@ -144,23 +160,39 @@ class _AddEventPageState extends State<AddEventPage> {
                         itemCount: postViewModel.userPastPosts.length,
                         itemBuilder: (context, index) {
                           final post = postViewModel.userPastPosts[index];
-                     
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ShowPostPage(
-                                    post: post,
-                                    isEditable: false,
+                          return FutureBuilder<String>(
+                            future: userViewModel.fetchUserName(
+                                userViewModel.user!, post.userId!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator(); // Loading indicator
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final String username = snapshot.data ??
+                                    ''; // Provide a default value ('') if snapshot.data is null
+                                return GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => ShowPostPage(
+                                          post: post,
+                                          username: username,
+                                          isEditable: true,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: EventCard(
+                                    title: post.title,
+                                    location: post.location,
+                                    date: post.deadline,
+                                    // Now you can use the 'username' variable here
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
-                            child: EventCard(
-                              title: post.title,
-                              location: post.location,
-                              date: post.deadline,
-                            ),
                           );
                         },
                       );
