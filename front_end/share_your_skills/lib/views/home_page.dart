@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:share_your_skills/viewmodels/skill_viewmodel.dart';
+import 'package:share_your_skills/views/home_show_page.dart';
 import 'package:share_your_skills/views/login_page.dart';
 import 'package:share_your_skills/views/show_post_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -67,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => ShowPostPage(post: post, isEditable: false,),
+                                builder: (context) => HomeShowPostPage(post: post, isEditable: false,),
                               ),
                             );
                           }, 

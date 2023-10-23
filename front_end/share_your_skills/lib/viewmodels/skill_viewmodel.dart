@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/models/post.dart';
+import 'package:share_your_skills/models/post_manager.dart';
 import 'package:share_your_skills/services/post_api_service.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
@@ -12,7 +13,7 @@ class SkillViewModel extends ChangeNotifier {
   User? _user;
   final SkillApiService skillApiService;
   final PostViewModel postViewModel;
-
+  
   SkillViewModel(this._user, this.postViewModel)
       : skillApiService = _user != null
             ? SkillApiService(_user!.token)
@@ -29,7 +30,7 @@ class SkillViewModel extends ChangeNotifier {
   Skill? get selectedSkill => _selectedSkill;
 
   void setSelectedSkill(Skill skill) {
-    print(skill.name);
+    print('skill selected: ${skill.name}');
     if (_selectedSkill != skill) {
       _selectedSkill = skill;
       postViewModel.fetchPostsBySkill(skill.skillId);
@@ -40,6 +41,7 @@ class SkillViewModel extends ChangeNotifier {
   void clearSelectedSkill() {
     if (_selectedSkill != null) {
       // Call the method from PostViewModel
+      print("recommended selected");
       postViewModel.fetchRecommendedPosts();
       _selectedSkill = null;
       notifyListeners();

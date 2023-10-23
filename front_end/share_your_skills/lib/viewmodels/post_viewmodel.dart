@@ -135,9 +135,21 @@ class PostViewModel extends ChangeNotifier {
 
   Future<void> fetchPostsBySkill(String skillId) async {
     try {
+      print('postbySkillID-${skillId}');
       final posts = await postApiService.getPostsBySkill(skillId);
       _displayPosts = posts;
       print('Updated recommended posts length: ${_displayPosts.length}');
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching recommended posts: $e');
+    }
+  }
+
+  Future<void> assignPost(String postId) async{
+    // http://localhost:8000/posts/assignPost
+    try {
+      final posts = await postApiService.assignPost(postId);
+      print('Assigned post succesfully');
       notifyListeners();
     } catch (e) {
       print('Error fetching recommended posts: $e');

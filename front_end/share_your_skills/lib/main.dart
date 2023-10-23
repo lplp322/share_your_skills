@@ -15,12 +15,13 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  final ipAddress = 'localhost';
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         Provider<UserApiService>(
-          create: (context) => UserApiService('http://localhost:8000/users'),
+          create: (context) => UserApiService('http://$ipAddress:8000/users'),
         ),
         ChangeNotifierProvider<UserViewModel>(
           create: (context) => UserViewModel(

@@ -7,6 +7,7 @@ import 'package:share_your_skills/models/post.dart';
 class PostApiService {
   User user;
   String baseUrl = 'http://localhost:8000/posts';
+  String ipAddress = 'localhost';
   PostApiService(this.user) {
     print('PostAPiService initialized');
   }
@@ -82,6 +83,33 @@ class PostApiService {
     } catch (e) {
       print('Posts API Error: $e');
       return [];
+    }
+  }
+
+  Future<String> assignPost(String postId) async {
+    print("API - Assign post is called");
+    final url = Uri.parse('$baseUrl/assignPost');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ${user.token}',
+    };
+
+    final body = {
+      "postId": postId,
+    };
+
+    try {
+      final response =
+          await http.put(url, headers: headers, body: jsonEncode(body));
+
+      if (response.statusCode == 201) {
+        return response.body;
+      } else {
+        return response.body;
+      }
+    } catch (e) {
+      print('Error: $e');
+      return "error";
     }
   }
 
@@ -281,7 +309,7 @@ class PostApiService {
   Future<List<Post>> getAllPosts(String userId) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8000/posts'),
+        Uri.parse(baseUrl),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${user.token}",
@@ -317,7 +345,7 @@ class PostApiService {
   Future<List<Post>> getRecommendedPosts() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8000/posts/getRecommendedPosts'),
+        Uri.parse('$baseUrl/getRecommendedPosts'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer ${user.token}",
@@ -352,7 +380,7 @@ class PostApiService {
         "Authorization": "Bearer ${user.token}",
       };
       final uri = Uri.http(
-        'localhost:8000', 
+        '$ipAddress:8000', 
         '/posts/getPostsBySkill', 
         {"skillId": skillId}
       );

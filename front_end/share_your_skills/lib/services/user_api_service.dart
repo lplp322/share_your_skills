@@ -5,7 +5,7 @@ import 'package:share_your_skills/models/skill.dart';
 
 class UserApiService {
   final String baseUrl;
-
+  String ipAddress = 'localhost';
   UserApiService(this.baseUrl);
 
   Future<User?> loginUser(String email, String password) async {
@@ -146,7 +146,7 @@ class UserApiService {
   Future<String?> changeName(User user, String name) async {
     final token = user.token;
     try {
-      final response = await http.post(
+      final response = await http.put(
         Uri.parse('$baseUrl/changeName'),
         headers: {
           "Content-Type": "application/json",
@@ -171,7 +171,7 @@ class UserApiService {
   Future<String?> changeEmail(User user, String email) async {
     final token = user.token;
     try {
-      final response = await http.post(
+      final response = await http.put(
         Uri.parse('$baseUrl/changeLogin'),
         headers: {
           "Content-Type": "application/json",
@@ -196,7 +196,7 @@ class UserApiService {
   Future<String?> changeAddress(User user, Address address) async {
     final token = user.token;
     try {
-      final response = await http.post(
+      final response = await http.put(
         Uri.parse('$baseUrl/changeAddress'),
         headers: {
           "Content-Type": "application/json",
@@ -230,9 +230,9 @@ class UserApiService {
         "Authorization": "Bearer $token",
       };
       final uri =
-          Uri.http('localhost:8000', '/skills/addSkill', {"skillId": skillId});
+          Uri.http('$ipAddress:8000', '/skills/addSkill', {"skillId": skillId});
 
-      final response = await http.post(
+      final response = await http.put(
         uri,
         headers: headers,
       );
@@ -263,7 +263,7 @@ class UserApiService {
         "Authorization": "Bearer $token",
       };
       final uri = Uri.http(
-          'localhost:8000', '/skills/deleteSkill', {"skillId": skillId});
+          '$ipAddress:8000', '/skills/deleteSkill', {"skillId": skillId});
 
       final response = await http.delete(
         uri,
@@ -290,7 +290,7 @@ class UserApiService {
   Future<Map<String, String>> fetchSkills() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8000/skills'),
+        Uri.parse('http://$ipAddress:8000/skills'),
         headers: {
           'Content-Type': 'application/json',
         },
