@@ -203,6 +203,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                         id: widget.postId, // Include the post ID for updating
                         title: titleController.text,
                         content: contentController.text,
+                        status: existingPost?.status,
                         location: locationController.text,
                         deadline: DateTime(
                             selectedDate.year,
@@ -212,7 +213,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                             selectedTime.minute),
                         userId: existingPost?.userId,
                         skillIds: [skillId],
-                        assignedUserId: existingPost?.assignedUserId,
+                  
                       );
                       //update post
                       await postViewModel.updatePost(updatedPost);

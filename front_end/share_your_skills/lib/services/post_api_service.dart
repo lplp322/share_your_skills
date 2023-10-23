@@ -13,7 +13,7 @@ class PostApiService {
 
   Future<List<Post>> getUserAssignedPosts() async {
     try {
-      print("API for fetch is called");
+     // print("API for fetch is called");
       final response = await http.get(
         Uri.parse('$baseUrl/getAssignedPosts'),
         headers: {
@@ -24,11 +24,11 @@ class PostApiService {
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        print(jsonResponse);
+       // print(jsonResponse);
         if (jsonResponse is List) {
           final posts = jsonResponse;
           for (var post in posts) {
-            print(post["title"]);
+           // print(post["title"]);
           }
           return jsonResponse
               .map<Post>((postJson) => Post.fromJson(postJson))
@@ -88,7 +88,7 @@ class PostApiService {
   // add post
   Future<Post> addPost(Post post) async {
     try {
-      print("API - Add post is called");
+     // print("API - Add post is called");
       final url = Uri.parse('$baseUrl/addPost');
       final headers = {
         'Content-Type': 'application/json',
@@ -123,12 +123,12 @@ class PostApiService {
     };
 
     final body = post.toJsonUpdate(); // Convert the Post object to JSON
-
+    print('Post body: $body');
     try {
       final response =
           await http.put(url, headers: headers, body: jsonEncode(body));
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         return await getPost(post.id!);
       } else {
         return post;
