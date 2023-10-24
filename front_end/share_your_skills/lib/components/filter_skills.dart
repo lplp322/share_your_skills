@@ -13,12 +13,8 @@ class ButtonData {
 
 class FilterComponent extends StatelessWidget {
   final SkillViewModel skillViewModel;
-  final PostViewModel postViewModel;
 
-  FilterComponent({
-    required this.skillViewModel,
-    required this.postViewModel
-  });
+  FilterComponent({required this.skillViewModel});
 
   @override
   Widget build(BuildContext context) {

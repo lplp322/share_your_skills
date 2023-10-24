@@ -8,7 +8,6 @@ class PostViewModel extends ChangeNotifier {
   final PostApiService postApiService;
 
   PostViewModel(user) : postApiService = PostApiService(user) {
-    print('PostViewModel initialized');
     fetchRecommendedPosts();
   }
 
@@ -25,6 +24,9 @@ class PostViewModel extends ChangeNotifier {
   List<Post> _userCompletedPosts = [];
   List<Post> get userCompletedPosts => _userCompletedPosts;
 
+  set displayPosts(List<Post> new_displayPosts){
+    _displayPosts = new_displayPosts;
+  }
   Future<void> fetchUserAssignedPosts() async {
     try {
       print("Fetch is called");
@@ -123,26 +125,30 @@ class PostViewModel extends ChangeNotifier {
   }
 */
 
-  Future<void> fetchRecommendedPosts() async {
+  Future<List<Post>> fetchRecommendedPosts() async {
     try {
       final posts = await postApiService.getRecommendedPosts();
       _displayPosts = posts;
       print('Updated fetch recommended posts length: ${_displayPosts.length}');
       notifyListeners();
+      return _displayPosts;
     } catch (e) {
       print('Error fetching recommended posts: $e');
+      return _displayPosts;
     }
   }
 
-  Future<void> fetchPostsBySkill(String skillId) async {
+  Future<List<Post>> fetchPostsBySkill(String skillId) async {
     try {
       print('postbySkillID-${skillId}');
       final posts = await postApiService.getPostsBySkill(skillId);
       _displayPosts = posts;
-      print('Updated recommended posts length: ${_displayPosts.length}');
+      print('Updated posts by skill length: ${_displayPosts.length}');
       notifyListeners();
+      return _displayPosts;
     } catch (e) {
       print('Error fetching recommended posts: $e');
+      return _displayPosts;
     }
   }
 

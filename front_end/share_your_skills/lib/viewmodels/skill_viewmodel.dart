@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/models/post.dart';
-import 'package:share_your_skills/models/post_manager.dart';
 import 'package:share_your_skills/services/post_api_service.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
@@ -13,9 +12,8 @@ import '../services/skill_api_service.dart';
 class SkillViewModel extends ChangeNotifier {
   User? _user;
   final SkillApiService skillApiService;
-  // final PostViewModel postViewModel;
   final UserViewModel userViewModel;
-  
+
   SkillViewModel(this.userViewModel)
       : skillApiService = userViewModel.user != null
             ? SkillApiService(userViewModel.user!.token)
@@ -32,21 +30,22 @@ class SkillViewModel extends ChangeNotifier {
   Skill? get selectedSkill => _selectedSkill;
 
   void setSelectedSkill(Skill skill) {
-    print('skill selected: ${skill.name}');
+    print('${skill.name}');
     if (_selectedSkill != skill) {
-      _selectedSkill = skill;       
-      userViewModel.postViewModel.fetchPostsBySkill(skill.skillId);
-      notifyListeners();
+      _selectedSkill = skill;
+      // userViewModel.postViewModel.fetchPostsBySkill(skill.skillId);
+      userViewModel.updatePostViewModel(skill.skillId);
+      // notifyListeners();
     }
   }
 
   void clearSelectedSkill() {
     if (_selectedSkill != null) {
       // Call the method from PostViewModel
-      print("recommended selected");
-      userViewModel.postViewModel.fetchRecommendedPosts();
+      // userViewModel.postViewModel.fetchRecommendedPosts();
+      userViewModel.updatePostViewModel('');
       _selectedSkill = null;
-      notifyListeners();
+      // notifyListeners();
     }
   }
 

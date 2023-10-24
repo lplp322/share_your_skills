@@ -69,7 +69,6 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
   }
 
   bool buttonDisabled(Post post) {
-    print('disabled Assigned - ${post.assignedUserId}');
     if (post.assignedUserId != null &&
         post.assignedUserId != 'No User Assigned') {
       return true;
@@ -99,7 +98,6 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
     final userViewModel = Provider.of<UserViewModel>(context, listen: false);
     final postViewModel = userViewModel.postViewModel;
 
-    final eyey = widget.post.assignedUserId;
     return Scaffold(
       body: SafeArea(
         child: Padding(

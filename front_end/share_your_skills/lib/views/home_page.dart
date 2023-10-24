@@ -79,8 +79,7 @@ class _HomePageState extends State<HomePage> {
                   //   ),
                   // ),
                   FilterComponent(
-                      skillViewModel: skillViewModel,
-                      postViewModel: postViewModel),
+                      skillViewModel: skillViewModel),
                   Expanded(
                     child: Consumer<UserViewModel>(
                       builder: (context, userViewModel, child) {

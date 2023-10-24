@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<SkillViewModel>(
           create: (context) => SkillViewModel(
-            Provider.of<UserViewModel>(context, listen: false),
+            Provider.of<UserViewModel>(context, listen: false)
           ),
         ),
       ],

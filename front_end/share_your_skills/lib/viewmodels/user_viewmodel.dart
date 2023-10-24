@@ -3,6 +3,7 @@ import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'package:share_your_skills/services/user_api_service.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:share_your_skills/viewmodels/skill_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_your_skills/views/login_page.dart';
 import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
@@ -19,8 +20,8 @@ class UserViewModel extends ChangeNotifier {
   final BuildContext context;
   late SharedPreferences _prefs;
   late PostViewModelManager postViewModelManager;
-  late PostViewModel postViewModel;
-
+  late PostViewModel postViewModel = PostViewModel(user);
+  
   UserViewModel(
     this._userApiService,
     this.context,
@@ -67,6 +68,15 @@ class UserViewModel extends ChangeNotifier {
     _user = updatedUser;
     print(updatedName);
     notifyListeners();
+  }
+
+  Future<void> updatePostViewModel(String skillId) async {
+    if(skillId.isEmpty){
+      postViewModel.displayPosts = await postViewModel.fetchRecommendedPosts();
+    }else{
+      postViewModel.displayPosts = await postViewModel.fetchPostsBySkill(skillId);
+    }
+    notifyListeners(); // Notify listeners here
   }
 
   Future<void> updateEmail(User user, String newEmail) async {
