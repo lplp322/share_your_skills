@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 
-class EventCard extends StatelessWidget {
+class EventCard extends StatefulWidget {
   final String title;
   final String location;
   final DateTime date;
-
   EventCard({
     required this.title,
     required this.location,
     required this.date,
+
   });
 
+  @override
+  State<EventCard> createState() => _EventCardState();
+}
+
+class _EventCardState extends State<EventCard> {
   String getImageAssetPath() {
-    switch (title) {
+    switch (widget.title) {
       case "Cooking":
         return 'images/cooking.jpg';
-      case "Garderning":
+      case "Gardening":
         return 'images/gardening.webp';
       case "Cleaning":
         return 'images/cleaning.jpeg';
@@ -27,7 +32,7 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String formattedDate =
-        "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+        "${widget.date.year}-${widget.date.month.toString().padLeft(2, '0')}-${widget.date.day.toString().padLeft(2, '0')}";
 
     return Column(
       children: [
@@ -58,26 +63,27 @@ class EventCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 6),
+                    SizedBox(height: 4),
                     Text(
-                      title,
+                      widget.title,
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 35),
                     Text(
-                      location,
+                      widget.location,
                       style: TextStyle(
-                        fontSize: 25,
+                        fontSize: 20,
                         color: Color(0xFF7B7B7B),
                       ),
                     ),
+                    SizedBox(height: 35),
                     Text(
                       formattedDate,
                       style: TextStyle(
-                        fontSize: 25,
+                        fontSize: 20,
                         color: Color(0xFF7B7B7B),
                       ),
                     ),

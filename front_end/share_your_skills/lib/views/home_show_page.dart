@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_your_skills/models/post.dart';
+import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:share_your_skills/views/event_page.dart';
 
-class ShowPostPage extends StatefulWidget {
+class HomeShowPostPage extends StatefulWidget {
   final Post post;
   final bool isEditable;
-  final String? username;
 
-  ShowPostPage({required this.post, this.isEditable = false, this.username});
+  HomeShowPostPage({required this.post, this.isEditable = false});
 
   @override
   _ShowPostPageState createState() => _ShowPostPageState();
 }
 
-class _ShowPostPageState extends State<ShowPostPage> {
+class _ShowPostPageState extends State<HomeShowPostPage> {
   void deletePost(BuildContext context) async {
     final postViewModel =
         Provider.of<UserViewModel>(context, listen: false).postViewModel;
@@ -39,7 +40,7 @@ class _ShowPostPageState extends State<ShowPostPage> {
               onPressed: () async {
                 await postViewModel.deletePost(widget.post.id!);
                 Navigator.of(dialogContext).pop(); // Close the dialog
-                Navigator.of(context).pop(); // Close the ShowPostPage
+                Navigator.of(context).pop(); // Close the HomeShowPostPage
               },
             ),
           ],
@@ -50,6 +51,7 @@ class _ShowPostPageState extends State<ShowPostPage> {
 
   void editPost() {
     // Navigate to the CreateEventPage for editing
+    Navigator.of(context).pop();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CreateEventDetailPage(
@@ -59,14 +61,46 @@ class _ShowPostPageState extends State<ShowPostPage> {
     );
   }
 
+  bool eligibility(List<String> postSkillId, List<String>? userSkillsId) {
+    if (userSkillsId != null) {
+      return postSkillId.any((skill) => userSkillsId.contains(skill));
+    }
+    return false;
+  }
+
+  bool buttonDisabled(Post post) {
+    if (post.assignedUserId != null &&
+        post.assignedUserId != 'No User Assigned') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void assignPost(PostViewModel postViewModel) async {
+    await postViewModel.assignPost(widget.post.id!);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Event assigned successfully!'),
+        duration: Duration(seconds: 3), // You can customize the duration
+      ),
+    );
+
+    // Navigate to My Events
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final formattedDate =
         DateFormat('yyyy-MM-dd HH:mm').format(widget.post.deadline);
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final postViewModel = userViewModel.postViewModel;
 
-    return SafeArea(
-      child: Scaffold(
-        body: Padding(
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,14 +121,6 @@ class _ShowPostPageState extends State<ShowPostPage> {
                       ),
                     ),
                   ),
-                  Spacer(),
-                  if (widget.isEditable)
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        editPost();
-                      },
-                    ),
                 ],
               ),
               SizedBox(height: 16.0),
@@ -121,7 +147,7 @@ class _ShowPostPageState extends State<ShowPostPage> {
               ),
               SizedBox(height: 16.0),
               Text(
-                'Publisher name: ${widget.username}',
+                'Publisher ID: ${widget.post.userId}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
@@ -130,34 +156,35 @@ class _ShowPostPageState extends State<ShowPostPage> {
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (widget.isEditable)
-                    ElevatedButton(
-                      onPressed: () {
-                        deletePost(context);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(395, 40)),
-                      ),
-                      child: Container(
-                        width: 150,
-                        child: Center(
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+              _buildAssignButton(userViewModel, postViewModel),
+
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAssignButton(
+      UserViewModel userViewModel, PostViewModel postViewModel) {
+    bool isAssigned = buttonDisabled(widget.post);
+    bool isEligible =
+        eligibility(widget.post.skillIds, userViewModel.user?.skillIds);
+
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: isAssigned || !isEligible
+            ? null
+            : () {
+                assignPost(postViewModel);
+              },
+        child: Text(
+          isAssigned
+              ? "Event Assigned"
+              : !isEligible
+                  ? 'Not eligible'
+                  : 'Assign',
         ),
       ),
     );

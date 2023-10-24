@@ -15,171 +15,204 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController streetController = TextEditingController();
   final TextEditingController houseNumberController = TextEditingController();
   List<String> selectedSkills = [];
+  /*
   final Map<String, String> skillNameToId = {
-    "Cleaning": "65256b8601db3b3814171c5f",
-    "Cooking": "65256b7101db3b3814171c5b",
-    "Gardening": "65256b7a01db3b3814171c5d",
+    "Cleaning": "652e223fbf0dea6755b2198b",
+    "Cooking": "652e2246bf0dea6755b2198d",
+    "Gardening": "652e224cbf0dea6755b2198f",
     // Add more skills and their corresponding IDs here
-  };
+  };*/
+  List<String> predefinedSkills = [];
+  Map<String, String> skillIdToName = {};
 
-  List<String> predefinedSkills = [
-    "Cleaning",
-    "Cooking",
-    "Gardening",
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _fetchSkills();
+  }
+
+  Future<void> _fetchSkills() async {
+    final userViewModel = Provider.of<UserViewModel>(context, listen: false);
+    final skills = await userViewModel.fetchSkills();
+    print("Skills: $skills");
+    setState(() {
+      predefinedSkills = skills.keys.toList();
+      skillIdToName = skills;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: true);
     String? errorMessage = userViewModel.registrationErrorMessage;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Registration Page'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextField(
-                controller: nameController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Full Name",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xFF588F2C),
+          title: Text('Registration Page'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextField(
+                  controller: nameController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "Full Name",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: emailController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                SizedBox(height: 10),
+                TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "Email",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: passwordController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                SizedBox(height: 10),
+                TextField(
+                  controller: passwordController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "Password",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                  ),
+                  obscureText: true,
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: cityController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "City",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
                   ),
                 ),
-                obscureText: true,
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: cityController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "City",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                SizedBox(height: 10),
+                TextField(
+                  controller: streetController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "Street",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: streetController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Street",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                SizedBox(height: 10),
+                TextField(
+                  controller: houseNumberController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: "House Number",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: houseNumberController,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "House Number",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                ),
-              ),
-              SizedBox(height: 10),
-              Text("Select up to 3 skills:"),
-              Row(
-                children: predefinedSkills.map((skill) {
-                  final skillId =
-                      skillNameToId[skill] ?? ''; // Get the ID from the map
-                  return Row(
-                    children: [
-                      Checkbox(
-                        value: selectedSkills.contains(skillId),
-                        onChanged: (bool? value) {
-                          if (value != null) {
-                            setState(() {
-                              if (value) {
-                                if (selectedSkills.length < 3) {
-                                  selectedSkills.add(skillId);
+                SizedBox(height: 10),
+                Text("Select skills:"),
+                Row(
+                  children: predefinedSkills.map((skill) {
+                    return Row(
+                      children: [
+                        Checkbox(
+                          value: selectedSkills.contains(skill),
+                          onChanged: (bool? value) {
+                            if (value != null) {
+                              setState(() {
+                                if (value) {
+                                  selectedSkills.add(skill);
+                                } else {
+                                  selectedSkills.remove(skill);
                                 }
-                              } else {
-                                selectedSkills.remove(skillId);
-                              }
-                            });
-                          }
-                        },
-                      ),
-                      Text(skill),
-                    ],
-                  );
-                }).toList(),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  userViewModel.registerUser(
-                    fullName: nameController.text,
-                    email: emailController.text,
-                    password: passwordController.text,
-                    selectedSkills: selectedSkills,
-                    city: cityController.text,
-                    street: streetController.text,
-                    houseNumber: houseNumberController.text,
-                    context: context,
-                  );
-                },
-                child: Text('Register'),
-              ),
-              SizedBox(height: 10),
-              Consumer<UserViewModel>(
-                builder: (context, userViewModel, _) {
-                  return errorMessage != null
-                      ? Text(
-                          errorMessage!,
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        )
-                      : SizedBox();
-                },
-              ),
-            ],
+                              });
+                            }
+                          },
+                        ),
+                        Text(skillIdToName[skill] ?? skill),
+                      ],
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    final List<String> userSkills = selectedSkills
+                        .map((skillName) {
+                          final skillId = skillName;
+                          return skillId;
+                        })
+                        .whereType<
+                            String>() // Filter out null values and cast to List<String>
+                        .toList();
+
+                    // Check if the user has selected at least one skill
+                    if (userSkills.isEmpty) {
+                      print("Please select at least one skill.");
+                      return;
+                    }
+                    print("User Skills: $userSkills");
+                    // Perform user registration with skill IDs
+                    userViewModel.registerUser(
+                      fullName: nameController.text,
+                      email: emailController.text,
+                      password: passwordController.text,
+                      selectedSkills: userSkills,
+                      city: cityController.text,
+                      street: streetController.text,
+                      houseNumber: houseNumberController.text,
+                      context: context,
+                    );
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  ),
+                  child: Text('Register'),
+                ),
+                SizedBox(height: 10),
+                Consumer<UserViewModel>(
+                  builder: (context, userViewModel, _) {
+                    return errorMessage != null
+                        ? Text(
+                            errorMessage,
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          )
+                        : SizedBox();
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

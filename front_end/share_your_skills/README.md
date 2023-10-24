@@ -1,6 +1,6 @@
 # Share Your Skills
 
-Welcome to the Share Your Skills project! This is a Flutter-based app where you can showcase your skills and connect with others who share similar interests.
+Welcome to the Share Your Skills project! This is a Flutter-based app where you can share your skills and connect with others who share similar interests. 
 
 ## Getting Started
 
@@ -45,3 +45,4 @@ to check all dependencences are in place use flutter doctor.
      ```
 
      The `flutter doctor` command will check your environment and provide guidance on any missing or misconfigured dependencies. Resolve any issues reported by `flutter doctor` to ensure a smooth development experience.
+     

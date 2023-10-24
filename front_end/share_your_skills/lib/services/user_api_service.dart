@@ -1,12 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:share_your_skills/models/user.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
-import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:share_your_skills/models/skill.dart';
 
 class UserApiService {
-  final String baseUrl; // Replace with your API base URL
-
+  final String baseUrl;
+  String ipAddress = 'localhost';
   UserApiService(this.baseUrl);
 
   Future<User?> loginUser(String email, String password) async {
@@ -27,10 +26,12 @@ class UserApiService {
 
         if (token != null && token.isNotEmpty && userJson != null) {
           // Save the token to SharedPreferences
+          /*
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
-
-          final user = extractUserFromToken(token, userJson); // Use the extract method
+*/ // print(userJson);
+          final user = User.fromJson(jsonResponse);
+          print(" API ${user}");
           return user;
         } else {
           print('Token or user data is null or empty');
@@ -72,10 +73,11 @@ class UserApiService {
 
         if (token != null && token.isNotEmpty && userJson != null) {
           // Save the token to SharedPreferences
+          /*
           final prefs = await SharedPreferences.getInstance();
           prefs.setString('token', token);
-
-          final extractedUser = extractUserFromToken(token, userJson);
+          */
+          final extractedUser = User.fromJson(jsonResponse);
 
           return extractedUser; // Registration successful, return user object
         } else {
@@ -99,46 +101,29 @@ class UserApiService {
     }
   }
 
-  User? extractUserFromToken(String token, Map <String, dynamic>? userJson) {
-
+/*
+  Future<User?> extractUserFromToken(
+      String token, Map<String, dynamic>? userJson) async {
     try {
       if (userJson != null) {
         final String? userId = userJson['_id'];
-        final String? email = userJson['login']; // Update to 'email' for email
+        final String? email = userJson['login']; 
         final String? name = userJson['name'];
-        final List<String>? skillIds =
-            List<String>.from(userJson['skillIds'] ?? []);
 
-        // Create a mapping of skill IDs to skill names
-        final Map<String, String> skillIdToName = {
-          "65256b8601db3b3814171c5f": "Cleaning",
-          "65256b7a01db3b3814171c5d": "Gardening",
-          "65256b7101db3b3814171c5b": "Cooking",
-          // Add more skill ID to name mappings as needed
-        };
 
-        final List<String> userSkills = skillIds?.map((skillId) {
-              final skillName = skillIdToName[skillId];
-              if (skillName == null) {
-                print("Unknown skill ID: $skillId");
-                return skillId; // Use skill ID if no mapping found
-              }
-              return skillName;
-            }).toList() ??
-            [];
+  
 
         final Map<String, dynamic>? addressData = userJson['address'];
         final String? city = addressData?['city'];
         final String? street = addressData?['street'];
         final String? houseNumber = addressData?['houseNumber'];
 
-
         // Create a new User object with updated information
         final updatedUser = User(
           userId: userId,
           name: name ?? '', // Provide a default value if name is null
           email: email ?? '', // Provide a default value if email is null
-          skillIds: userSkills,
+          skillIds: userJson['skillIds'] ?? [],
           token: token,
           address: Address(
             city: city,
@@ -155,6 +140,206 @@ class UserApiService {
     } catch (e) {
       print("User Data Extraction Error: $e");
       return null; // Handle data extraction errors
+    }
+  }
+*/
+  Future<String?> changeName(User user, String name) async {
+    final token = user.token;
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/changeName'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode({"name": name}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print(
+            'Updating name failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return null; // Handle login failure
+      }
+    } catch (e) {
+      print('Updating name API Error: $e');
+      return null; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> changeEmail(User user, String email) async {
+    final token = user.token;
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/changeLogin'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode({"newLogin": email}),
+      );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print(
+            'Updating email failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return null; // Handle login failure
+      }
+    } catch (e) {
+      print('Updating email API Error: $e');
+      return null; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> changeAddress(User user, Address address) async {
+    final token = user.token;
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/changeAddress'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode({
+          "city": address.city,
+          "street": address.street,
+          "houseNumber": address.houseNumber
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        print(
+            'Updating address failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return null; // Handle login failure
+      }
+    } catch (e) {
+      print('Updating address API Error: $e');
+      return null; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> addSkill(User user, String skillId) async {
+    try {
+      final token = user.token;
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      };
+      final uri =
+          Uri.http('$ipAddress:8000', '/skills/addSkill', {"skillId": skillId});
+
+      final response = await http.put(
+        uri,
+        headers: headers,
+      );
+
+      if (response.statusCode == 201) {
+        return response.body;
+      } else if ((response.statusCode == 500)) {
+        print(
+            'Skill already added. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      } else {
+        print(
+            'Adding skill failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      }
+    } catch (e) {
+      print('Adding skill failed API Error: $e');
+      return ''; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  Future<String?> deleteSkill(User user, String skillId) async {
+    try {
+      print('entering call ${skillId}');
+      final token = user.token;
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      };
+      final uri = Uri.http(
+          '$ipAddress:8000', '/skills/deleteSkill', {"skillId": skillId});
+
+      final response = await http.delete(
+        uri,
+        headers: headers,
+      );
+      if (response.statusCode == 201) {
+        return response.body;
+      } else if ((response.statusCode == 500)) {
+        print(
+            'Skill deleted. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      } else {
+        print(
+            'Deleting skill failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
+        return ''; // Handle the case where the server responds with an error
+      }
+    } catch (e) {
+      print('Adding skill failed API Error: $e');
+      return ''; // Handle exceptions (e.g., network errors)
+    }
+  }
+
+  // get skills list
+  Future<Map<String, String>> fetchSkills() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://$ipAddress:8000/skills'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        final Map<String, String> skillMap = {};
+
+        for (final skillData in data) {
+          final Skill skill = Skill.fromJson(skillData);
+          skillMap[skill.skillId] = skill.name;
+        }
+
+        return skillMap;
+      } else {
+        throw Exception(
+            'Failed to load skills. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load skills: $e');
+    }
+  }
+
+  // get username
+  Future<String> fetchUserName(User user, String userId) async {
+    try {
+      final token = user.token;
+      print("token ${token}");
+      print("Fetch name: userId ${userId}");
+      final response = await http.get(
+        Uri.parse('http://localhost:8000/users/getUsernameFromId?searchedUserId=${userId}'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${token}',
+        },
+      );
+
+      if (response.statusCode == 200) {
+       
+        final String name = response.body;
+
+        return name;
+      } else {
+        throw Exception(
+            'Failed to load user. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Failed to load user: $e');
     }
   }
 }
