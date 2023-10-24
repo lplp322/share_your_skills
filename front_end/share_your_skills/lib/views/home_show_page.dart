@@ -10,8 +10,9 @@ import 'package:share_your_skills/views/event_page.dart';
 class HomeShowPostPage extends StatefulWidget {
   final Post post;
   final bool isEditable;
+  final String? username;
 
-  HomeShowPostPage({required this.post, this.isEditable = false});
+  HomeShowPostPage({required this.post, this.isEditable = false, this.username});
 
   @override
   _ShowPostPageState createState() => _ShowPostPageState();
@@ -147,7 +148,7 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
               ),
               SizedBox(height: 16.0),
               Text(
-                'Publisher ID: ${widget.post.userId}',
+                'Publisher name: ${widget.username}',
                 style: TextStyle(fontSize: 20),
               ),
               SizedBox(height: 16.0),
