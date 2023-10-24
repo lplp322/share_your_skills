@@ -322,7 +322,7 @@ class UserApiService {
       print("token ${token}");
       print("Fetch name: userId ${userId}");
       final response = await http.get(
-        Uri.parse('http://localhost:8000/users/getUser?userId=${userId}'),
+        Uri.parse('http://localhost:8000/users/getUsernameFromId?searchedUserId=${userId}'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${token}',
@@ -330,8 +330,8 @@ class UserApiService {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final String name = data['name'];
+       
+        final String name = response.body;
 
         return name;
       } else {
