@@ -207,7 +207,9 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
         borderRadius: 4.0,
         elevation: 0.0,
         contentGap: 6.0,
-        buttonColor: Color(0xFF588F2C),
+        buttonColor: isAssigned || !isEligible || sameUser
+            ? Colors.grey
+            : Color(0xFF588F2C),
         onPressed: isAssigned || !isEligible || sameUser
             ? null
             : () {
