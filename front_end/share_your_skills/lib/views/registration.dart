@@ -81,7 +81,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    hintText: "Email",
+                    hintText: "Username",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
