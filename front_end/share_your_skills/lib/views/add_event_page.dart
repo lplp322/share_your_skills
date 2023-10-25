@@ -166,12 +166,12 @@ class _AddEventPageState extends State<AddEventPage> {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return CircularProgressIndicator(); // Loading indicator
+                                return CircularProgressIndicator(); 
                               } else if (snapshot.hasError) {
                                 return Text('Error: ${snapshot.error}');
                               } else {
                                 final String username = snapshot.data ??
-                                    ''; // Provide a default value ('') if snapshot.data is null
+                                    ''; 
                                 return GestureDetector(
                                   onTap: () async {
                                     await Navigator.of(context).push(
@@ -188,7 +188,6 @@ class _AddEventPageState extends State<AddEventPage> {
                                     title: post.title,
                                     location: post.location,
                                     date: post.deadline,
-                                    // Now you can use the 'username' variable here
                                   ),
                                 );
                               }

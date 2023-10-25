@@ -1,3 +1,4 @@
+import 'package:easy_loading_button/easy_loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/components/select_user_skills.dart';
@@ -51,7 +52,21 @@ class _ProfilePageState extends State<ProfilePage> {
             SelectUserSkills(
                 skillViewModel: skillViewModel, userViewModel: userViewModel),
             SizedBox(height: 130),
-            ElevatedButton(
+            EasyButton(
+              type: EasyButtonType.elevated,  
+              idleStateWidget: const Text(
+                'Save Profile',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              loadingStateWidget: CircularProgressIndicator(
+                strokeWidth: 3.0,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Colors.white,
+                ),
+              ),
+              buttonColor: Color(0xFF588F2C),
               onPressed: () async {
                 bool change = false;
                 final futures = <Future>[];
@@ -95,17 +110,29 @@ class _ProfilePageState extends State<ProfilePage> {
                   );
                 }
               },
-              child: Text('Save Profile'),
             ),
             SizedBox(height: 40),
-            ElevatedButton(
+            EasyButton(
+              type: EasyButtonType.elevated,
+              idleStateWidget: const Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              loadingStateWidget: CircularProgressIndicator(
+                strokeWidth: 3.0,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Colors.white,
+                ),
+              ),
+               buttonColor: Color(0xFF588F2C),
               onPressed: () {
                 userViewModel.logout(context);
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(builder: (context) => LoginPage()),
                 );
               },
-              child: Text('Logout'),
             ),
           ],
         ),

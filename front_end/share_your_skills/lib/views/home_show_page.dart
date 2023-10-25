@@ -6,13 +6,16 @@ import 'package:share_your_skills/views/create_event_details_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/views/event_page.dart';
+import 'package:easy_loading_button/easy_loading_button.dart';
 
 class HomeShowPostPage extends StatefulWidget {
   final Post post;
   final bool isEditable;
   final String? username;
 
+
   HomeShowPostPage({required this.post, this.isEditable = false, this.username});
+
 
   @override
   _ShowPostPageState createState() => _ShowPostPageState();
@@ -158,7 +161,6 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
               ),
               SizedBox(height: 16.0),
               _buildAssignButton(userViewModel, postViewModel),
-
             ],
           ),
         ),
@@ -174,19 +176,34 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
 
     return SizedBox(
       width: double.infinity,
-      child: ElevatedButton(
-        onPressed: isAssigned || !isEligible
-            ? null
-            : () {
-                assignPost(postViewModel);
-              },
-        child: Text(
+      child: EasyButton(
+        type: EasyButtonType.elevated,
+        idleStateWidget: Text(
           isAssigned
               ? "Event Assigned"
               : !isEligible
                   ? 'Not eligible'
                   : 'Assign',
+          style: TextStyle(
+            fontSize: 20,
+          ),
         ),
+        loadingStateWidget: CircularProgressIndicator(
+          strokeWidth: 3.0,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            Colors.white,
+          ),
+        ),
+        height: 35.0,
+        borderRadius: 4.0,
+        elevation: 0.0,
+        contentGap: 6.0,
+        buttonColor: Color(0xFF588F2C),
+        onPressed: isAssigned || !isEligible
+            ? null
+            : () {
+                assignPost(postViewModel);
+              },
       ),
     );
   }

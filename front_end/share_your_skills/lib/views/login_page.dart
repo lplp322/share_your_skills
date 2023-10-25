@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import provider package
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart'; // Import your UserViewModel
 import 'package:share_your_skills/views/registration.dart';
+import 'package:easy_loading_button/easy_loading_button.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key});
@@ -19,8 +20,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: true);
-    errorMessage = userViewModel
-        .loginErrorMessage; // Get the error message from the UserViewModelƒ
+    errorMessage = userViewModel.errorMessage;
+
     return SafeArea(
       child: Scaffold(
         body: SafeArea(
@@ -88,40 +89,82 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
 
-                ElevatedButton(
-                  onPressed: () {
-                    userViewModel.loginUser(
-                      emailController.text,
-                      passwordController.text,
-                      context,
-                    );
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
-                  ),
-                  child: Text(
+                EasyButton(
+                  type: EasyButtonType.elevated,
+                  idleStateWidget: const Text(
                     'Login',
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  loadingStateWidget: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
+                  ),
+                  width: 200.0,
+                  height: 40.0,
+                  borderRadius: 4.0,
+                  elevation: 0.0,
+                  contentGap: 6.0,
+                  buttonColor: Color(0xFF588F2C),
+                  onPressed: () async {
+                    try {
+                      await userViewModel.loginUser(
+                        emailController.text,
+                        passwordController.text,
+                        context,
+                      );
+                    } catch (e) {}
+                  },
+                ),
+
+                SizedBox(
+                  height: 20,
+                ),
+                // display text "dont have an account? register here"
+                Text(
+                  "Don't have an account? Register now",
+                  style: TextStyle(
+                    fontSize: 15,
                   ),
                 ),
                 SizedBox(
                   height: 10,
                 ),
-                ElevatedButton(
+                EasyButton(
+                  type: EasyButtonType.elevated,
+                  idleStateWidget: const Text(
+                    'Register',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                   onPressed: () {
+                    setState(() {
+                      userViewModel.errorMessage = null;
+                    });
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RegistrationPage()),
+                        builder: (context) => RegistrationPage(),
+                      ),
                     );
                   },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
+                  loadingStateWidget: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
                   ),
-                  child: Text('Register'),
-                ),
+                  width: 200.0,
+                  height: 40.0,
+                  borderRadius: 4.0,
+                  elevation: 0.0,
+                  contentGap: 6.0,
+                  buttonColor: Color(0xFF588F2C),
+                )
               ],
             ),
           ),
