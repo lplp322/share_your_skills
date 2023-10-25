@@ -88,22 +88,39 @@ class _HomePageState extends State<HomePage> {
                           itemCount: postViewModel.displayPosts.length,
                           itemBuilder: (context, index) {
                             final post = postViewModel.displayPosts[index];
-                            return GestureDetector(
-                                onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => HomeShowPostPage(
-                                        post: post,
-                                        isEditable: false,
+                            return FutureBuilder<String>(
+                            future: userViewModel.fetchUserName(
+                                userViewModel.user!, post.userId!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator(); // Loading indicator
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                final String username = snapshot.data ??
+                                    ''; // Provide a default value ('') if snapshot.data is null
+                              return GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => HomeShowPostPage(
+                                          post: post,
+                                          username: username,
+                                          isEditable: false,
+                                        ),
                                       ),
-                                    ),
+                                    );
+                                  },
+                                  child: EventCard(
+                                    title: post.title,
+                                    location: post.location,
+                                    date: post.deadline,
+                                  )
                                   );
-                                },
-                                child: EventCard(
-                                  title: post.title,
-                                  location: post.location,
-                                  date: post.deadline,
-                                ));
+                                }
+                            },
+                            );
                           },
                         );
                       },
