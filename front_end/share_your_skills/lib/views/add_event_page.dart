@@ -27,9 +27,6 @@ class _AddEventPageState extends State<AddEventPage> {
       child: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(Duration(seconds: 1));
-          setState(() {
-            postViewModel.fetchAllPosts();
-          });
         },
         child: Scaffold(
           body: Column(
@@ -52,9 +49,6 @@ class _AddEventPageState extends State<AddEventPage> {
                         builder: (context) => CreateEventDetailPage(),
                       ),
                     );
-                    setState(() {
-                      postViewModel.fetchAllPosts();
-                    });
                   },
                 ),
               ),
@@ -166,12 +160,11 @@ class _AddEventPageState extends State<AddEventPage> {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return CircularProgressIndicator(); 
+                                return CircularProgressIndicator();
                               } else if (snapshot.hasError) {
                                 return Text('Error: ${snapshot.error}');
                               } else {
-                                final String username = snapshot.data ??
-                                    ''; 
+                                final String username = snapshot.data ?? '';
                                 return GestureDetector(
                                   onTap: () async {
                                     await Navigator.of(context).push(
