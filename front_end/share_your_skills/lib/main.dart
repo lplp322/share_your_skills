@@ -8,6 +8,8 @@ import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/services/user_api_service.dart';
 import 'package:share_your_skills/views/app_bar.dart' as MyAppbar;
 import 'package:share_your_skills/models/post_manager.dart';
+//easy loading
+
 void main() {
   runApp(
     MyApp(),

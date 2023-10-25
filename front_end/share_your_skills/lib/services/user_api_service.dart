@@ -8,7 +8,7 @@ class UserApiService {
   String ipAddress = 'localhost';
   UserApiService(this.baseUrl);
 
-  Future<User?> loginUser(String email, String password) async {
+  Future<dynamic> loginUser(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
@@ -25,30 +25,25 @@ class UserApiService {
         final userJson = jsonResponse['user'];
 
         if (token != null && token.isNotEmpty && userJson != null) {
-          // Save the token to SharedPreferences
-          /*
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setString('token', token);
-*/ // print(userJson);
           final user = User.fromJson(jsonResponse);
           print(" API ${user}");
           return user;
         } else {
           print('Token or user data is null or empty');
-          return null; // Handle login failure
+          final errorMessage = response.body;
+          return errorMessage; // Handle login failure
         }
       } else {
-        print(
-            'Login failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
-        return null; // Handle login failure
+          final errorMessage = response.body;
+        return errorMessage; // Handle login failure
       }
     } catch (e) {
       print('Login API Error: $e');
-      return null; // Handle exceptions (e.g., network errors)
+     return 'Login API Error: $e'; // Handle exceptions (e.g., network errors)
     }
   }
 
-  Future<User?> registerUser(User user, String password) async {
+  Future<dynamic> registerUser(User user, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/register'),
@@ -81,23 +76,25 @@ class UserApiService {
 
           return extractedUser; // Registration successful, return user object
         } else {
-          print('Token or user data is null or empty');
-          return null; // Registration failed, return null
+        final errorMessage = response.body;
+          return errorMessage; // Registration failed, return null
         }
       } else if (response.statusCode == 400) {
-        // Registration failed, extract the error message
+       
         final jsonResponse = jsonDecode(response.body);
         final errorMessage = jsonResponse['error'] ?? 'Registration failed';
         print('Registration failed: $errorMessage');
-        return null; // Registration failed, return null
+        return errorMessage; // Registration failed, return null
       } else {
         print(
             'Registration failed. Status Code: ${response.statusCode}, Response Body: ${response.body}');
-        return null; // Handle other errors, return null
+        final errorMessage = response.body;
+        return errorMessage; // Handle other errors, return null
       }
     } catch (e) {
       print('Registration API Error: $e');
-      return null; // Handle exceptions (e.g., network errors), return null
+      final errorMessage = e.toString();
+      return errorMessage; // Handle exceptions (e.g., network errors), return null
     }
   }
 

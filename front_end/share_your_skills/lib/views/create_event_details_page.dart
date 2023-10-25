@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_your_skills/models/post.dart';
-import 'package:share_your_skills/models/skill.dart';
+import 'package:easy_loading_button/easy_loading_button.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -78,7 +78,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
       child: Scaffold(
         body: SingleChildScrollView(
           child: Padding(
-            padding:  EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -100,20 +100,20 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                 Text('Title', style: TextStyle(fontSize: 20)),
                 TextFormField(
                   controller: titleController,
-                  decoration: InputDecoration(labelText: 'Enter title'),
+                  decoration: InputDecoration(labelText: 'Enter title *'),
                 ),
                 SizedBox(height: 16),
                 Text('Description', style: TextStyle(fontSize: 20)),
                 TextFormField(
                   controller: contentController,
-                  decoration: InputDecoration(labelText: 'Enter description'),
+                  decoration: InputDecoration(labelText: 'Enter description *'),
                   maxLines: 2,
                 ),
                 SizedBox(height: 16),
                 Text('Location', style: TextStyle(fontSize: 20)),
                 TextFormField(
                   controller: locationController,
-                  decoration: InputDecoration(labelText: 'Enter location'),
+                  decoration: InputDecoration(labelText: 'Enter location *'),
                 ),
                 SizedBox(height: 16),
                 Text('Date', style: TextStyle(fontSize: 20)),
@@ -189,9 +189,33 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                   }).toList(),
                 ),
                 SizedBox(height: 32),
-                ElevatedButton(
+                EasyButton(
+                  type: EasyButtonType.elevated,
+                  idleStateWidget: Text(
+                    widget.postId != null ? 'Save Changes' : 'Create',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                   onPressed: () async {
                     if (selectedSkill == null) {
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          content: Text('Please choose desired'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      return;
+                    }
+                    if (titleController.text.isEmpty || contentController.text.isEmpty || locationController.text.isEmpty){
+                      final scaffoldMessenger = ScaffoldMessenger.of(context);
+                      scaffoldMessenger.showSnackBar(
+                        SnackBar(
+                          content: Text('Please fill in all fields'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                       return;
                     }
 
@@ -199,6 +223,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       // Update an existing post
                       final skillId =
                           skills[predefinedSkills.indexOf(selectedSkill!)];
+
                       Post updatedPost = Post(
                         id: widget.postId, // Include the post ID for updating
                         title: titleController.text,
@@ -206,14 +231,14 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                         status: existingPost?.status,
                         location: locationController.text,
                         deadline: DateTime(
-                            selectedDate.year,
-                            selectedDate.month,
-                            selectedDate.day,
-                            selectedTime.hour,
-                            selectedTime.minute),
+                          selectedDate.year,
+                          selectedDate.month,
+                          selectedDate.day,
+                          selectedTime.hour,
+                          selectedTime.minute,
+                        ),
                         userId: existingPost?.userId,
                         skillIds: [skillId],
-                  
                       );
                       //update post
                       await postViewModel.updatePost(updatedPost);
@@ -234,19 +259,21 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       final skillId =
                           skills[predefinedSkills.indexOf(selectedSkill!)];
                       Post newPost = Post(
-                          id: null,
-                          title: titleController.text,
-                          content: contentController.text,
-                          location: locationController.text,
-                          deadline: DateTime(
-                              selectedDate.year,
-                              selectedDate.month,
-                              selectedDate.day,
-                              selectedTime.hour,
-                              selectedTime.minute),
-                          skillIds: [skillId],
-                          userId: postViewModel.user?.userId,
-                          assignedUserId: null);
+                        id: null,
+                        title: titleController.text,
+                        content: contentController.text,
+                        location: locationController.text,
+                        deadline: DateTime(
+                          selectedDate.year,
+                          selectedDate.month,
+                          selectedDate.day,
+                          selectedTime.hour,
+                          selectedTime.minute,
+                        ),
+                        skillIds: [skillId],
+                        userId: postViewModel.user?.userId,
+                        assignedUserId: null,
+                      );
 
                       await postViewModel.addPost(newPost);
                       postViewModel.fetchAllPosts();
@@ -254,24 +281,26 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       final scaffoldMessenger = ScaffoldMessenger.of(context);
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
-                          content: Text(
-                              'Post created successfully'), // Change the message as needed
-                          duration: Duration(seconds: 2), // Adjust the duration
+                          content: Text('Post created, please reload the page'),
+                          duration: Duration(seconds: 2),
                         ),
                       );
                       Navigator.of(context).pop();
                     }
-
-                    // Navigator.of(context).pop();
                   },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
-                    minimumSize: MaterialStateProperty.all<Size>(
-                        Size(double.infinity, 40)),
+                  loadingStateWidget: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
                   ),
-                  child:
-                      Text(widget.postId != null ? 'Save Changes' : 'Create'),
+                  width: double
+                      .infinity, // Use double.infinity to make it full-width
+                  height: 40.0,
+                  borderRadius: 4.0,
+                  elevation: 0.0,
+                  contentGap: 6.0,
+                  buttonColor: Color(0xFF588F2C),
                 )
               ],
             ),

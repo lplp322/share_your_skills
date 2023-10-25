@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/models/user.dart';
@@ -14,14 +16,13 @@ import 'package:share_your_skills/models/post_manager.dart';
 
 class UserViewModel extends ChangeNotifier {
   User? _user;
-  String? registrationErrorMessage;
-  String? loginErrorMessage;
+  String? errorMessage;
   final UserApiService _userApiService;
   final BuildContext context;
   late SharedPreferences _prefs;
   late PostViewModelManager postViewModelManager;
   late PostViewModel postViewModel = PostViewModel(user);
-  
+
   UserViewModel(
     this._userApiService,
     this.context,
@@ -71,10 +72,11 @@ class UserViewModel extends ChangeNotifier {
   }
 
   Future<void> updatePostViewModel(String skillId) async {
-    if(skillId.isEmpty){
+    if (skillId.isEmpty) {
       postViewModel.displayPosts = await postViewModel.fetchRecommendedPosts();
-    }else{
-      postViewModel.displayPosts = await postViewModel.fetchPostsBySkill(skillId);
+    } else {
+      postViewModel.displayPosts =
+          await postViewModel.fetchPostsBySkill(skillId);
     }
     notifyListeners(); // Notify listeners here
   }
@@ -193,11 +195,13 @@ class UserViewModel extends ChangeNotifier {
   }) async {
     try {
       if (fullName.isEmpty) {
-        registrationErrorMessage = 'Please enter your Fullname.';
+        errorMessage = 'Please enter your Fullname.';
       } else if (email.isEmpty) {
-        registrationErrorMessage = 'Please enter your Email.';
+        errorMessage = 'Please enter your Email.';
       } else if (password.isEmpty) {
-        registrationErrorMessage = 'Please enter your Password.';
+        errorMessage = 'Please enter your Password.';
+      } else if (password.length < 6) {
+        errorMessage = 'Password must be at least 6 characters.';
       } else {
         final user = User(
           name: fullName,
@@ -212,13 +216,14 @@ class UserViewModel extends ChangeNotifier {
 
         final registeredUser =
             await _userApiService.registerUser(user, password);
-
-        if (registeredUser != null) {
+        if (registeredUser is String) {
+          errorMessage = registeredUser;
+        } else {
           final token = registeredUser.token;
 
           if (!JwtDecoder.isExpired(token)) {
             _user = registeredUser;
-            registrationErrorMessage = null;
+            errorMessage = null;
             _prefs.setString('token', token);
             postViewModelManager.onUserLogin(registeredUser);
             postViewModel =
@@ -235,16 +240,14 @@ class UserViewModel extends ChangeNotifier {
             }
           } else {
             print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
-            registrationErrorMessage = 'Token is expired. Please log in again.';
+            errorMessage = 'Token is expired. Please log in again.';
             _prefs.remove('token');
           }
-        } else {
-          registrationErrorMessage = 'Registration failed. Please try again.';
         }
       }
     } catch (e) {
       print('Registration error: $e');
-      registrationErrorMessage = 'Registration failed. Please try again.';
+      errorMessage = e.toString();
     } finally {
       notifyListeners();
     }
@@ -256,14 +259,18 @@ class UserViewModel extends ChangeNotifier {
     BuildContext context,
   ) async {
     try {
-      final loggedInUser = await _userApiService.loginUser(email, password);
-      print(loggedInUser);
-      if (loggedInUser != null) {
+      final loggedInUserOrError =
+          await _userApiService.loginUser(email, password);
+      print(loggedInUserOrError);
+      if (loggedInUserOrError is String) {
+        errorMessage = loggedInUserOrError;
+      } else {
+        final loggedInUser = loggedInUserOrError as User;
         final token = loggedInUser.token;
 
         if (!JwtDecoder.isExpired(token)) {
           _user = loggedInUser;
-          loginErrorMessage = null;
+          errorMessage = null;
           postViewModelManager.onUserLogin(loggedInUser);
           postViewModel =
               postViewModelManager.userPostViewModels[loggedInUser]!;
@@ -281,18 +288,24 @@ class UserViewModel extends ChangeNotifier {
           );
         } else {
           print('Token is expired. Token data: ${JwtDecoder.decode(token)}');
-          loginErrorMessage = 'Token is expired. Please log in again.';
+          errorMessage = 'Token is expired. Please log in again.';
           _prefs.remove('token');
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (context) => LoginPage()),
           );
         }
-      } else {
-        loginErrorMessage = 'Login failed. Please check your credentials.';
       }
     } catch (e) {
-      loginErrorMessage = 'Login failed. Please check your credentials.';
+      print('Login error: $e');
+      errorMessage = e.toString();
     } finally {
+      if (errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage!),
+          ),
+        );
+      }
       notifyListeners();
     }
   }

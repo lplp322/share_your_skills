@@ -1,3 +1,4 @@
+import 'package:easy_loading_button/easy_loading_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:share_your_skills/models/post.dart';
@@ -38,6 +39,13 @@ class _ShowPostPageState extends State<ShowPostPage> {
               child: Text("Delete"),
               onPressed: () async {
                 await postViewModel.deletePost(widget.post.id!);
+                final scaffoldMessenger = ScaffoldMessenger.of(context);
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(
+                    content: Text('Post deleted, please reload the page'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
                 Navigator.of(dialogContext).pop(); // Close the dialog
                 Navigator.of(context).pop(); // Close the ShowPostPage
               },
@@ -134,25 +142,30 @@ class _ShowPostPageState extends State<ShowPostPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (widget.isEditable)
-                    ElevatedButton(
+                    EasyButton(
+                      type: EasyButtonType.elevated,
+                      idleStateWidget: Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
                       onPressed: () {
                         deletePost(context);
                       },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.red),
-                        minimumSize:
-                            MaterialStateProperty.all<Size>(Size(395, 40)),
-                      ),
-                      child: Container(
-                        width: 150,
-                        child: Center(
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
+                      loadingStateWidget: CircularProgressIndicator(
+                        strokeWidth: 3.0,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white,
                         ),
                       ),
+                      width: 395,
+                      height: 40.0,
+                      borderRadius: 4.0,
+                      elevation: 0.0,
+                      contentGap: 6.0,
+                      buttonColor: Colors.red,
                     ),
                 ],
               ),

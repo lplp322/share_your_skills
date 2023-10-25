@@ -79,7 +79,7 @@ class _EventPageState extends State<EventPage> {
                                         builder: (context) => ShowPostPage(
                                           post: post,
                                           username: username,
-                                          isEditable: true,
+                                          isEditable: false,
                                         ),
                                       ),
                                     );

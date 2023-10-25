@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
+import 'package:easy_loading_button/easy_loading_button.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -15,6 +16,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController streetController = TextEditingController();
   final TextEditingController houseNumberController = TextEditingController();
   List<String> selectedSkills = [];
+  String? errorMessage;
+  String? localErrorMessage;
   /*
   final Map<String, String> skillNameToId = {
     "Cleaning": "652e223fbf0dea6755b2198b",
@@ -44,7 +47,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     final userViewModel = Provider.of<UserViewModel>(context, listen: true);
-    String? errorMessage = userViewModel.registrationErrorMessage;
+    errorMessage = userViewModel.errorMessage;
 
     return SafeArea(
       child: Scaffold(
@@ -163,47 +166,66 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   }).toList(),
                 ),
                 SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
+                EasyButton(
+                  type: EasyButtonType.elevated,
+                  idleStateWidget: const Text(
+                    'Register',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  loadingStateWidget: CircularProgressIndicator(
+                    strokeWidth: 3.0,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
+                  ),
+                  width: 150.0,
+                  height: 40.0,
+                  borderRadius: 4.0,
+                  elevation: 0.0,
+                  contentGap: 6.0,
+                  buttonColor: Color(0xFF588F2C),
+                  onPressed: () async {
                     final List<String> userSkills = selectedSkills
-                        .map((skillName) {
-                          final skillId = skillName;
-                          return skillId;
-                        })
-                        .whereType<
-                            String>() // Filter out null values and cast to List<String>
+                        .map((skillName) => skillName)
+                        .whereType<String>()
                         .toList();
 
-                    // Check if the user has selected at least one skill
                     if (userSkills.isEmpty) {
-                      print("Please select at least one skill.");
+                      setState(() {
+                        localErrorMessage = "Please select at least one skill.";
+                      });
+
                       return;
                     }
-                    print("User Skills: $userSkills");
-                    // Perform user registration with skill IDs
-                    userViewModel.registerUser(
-                      fullName: nameController.text,
-                      email: emailController.text,
-                      password: passwordController.text,
-                      selectedSkills: userSkills,
-                      city: cityController.text,
-                      street: streetController.text,
-                      houseNumber: houseNumberController.text,
-                      context: context,
-                    );
+
+                    try {
+                      await userViewModel.registerUser(
+                        fullName: nameController.text,
+                        email: emailController.text,
+                        password: passwordController.text,
+                        selectedSkills: userSkills,
+                        city: cityController.text,
+                        street: streetController.text,
+                        houseNumber: houseNumberController.text,
+                        context: context,
+                      );
+                    } catch (e) {
+                      setState(() {
+                        localErrorMessage = e.toString();
+                      });
+                    }
                   },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xFF588F2C)),
-                  ),
-                  child: Text('Register'),
                 ),
                 SizedBox(height: 10),
                 Consumer<UserViewModel>(
                   builder: (context, userViewModel, _) {
-                    return errorMessage != null
+                    final combinedErrorMessage =
+                        errorMessage ?? localErrorMessage;
+                    return combinedErrorMessage != null
                         ? Text(
-                            errorMessage,
+                            combinedErrorMessage,
                             style: TextStyle(
                               color: Colors.red,
                             ),
