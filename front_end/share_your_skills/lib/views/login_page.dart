@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      hintText: "Email",
+                      hintText: "Username",
                       errorText: _isNotValidate ? "Enter Proper Info" : null,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
