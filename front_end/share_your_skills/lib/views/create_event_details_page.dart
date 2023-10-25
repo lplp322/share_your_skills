@@ -281,7 +281,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       final scaffoldMessenger = ScaffoldMessenger.of(context);
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
-                          content: Text('Post created, please reload the page'),
+                          content: Text('Post created, please reload the page twice'),
                           duration: Duration(seconds: 2),
                         ),
                       );
