@@ -84,13 +84,17 @@ export async function getPastAssignedPosts(userId: Types.ObjectId) {
   }
 }
 
-export async function getPostsBySkill(skillId: Types.ObjectId) {
+export async function getPostsBySkill(
+  userId: Types.ObjectId,
+  skillId: Types.ObjectId
+) {
   try {
     const foundPosts = [];
     for (const post of await PostModel.find({})) {
       if (
         post.skillIds.includes(skillId) &&
-        post.status === postStatus.PENDING
+        post.status === postStatus.PENDING &&
+        post.userId.toString() !== userId.toString()
       ) {
         foundPosts.push(post);
       }
@@ -110,15 +114,12 @@ export async function getRecommendedPosts(userId: Types.ObjectId) {
       | null
     )[] = [];
     for (const skill of skills) {
-      const skilledPosts = await getPostsBySkill(skill._id);
+      const skilledPosts = await getPostsBySkill(userId, skill._id);
       if (!skilledPosts) {
         continue;
       }
       for (const post of skilledPosts) {
-        if (
-          !recommendedPosts.includes(post) &&
-          post.userId.toString() !== userId.toString()
-        ) {
+        if (!recommendedPosts.includes(post)) {
           recommendedPosts.push(post);
         }
       }

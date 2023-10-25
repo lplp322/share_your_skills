@@ -86,10 +86,13 @@ export const getPastAssignedPosts = async (req: Request, res: Response) => {
 
 export const getPostsBySkill = async (req: Request, res: Response) => {
   try {
+    const userId: Types.ObjectId = new Types.ObjectId(
+      (req as CustomRequest).user_id
+    );
     const skillId: Types.ObjectId = new Types.ObjectId(
       req.query.skillId as string
     );
-    const posts = await postServices.getPostsBySkill(skillId);
+    const posts = await postServices.getPostsBySkill(userId, skillId);
     res.status(messages.SUCCESSFUL).send(posts);
   } catch (err) {
     return res
