@@ -202,7 +202,7 @@ class _CreateEventDetailPageState extends State<CreateEventDetailPage> {
                       final scaffoldMessenger = ScaffoldMessenger.of(context);
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
-                          content: Text('Please choose desired'),
+                          content: Text('Please choose desired skill'),
                           duration: Duration(seconds: 2),
                         ),
                       );

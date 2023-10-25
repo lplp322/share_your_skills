@@ -7,15 +7,15 @@ import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:share_your_skills/views/event_page.dart';
 import 'package:easy_loading_button/easy_loading_button.dart';
+import 'package:share_your_skills/models/user.dart';
 
 class HomeShowPostPage extends StatefulWidget {
   final Post post;
   final bool isEditable;
   final String? username;
 
-
-  HomeShowPostPage({required this.post, this.isEditable = false, this.username});
-
+  HomeShowPostPage(
+      {required this.post, this.isEditable = false, this.username});
 
   @override
   _ShowPostPageState createState() => _ShowPostPageState();
@@ -81,13 +81,20 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
     }
   }
 
+  bool notEligible(User user, Post post) {
+    if (user.userId == post.userId) {
+      return true;
+    }
+    return false;
+  }
+
   void assignPost(PostViewModel postViewModel) async {
     await postViewModel.assignPost(widget.post.id!);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Event assigned successfully!'),
-        duration: Duration(seconds: 3), // You can customize the duration
+        duration: Duration(seconds: 3),
       ),
     );
 
@@ -173,7 +180,7 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
     bool isAssigned = buttonDisabled(widget.post);
     bool isEligible =
         eligibility(widget.post.skillIds, userViewModel.user?.skillIds);
-
+    bool sameUser = widget.post.userId == userViewModel.user?.userId;
     return SizedBox(
       width: double.infinity,
       child: EasyButton(
@@ -199,7 +206,7 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
         elevation: 0.0,
         contentGap: 6.0,
         buttonColor: Color(0xFF588F2C),
-        onPressed: isAssigned || !isEligible
+        onPressed: isAssigned || !isEligible || sameUser
             ? null
             : () {
                 assignPost(postViewModel);

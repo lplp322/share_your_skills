@@ -228,6 +228,7 @@ class UserViewModel extends ChangeNotifier {
             postViewModelManager.onUserLogin(registeredUser);
             postViewModel =
                 postViewModelManager.userPostViewModels[registeredUser]!;
+            initControllerFields();
             if (context != null) {
               Provider.of<AppState>(context, listen: false).setSelectedIndex(2);
               Navigator.of(context).pushReplacement(
