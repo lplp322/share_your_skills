@@ -192,14 +192,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         .whereType<String>()
                         .toList();
 
-                    if (userSkills.isEmpty) {
-                      setState(() {
-                        localErrorMessage = "Please select at least one skill.";
-                      });
-
-                      return;
-                    }
-
                     try {
                       await userViewModel.registerUser(
                         fullName: nameController.text,
