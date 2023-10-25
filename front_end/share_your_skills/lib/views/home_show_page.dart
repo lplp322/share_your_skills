@@ -13,8 +13,9 @@ class HomeShowPostPage extends StatefulWidget {
   final bool isEditable;
   final String? username;
 
-  HomeShowPostPage(
-      {required this.post, this.isEditable = false, this.username});
+
+  HomeShowPostPage({required this.post, this.isEditable = false, this.username});
+
 
   @override
   _ShowPostPageState createState() => _ShowPostPageState();
