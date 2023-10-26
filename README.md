@@ -31,7 +31,12 @@ Run the following commands
    cd front_end/share_your_skills
    flutter pub get
    ```
-7. Run the app
+7. Select device
+   
+   Locate the VS Code status bar and select a device. For details, see [How to run a Flutter app](https://docs.flutter.dev/get-started/test-drive?tab=vscode)
+   
+   ![image](https://github.com/lplp322/share_your_skills/assets/69764581/3be6d95c-dba4-4a74-9b4f-43f9cc094c5b)
+8. Run the app
    ```
    flutter run
    ```
