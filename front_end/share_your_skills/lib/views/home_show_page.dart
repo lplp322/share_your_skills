@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/models/post.dart';
 import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
@@ -10,7 +11,6 @@ import 'package:share_your_skills/views/event_page.dart';
 import 'package:easy_loading_button/easy_loading_button.dart';
 import 'package:share_your_skills/models/user.dart';
 import 'app_bar.dart' as MyAppbar;
-
 
 class HomeShowPostPage extends StatefulWidget {
   final Post post;
