@@ -5,9 +5,12 @@ import 'package:share_your_skills/viewmodels/post_viewmodel.dart';
 import 'package:share_your_skills/views/create_event_details_page.dart';
 import 'package:share_your_skills/viewmodels/user_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:share_your_skills/models/app_state.dart';
 import 'package:share_your_skills/views/event_page.dart';
 import 'package:easy_loading_button/easy_loading_button.dart';
 import 'package:share_your_skills/models/user.dart';
+import 'app_bar.dart' as MyAppbar;
+
 
 class HomeShowPostPage extends StatefulWidget {
   final Post post;
@@ -93,7 +96,7 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Event assigned successfully!'),
+        content: Text('Event assigned successfully!, Please reload the page, twice'),
         duration: Duration(seconds: 3),
       ),
     );
@@ -212,6 +215,14 @@ class _ShowPostPageState extends State<HomeShowPostPage> {
             ? null
             : () {
                 assignPost(postViewModel);
+                Provider.of<AppState>(context, listen: false).setSelectedIndex(0);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => MyAppbar.AppBar(
+                      token: userViewModel.user!.token,
+                    ),
+                  ),
+                );
               },
       ),
     );

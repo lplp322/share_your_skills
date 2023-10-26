@@ -27,6 +27,9 @@ class _AddEventPageState extends State<AddEventPage> {
       child: RefreshIndicator(
         onRefresh: () async {
           await Future.delayed(Duration(seconds: 1));
+          setState(() {
+            postViewModel.fetchAllPosts();
+          });
         },
         child: Scaffold(
           body: Column(
