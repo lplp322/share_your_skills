@@ -80,6 +80,21 @@ export const getOne = async (req: Request, res: Response) => {
   }
 };
 
+export const getOneFromId = async (req: Request, res: Response) => {
+  try {
+    const searchedUserId: Types.ObjectId = new Types.ObjectId(
+      req.query.searchedUserId as string
+    );
+    const user = await userServices.getOne(searchedUserId);
+    const username = user?.name?.toString();
+    res.status(messages.SUCCESSFUL).send(username);
+  } catch (err) {
+    return res
+      .status(messages.INTERNAL_SERVER_ERROR)
+      .send("getOneFromId : " + err);
+  }
+};
+
 export const deleteAll = async (req: Request, res: Response) => {
   try {
     await userServices.deleteAll();

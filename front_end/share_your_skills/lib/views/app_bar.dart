@@ -6,7 +6,6 @@ import 'package:share_your_skills/views/chat_page.dart';
 import 'package:share_your_skills/views/event_page.dart';
 import 'package:share_your_skills/views/home_page.dart';
 import 'package:share_your_skills/views/profile_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_your_skills/models/app_state.dart';
 
 class AppBar extends StatefulWidget {
@@ -31,64 +30,71 @@ class _AppBarState extends State<AppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Consumer<AppState>(
-          builder: (context, appState, _) {
-            // Use the selected index to determine the body widget
-            Widget selectedPage = _buildPage(appState.selectedIndex);
-
-            return selectedPage;
-          },
-        ),
-      ),
-      bottomNavigationBar: Consumer<AppState>(
-        builder: (context, appState, _) {
-          return BottomNavigationBar(
-             type: BottomNavigationBarType.fixed,
-            currentIndex: appState.selectedIndex,
-            onTap: (int newIndex) {
-              // Use the provided callback to update the state of the app
-              setState(() {
-                appState.selectedIndex = newIndex;
-              });
-            },
-            selectedItemColor: Colors.green, // Color for selected item
-            unselectedItemColor: Colors.black, // Color for unselected items
-            items: const [
-              BottomNavigationBarItem(
-                label: 'My Events',
-                icon: Icon(Icons.event),
+    return SafeArea(
+      child: Scaffold(
+            body: Center(
+              child: Consumer<AppState>(
+                builder: (context, appState, _) {
+                  // Use the selected index to determine the body widget
+                  Widget selectedPage = _buildPage(appState.selectedIndex);
+        
+                  return selectedPage;
+                },
               ),
-              BottomNavigationBarItem(
-                label: 'Add Event',
-                icon: Icon(Icons.add),
-              ),
-              BottomNavigationBarItem(
-                label: 'Home',
-                icon: Icon(Icons.home),
-              ),
-              BottomNavigationBarItem(
-                label: 'Chat',
-                icon: Icon(Icons.chat),
-              ),
-              BottomNavigationBarItem(
-                label: 'Profile',
-                icon: Icon(Icons.person),
-              ),
-            ],
-          );
-        },
-      ),
+            ),
+            bottomNavigationBar: Consumer<AppState>(
+              builder: (context, appState, _) {
+                return BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  currentIndex: appState.selectedIndex,
+                  onTap: (int newIndex) {
+                    // Use the provided callback to update the state of the app
+                    setState(() {
+                      appState.selectedIndex = newIndex;
+                    });
+                  },
+                  selectedItemColor: Colors.green, // Color for selected item
+                  unselectedItemColor: Colors.grey, // Color for unselected items
+                  items: const [
+                    BottomNavigationBarItem(
+                      label: 'My Posts',
+                      icon: Icon(Icons.event),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Add Posts',
+                      icon: Icon(Icons.add),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Home',
+                      icon: Icon(Icons.home_filled),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Chat',
+                      icon: Icon(Icons.chat_bubble),
+                    ),
+                    BottomNavigationBarItem(
+                      label: 'Profile',
+                      icon: Icon(Icons.person),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        
     );
   }
 
   Widget _buildPage(int selectedIndex) {
     switch (selectedIndex) {
       case 0:
-        return EventPage();
+        return EventPage(
+     
+        );
       case 1:
-        return AddEventPage();
+        return AddEventPage(
+   
+        );
       case 2:
         return HomePage();
       case 3:

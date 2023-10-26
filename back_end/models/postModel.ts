@@ -5,6 +5,7 @@ export interface IPost {
   content: string;
   deadline: Date;
   status: string;
+  location: string;
   userId: Types.ObjectId;
   skillIds: Array<Types.ObjectId>;
   assignedUserId?: Types.ObjectId;
@@ -15,6 +16,7 @@ const PostSchema = new Schema<IPost>({
   content: { type: String, required: true },
   deadline: { type: Date, required: true },
   status: { type: String, required: true },
+  location: { type: String, required: true },
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
   skillIds: { type: [Schema.Types.ObjectId], ref: "Skill", required: true },
   assignedUserId: { type: Schema.Types.ObjectId, ref: "User", required: false },

@@ -131,3 +131,8 @@ dist
 
 ## All build JS files
 *.js
+
+
+cosign.pub
+http_ca.crt
+test_elasticS.js
